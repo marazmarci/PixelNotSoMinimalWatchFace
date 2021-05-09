@@ -55,7 +55,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="pixelminimalwatchface"
+                    android:scheme="pixelnotsominimalwatchface"
                     android:host="open" />
             </intent-filter>
         </activity>
@@ -71,7 +71,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="pixelminimalwatchface"
+                    android:scheme="pixelnotsominimalwatchface"
                     android:host="donate" />
             </intent-filter>
 
