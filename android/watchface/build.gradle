@@ -78,10 +78,10 @@ dependencies {
 
     implementation 'androidx.wear:wear:1.1.0'
     implementation 'com.google.android.support:wearable:2.8.1'
-    implementation 'com.google.android.gms:play-services-wearable:17.0.0'
+    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.activity:activity-ktx:1.2.2'
+    implementation 'androidx.activity:activity-ktx:1.2.3'
 
     compileOnly 'com.google.android.wearable:wearable:2.8.1'
 }

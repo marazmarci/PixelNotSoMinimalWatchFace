@@ -93,7 +93,7 @@ dependencies {
     implementation 'io.insert-koin:koin-core:3.0.1'
     implementation 'io.insert-koin:koin-android:3.0.1'
 
-    implementation 'com.google.android.gms:play-services-wearable:17.0.0'
+    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
     implementation 'com.google.android.support:wearable:2.8.1'
     compileOnly 'com.google.android.wearable:wearable:2.8.1'
 
