@@ -108,7 +108,7 @@ class BillingImpl(context: Context,
      */
     override fun isUserPremium(): Boolean
     {
-        return storage.isUserPremium() || iabStatus == PremiumCheckStatus.Premium
+        return true // storage.isUserPremium() || iabStatus == PremiumCheckStatus.Premium
     }
 
     /**

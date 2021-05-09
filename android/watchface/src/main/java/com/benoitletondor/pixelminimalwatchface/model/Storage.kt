@@ -104,8 +104,8 @@ class StorageImpl : Storage {
     // SharedPreferences uses a map so we cache the values to avoid map lookups
     private var timeSizeCached = false
     private var cacheTimeSize = 0
-    private var isUserPremiumCached = false
-    private var cacheIsUserPremium = false
+    private var isUserPremiumCached = true // temporary
+    private var cacheIsUserPremium = true // temporary
     private var isUse24hFormatCached = false
     private var cacheUse24hFormat = false
     private var shouldShowWearOSLogoCached = false
