@@ -61,9 +61,6 @@
 
     <string name="misc_notification_channel_name">Misc</string>
     <string name="misc_notification_channel_description">Help improve the product by asking for your feedback</string>
-    <string name="rating_notification_title">Enjoy Pixel Minimal Watch Face?</string>
-    <string name="rating_notification_message">How do you like it so far?</string>
-    <string name="rating_notification_cta">Give feedback</string>
     <string name="rating_popup_question_title">What do you think of Pixel Minimal Watch Face?</string>
     <string name="rating_popup_question_message">I develop it on my free time, doing the best I can to make it look great.\nThere still might be things to improve so I would really appreciate your feedback.</string>
     <string name="rating_popup_question_cta_negative">-> I don\'t like it</string>
