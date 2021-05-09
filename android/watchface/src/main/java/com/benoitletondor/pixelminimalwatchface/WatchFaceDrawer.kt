@@ -607,7 +607,7 @@ class WatchFaceDrawerImpl : WatchFaceDrawer {
 
     private fun PhoneBatteryStatus.getBatteryText(currentTimestamp: Long): String {
         return when(this) {
-            is PhoneBatteryStatus.DataReceived -> if (isStale(currentTimestamp)) { "?" } else { "${batteryPercentage}%" }
+            is PhoneBatteryStatus.DataReceived -> if (isStale(currentTimestamp)) { "$batteryPercentage% ?" } else { "$batteryPercentage%" }
             PhoneBatteryStatus.Unknown -> "?"
         }
     }
