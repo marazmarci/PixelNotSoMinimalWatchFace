@@ -16,7 +16,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 def keystorePropertiesFile = rootProject.file("key/key.properties")
@@ -41,7 +41,7 @@ android {
 
     signingConfigs {
         debug {
-            keyAlias "pixelwatchface"
+            keyAlias "pixelwatchfacedebug"
             keyPassword "pixelwatchfacedebug"
             storeFile file("../key/debug.jks")
             storePassword "pixelwatchfacedebug"
