@@ -41,7 +41,7 @@
             android:name=".settings.ComplicationConfigActivity"
             android:label="@string/complication_config">
             <intent-filter>
-                <action android:name="com.benoitletondor.pixelminimalwatchface.CONFIG_COMPLICATION_SIMPLE"/>
+                <action android:name="dev.maraz.pixelnotsominimalwatchface.CONFIG_COMPLICATION_SIMPLE"/>
 
                 <category android:name="com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -89,7 +89,7 @@
 
             <meta-data
                 android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
-                android:value="com.benoitletondor.pixelminimalwatchface.CONFIG_COMPLICATION_SIMPLE"/>
+                android:value="dev.maraz.pixelnotsominimalwatchface.CONFIG_COMPLICATION_SIMPLE"/>
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

@@ -134,7 +134,7 @@ class ComplicationConfigActivity : Activity() {
             // Create Remote Intent to open Play Store listing of app on remote device.
             val intentAndroid = Intent(Intent.ACTION_VIEW)
                 .addCategory(Intent.CATEGORY_BROWSABLE)
-                .setData(Uri.parse("pixelminimalwatchface://open"))
+                .setData(Uri.parse("pixelnotsominimalwatchface://open"))
                 .setPackage(BuildConfig.APPLICATION_ID)
 
             RemoteIntent.startRemoteActivity(
@@ -169,7 +169,7 @@ class ComplicationConfigActivity : Activity() {
             // Create Remote Intent to open Play Store listing of app on remote device.
             val intentAndroid = Intent(Intent.ACTION_VIEW)
                 .addCategory(Intent.CATEGORY_BROWSABLE)
-                .setData(Uri.parse("pixelminimalwatchface://donate"))
+                .setData(Uri.parse("pixelnotsominimalwatchface://donate"))
                 .setPackage(BuildConfig.APPLICATION_ID)
 
             RemoteIntent.startRemoteActivity(
