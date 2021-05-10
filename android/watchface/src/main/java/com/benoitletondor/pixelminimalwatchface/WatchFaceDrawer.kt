@@ -187,8 +187,10 @@ class WatchFaceDrawerImpl : WatchFaceDrawer {
 
             if( complicationId == BOTTOM_COMPLICATION_ID ) {
                 complicationDrawable.setBorderColorActive(ContextCompat.getColor(context, R.color.transparent))
-                complicationDrawable.setBorderColorAmbient(ContextCompat.getColor(context, R.color.transparent))
+                //complicationDrawable.setBorderColorAmbient(ContextCompat.getColor(context, R.color.transparent))
             }
+
+            complicationDrawable.setBorderColorAmbient(ContextCompat.getColor(context, R.color.transparent))
 
             onComplicationDataUpdate(complicationId, complicationDrawable, complicationsData.get(complicationId), complicationColors)
         }
