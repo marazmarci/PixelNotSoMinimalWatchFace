@@ -481,8 +481,12 @@ public class CustomComplicationRenderer extends ComplicationRenderer {
                 this.mMainTextRenderer.setRelativePadding(paddingAmount / (float)this.mMainTextBounds.width(), 0.0F, 0.0F, 0.0F);
                 this.mSubTextRenderer.setRelativePadding(paddingAmount / (float)this.mMainTextBounds.width(), 0.0F, 0.0F, 0.0F);
             } else {
-                this.mMainTextRenderer.setRelativePadding(0.0F, 0.0F, 0.0F, 0.0F);
-                this.mSubTextRenderer.setRelativePadding(0.0F, 0.0F, 0.0F, 0.0F);
+                float horizontalPadding = 0f;
+                if (this.mComplicationData.getType() == TYPE_RANGED_VALUE) {
+                    horizontalPadding = 0.12f;
+                }
+                this.mMainTextRenderer.setRelativePadding(horizontalPadding, 0.0F, horizontalPadding, 0.0F);
+                this.mSubTextRenderer.setRelativePadding(horizontalPadding, 0.0F, horizontalPadding, 0.0F);
             }
 
             Rect innerBounds = new Rect();
