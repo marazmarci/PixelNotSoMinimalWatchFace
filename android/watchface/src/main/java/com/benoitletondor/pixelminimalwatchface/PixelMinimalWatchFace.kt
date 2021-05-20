@@ -15,16 +15,12 @@
  */
 package com.benoitletondor.pixelminimalwatchface
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.WallpaperManager
 import android.content.*
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -41,20 +37,16 @@ import android.util.SparseArray
 import android.view.SurfaceHolder
 import android.view.WindowInsets
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.benoitletondor.pixelminimalwatchface.helper.FullBrightnessActivity
 import com.benoitletondor.pixelminimalwatchface.helper.await
 import com.benoitletondor.pixelminimalwatchface.helper.openActivity
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationColors
 import com.benoitletondor.pixelminimalwatchface.model.DEFAULT_APP_VERSION
 import com.benoitletondor.pixelminimalwatchface.model.Storage
-import com.benoitletondor.pixelminimalwatchface.rating.FeedbackActivity
 import com.benoitletondor.pixelminimalwatchface.settings.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchface.settings.phonebattery.*
 import com.google.android.gms.wearable.*
 import kotlinx.coroutines.*
-import java.lang.Runnable
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.max
@@ -62,13 +54,15 @@ import kotlin.math.max
 const val MISC_NOTIFICATION_CHANNEL_ID = "rating"
 private const val DATA_KEY_PREMIUM = "premium"
 private const val DATA_KEY_BATTERY_STATUS_PERCENT = "/batterySync/batteryStatus"
-private const val THREE_DAYS_MS: Long = 1000 * 60 * 60 * 24 * 3
 private const val THIRTY_MINS_MS: Long = 1000 * 60 * 30
+private const val FIFTEEN_MINS_MS: Long = 1000 * 60 * 15
+private const val MINIMUM_PHONE_BATTERY_UPDATE_INTERVAL_MS = FIFTEEN_MINS_MS
 private const val MINIMUM_COMPLICATION_UPDATE_INTERVAL_MS = 1000L
 
 const val WEAR_OS_APP_PACKAGE = "com.google.android.wearable.app"
 const val WEATHER_PROVIDER_SERVICE = "com.google.android.clockwork.home.weather.WeatherProviderService"
 const val WEATHER_ACTIVITY_NAME = "com.google.android.clockwork.home.weather.WeatherActivity"
+const val AGENDA_ACTIVITY_NAME = "com.google.android.clockwork.sysui.experiences.calendar.AgendaActivity"
 
 class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
@@ -287,7 +281,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             val lastPhoneSyncRequestTimestamp = lastPhoneSyncRequestTimestamp
             if( storage.shouldShowPhoneBattery() &&
                 phoneBatteryStatus.isStale(System.currentTimeMillis()) &&
-                (lastPhoneSyncRequestTimestamp == null || System.currentTimeMillis() - lastPhoneSyncRequestTimestamp > THIRTY_MINS_MS) ) {
+                (lastPhoneSyncRequestTimestamp == null || System.currentTimeMillis() - lastPhoneSyncRequestTimestamp > MINIMUM_PHONE_BATTERY_UPDATE_INTERVAL_MS) ) {
                 this.lastPhoneSyncRequestTimestamp = System.currentTimeMillis()
                 syncPhoneBatteryStatus()
             }
@@ -389,16 +383,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                         return
                     }
                     if( watchFaceDrawer.tapIsInCenterOfScreen(x, y) ) {
-                        if( lastTapEventTimestamp == 0L || eventTime - lastTapEventTimestamp > 400 ) {
-                            lastTapEventTimestamp = eventTime
-                            return
-                        } else {
-                            lastTapEventTimestamp = 0
-                            startActivity(Intent(this@PixelMinimalWatchFace, FullBrightnessActivity::class.java).apply {
-                                flags = FLAG_ACTIVITY_NEW_TASK
-                            })
-                            return
-                        }
+                        openActivity(WEAR_OS_APP_PACKAGE, AGENDA_ACTIVITY_NAME)
                     }
                     if ( storage.shouldShowPhoneBattery() && phoneBatteryStatus.isStale(System.currentTimeMillis()) && watchFaceDrawer.tapIsOnBattery(x, y)) {
                         startActivity(Intent(this@PixelMinimalWatchFace, PhoneBatteryConfigurationActivity::class.java).apply {

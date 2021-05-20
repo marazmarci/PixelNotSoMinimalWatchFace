@@ -28,7 +28,7 @@ class StorageImpl(context: Context) : Storage {
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
 
     override fun isUserPremium(): Boolean
-        = sharedPreferences.getBoolean(PREMIUM_KEY, false)
+        = sharedPreferences.getBoolean(PREMIUM_KEY, true)
 
     override fun setUserPremium(premium: Boolean) {
         sharedPreferences.edit {

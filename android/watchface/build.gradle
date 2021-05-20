@@ -44,10 +44,14 @@ android {
             storePassword "pixelwatchfacedebug"
         }
         release {
-            keyAlias keystoreProperties['keyAlias']
+            /*keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            storePassword keystoreProperties['storePassword']*/
+            keyAlias "pixelwatchfacedebug"
+            keyPassword "pixelwatchfacedebug"
+            storeFile file("../key/debug.jks")
+            storePassword "pixelwatchfacedebug"
         }
     }
 

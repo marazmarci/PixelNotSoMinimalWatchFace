@@ -18,6 +18,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:keep="@array/android_wear_capabilities" >
     <string-array name="android_wear_capabilities">
-        <item>verify_com_benoitletondor_pixelminimalwatchface</item>
+        <item>pixel_not-so-minimal_watch_face_companion_app</item>
     </string-array>
 </resources>

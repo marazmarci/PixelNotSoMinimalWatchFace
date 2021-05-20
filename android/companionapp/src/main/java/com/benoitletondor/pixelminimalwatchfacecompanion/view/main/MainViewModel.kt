@@ -34,7 +34,6 @@ import kotlinx.coroutines.*
 
 class MainViewModel(private val billing: Billing,
                     private val sync: Sync,
-                    private val config: Config,
                     private val storage: Storage) : ViewModel(), CoroutineScope by MainScope(), CapabilityClient.OnCapabilityChangedListener {
     val launchOnboardingEvent = SingleLiveEvent<Unit>()
     val errorSyncingEvent = SingleLiveEvent<Throwable>()
@@ -138,7 +137,7 @@ class MainViewModel(private val billing: Billing,
     }
 
     fun onVoucherInput(voucher: String) {
-        val vouchers = config.getVouchers()
+        val vouchers = emptyList<String>()
         if( vouchers.contains(voucher) ) {
             storage.setUserPremium(true)
             syncState(true)

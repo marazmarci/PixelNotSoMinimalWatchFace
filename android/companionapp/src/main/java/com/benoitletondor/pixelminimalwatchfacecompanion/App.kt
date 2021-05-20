@@ -18,14 +18,10 @@ package com.benoitletondor.pixelminimalwatchfacecompanion
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import com.benoitletondor.pixelminimalwatchfacecompanion.billing.Billing
-import com.benoitletondor.pixelminimalwatchfacecompanion.config.Config
 import com.benoitletondor.pixelminimalwatchfacecompanion.injection.appModule
 import com.benoitletondor.pixelminimalwatchfacecompanion.injection.viewModelModule
 import com.benoitletondor.pixelminimalwatchfacecompanion.storage.Storage
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -33,7 +29,7 @@ import org.koin.core.context.startKoin
 
 class App : Application() {
     private val billing: Billing by inject()
-    private val config: Config by inject()
+    //private val config: Config by inject()
     private val storage: Storage by inject()
 
     override fun onCreate() {
@@ -85,13 +81,13 @@ class App : Application() {
     private fun onAppForeground() {
         billing.updatePremiumStatusIfNeeded()
 
-        GlobalScope.async {
+        /*GlobalScope.async {
             try {
                 config.fetch()
             } catch (t: Throwable) {
                 Log.e("App", "Error syncing config", t)
             }
-        }.start()
+        }.start()*/
     }
 
     private fun onAppBackground() {
