@@ -130,8 +130,8 @@ class RegularDigitalWatchFaceDrawer(
 
             if( complicationId == PixelMinimalWatchFace.BOTTOM_COMPLICATION_ID) {
                 complicationDrawable.setBorderColorActive(ContextCompat.getColor(context, R.color.transparent))
-                complicationDrawable.setBorderColorAmbient(ContextCompat.getColor(context, R.color.transparent))
             }
+            complicationDrawable.setBorderColorAmbient(ContextCompat.getColor(context, R.color.transparent))
 
             onComplicationDataUpdate(complicationId, complicationsData[complicationId], complicationColors)
         }
