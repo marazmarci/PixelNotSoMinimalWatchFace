@@ -408,7 +408,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             }
 
             val lastWatchBatteryStatus = lastWatchBatteryStatus
-            if (Device.isSamsungGalaxyWatch &&
+            if (hasWidgetFrozenBug &&
                 lastWatchBatteryStatus is WatchBatteryStatus.DataReceived) {
                 ensureBatteryDataIsUpToDateOrReload(lastWatchBatteryStatus)
             }
@@ -715,11 +715,11 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             // Update battery subscription if needed
             if( storage.isUserPremium() &&
-                (storage.showWatchBattery() != shouldShowBattery || (Device.isSamsungGalaxyWatch && !didForceGalaxyWatch4BatterySubscription)) ) {
+                (storage.showWatchBattery() != shouldShowBattery || (hasWidgetFrozenBug && !didForceGalaxyWatch4BatterySubscription)) ) {
                 shouldShowBattery = storage.showWatchBattery()
                 didForceGalaxyWatch4BatterySubscription = true
 
-                if( shouldShowBattery || Device.isSamsungGalaxyWatch ) {
+                if( shouldShowBattery || hasWidgetFrozenBug ) {
                     subscribeToBatteryComplicationData()
                 } else {
                     unsubscribeToBatteryComplicationData()

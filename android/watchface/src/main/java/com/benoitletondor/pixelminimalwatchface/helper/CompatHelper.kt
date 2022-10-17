@@ -60,6 +60,8 @@ val isGalaxyWatch4CalendarBuggyWearOSVersion = Device.isSamsungGalaxyWatch && (
     Build.VERSION.SECURITY_PATCH.startsWith("2022-04")
 )
 
+val hasWidgetFrozenBug = Device.isWearOS3
+
 fun Context.getTopAndBottomMargins(): Float {
     return when {
         Device.isOppoWatch -> dpToPx(5).toFloat()
