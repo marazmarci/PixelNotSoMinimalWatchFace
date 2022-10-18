@@ -43,11 +43,13 @@ class ComplicationTimeDependentUpdateHandler(
     }
 
     fun cancelUpdate() {
-        if (DEBUG_LOGS) Log.d(TAG, "cancelUpdate")
-
         if( hasUpdateScheduled ) {
+            if (DEBUG_LOGS) Log.d(TAG, "cancelUpdate: Cancelling")
+
             hasUpdateScheduled = false
             removeMessages(MSG_UPDATE_TIME)
+        } else {
+            if (DEBUG_LOGS) Log.d(TAG, "cancelUpdate: No-op")
         }
     }
 

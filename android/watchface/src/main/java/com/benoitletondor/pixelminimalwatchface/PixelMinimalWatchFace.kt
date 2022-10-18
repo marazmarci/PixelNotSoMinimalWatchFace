@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.support.wearable.complications.*
 import android.support.wearable.watchface.CanvasWatchFaceService
 import android.support.wearable.watchface.WatchFaceService
@@ -76,7 +77,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             storage.setAppVersion(BuildConfig.VERSION_CODE)
         }
 
-        if (DEBUG_LOGS) Log.d(TAG, "onCreateEngine. Security Patch: ${Build.VERSION.SECURITY_PATCH}, OS version : ${Build.VERSION.INCREMENTAL}")
+        if (DEBUG_LOGS) Log.d(TAG, "onCreateEngine. Security Patch: ${Build.VERSION.SECURITY_PATCH}, OS version : ${Build.VERSION.INCREMENTAL}, Brand: ${Build.BRAND}, Model: ${Build.MODEL}")
 
         return Engine(this, storage)
     }
@@ -422,6 +423,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             invalidate()
 
             handleGalaxyWatch4WearOSJanuaryBug()
+            handlePixelWatchAmbientScreenGoingOffBug()
         }
 
         // ------------------------------------
@@ -461,6 +463,34 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error while handling january wearos bug", e)
+            }
+        }
+
+        private var lastForceBrightnessCall: Long = System.currentTimeMillis()
+        private fun handlePixelWatchAmbientScreenGoingOffBug() {
+            if (!Device.isPixelWatch || !isAmbientMode()) {
+                return
+            }
+
+            if (DEBUG_LOGS) Log.d(TAG, "handlePixelWatchAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastForceBrightnessCall}")
+
+            if (System.currentTimeMillis() - lastForceBrightnessCall >= FOURTEEN_MINS_MS) {
+                if (DEBUG_LOGS) Log.d(TAG, "handlePixelWatchAmbientScreenGoingOffBug: Start activity")
+
+                this.lastForceBrightnessCall = System.currentTimeMillis()
+
+                try {
+                    val pw = getSystemService(Context.POWER_SERVICE) as PowerManager
+                    val wl: PowerManager.WakeLock = pw.newWakeLock(
+                        PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                        "pixelwatchface:awakescreen"
+                    )
+
+                    wl.acquire(1000)
+                    wl.release()
+                } catch (e : Exception) {
+                    Log.e(TAG, "handlePixelWatchAmbientScreenGoingOffBug: Error while acquiring WL", e)
+                }
             }
         }
 
@@ -1012,6 +1042,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
     companion object {
         private const val HALF_HOUR_MS = 1000*60*30
+        private const val FOURTEEN_MINS_MS = 1000*60*14
 
         const val LEFT_COMPLICATION_ID = 100
         const val RIGHT_COMPLICATION_ID = 101
