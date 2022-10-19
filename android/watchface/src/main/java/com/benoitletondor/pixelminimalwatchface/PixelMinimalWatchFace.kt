@@ -57,7 +57,6 @@ import java.util.*
 import java.util.concurrent.Executors
 import kotlin.math.max
 
-
 const val MISC_NOTIFICATION_CHANNEL_ID = "rating"
 private const val DATA_KEY_PREMIUM = "premium"
 private const val DATA_KEY_BATTERY_STATUS_PERCENT = "/batterySync/batteryStatus"
@@ -132,6 +131,8 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         private var windowInsets: WindowInsets? = null
 
         private lateinit var phoneNotifications: PhoneNotifications
+
+        private var lastScreenOnTimeMs: Long = System.currentTimeMillis()
 
         private val timeZoneReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -423,7 +424,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             invalidate()
 
             handleGalaxyWatch4WearOSJanuaryBug()
-            handlePixelWatchAmbientScreenGoingOffBug()
+            handleAmbientScreenGoingOffBug()
         }
 
         // ------------------------------------
@@ -466,18 +467,17 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             }
         }
 
-        private var lastForceBrightnessCall: Long = System.currentTimeMillis()
-        private fun handlePixelWatchAmbientScreenGoingOffBug() {
-            if (!Device.isPixelWatch || !isAmbientMode()) {
+        private fun handleAmbientScreenGoingOffBug() {
+            if (!hasAmbientDisplayGoingOffBug || !isAmbientMode()) {
                 return
             }
 
-            if (DEBUG_LOGS) Log.d(TAG, "handlePixelWatchAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastForceBrightnessCall}")
+            if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastScreenOnTimeMs}")
 
-            if (System.currentTimeMillis() - lastForceBrightnessCall >= FOURTEEN_MINS_MS) {
-                if (DEBUG_LOGS) Log.d(TAG, "handlePixelWatchAmbientScreenGoingOffBug: Start activity")
+            if (System.currentTimeMillis() - lastScreenOnTimeMs >= FOURTEEN_MINS_MS) {
+                if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: Start activity")
 
-                this.lastForceBrightnessCall = System.currentTimeMillis()
+                this.lastScreenOnTimeMs = System.currentTimeMillis()
 
                 try {
                     val pw = getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -489,7 +489,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                     wl.acquire(1000)
                     wl.release()
                 } catch (e : Exception) {
-                    Log.e(TAG, "handlePixelWatchAmbientScreenGoingOffBug: Error while acquiring WL", e)
+                    Log.e(TAG, "handleAmbientScreenGoingOffBug: Error while acquiring WL", e)
                 }
             }
         }
@@ -544,6 +544,12 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             super.onAmbientModeChanged(inAmbient)
 
             if (DEBUG_LOGS) Log.d(TAG, "onAmbientModeChanged, ambient: $inAmbient")
+
+            // If is in ambient now and wasn't before
+            if (inAmbient && !ambient) {
+                if (DEBUG_LOGS) Log.d(TAG, "onAmbientModeChanged, updating lastScreenOnTimeMs")
+                lastScreenOnTimeMs = System.currentTimeMillis()
+            }
 
             ambient = inAmbient
 

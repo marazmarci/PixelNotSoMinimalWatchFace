@@ -61,6 +61,7 @@ val isGalaxyWatch4CalendarBuggyWearOSVersion = Device.isSamsungGalaxyWatch && (
 )
 
 val hasWidgetFrozenBug = Device.isWearOS3
+val hasAmbientDisplayGoingOffBug = Device.isPixelWatch
 
 fun Context.getTopAndBottomMargins(): Float {
     return when {
