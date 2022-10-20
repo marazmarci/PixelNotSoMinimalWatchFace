@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.support.wearable.complications.*
 import android.support.wearable.watchface.CanvasWatchFaceService
 import android.support.wearable.watchface.WatchFaceService
@@ -56,7 +57,6 @@ import java.util.*
 import java.util.concurrent.Executors
 import kotlin.math.max
 
-
 const val MISC_NOTIFICATION_CHANNEL_ID = "rating"
 private const val DATA_KEY_PREMIUM = "premium"
 private const val DATA_KEY_BATTERY_STATUS_PERCENT = "/batterySync/batteryStatus"
@@ -76,7 +76,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             storage.setAppVersion(BuildConfig.VERSION_CODE)
         }
 
-        if (DEBUG_LOGS) Log.d(TAG, "onCreateEngine. Security Patch: ${Build.VERSION.SECURITY_PATCH}, OS version : ${Build.VERSION.INCREMENTAL}")
+        if (DEBUG_LOGS) Log.d(TAG, "onCreateEngine. Security Patch: ${Build.VERSION.SECURITY_PATCH}, OS version : ${Build.VERSION.INCREMENTAL}, Brand: ${Build.BRAND}, Model: ${Build.MODEL}")
 
         return Engine(this, storage)
     }
@@ -131,6 +131,8 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         private var windowInsets: WindowInsets? = null
 
         private lateinit var phoneNotifications: PhoneNotifications
+
+        private var lastScreenOnTimeMs: Long = System.currentTimeMillis()
 
         private val timeZoneReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -408,7 +410,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             }
 
             val lastWatchBatteryStatus = lastWatchBatteryStatus
-            if (Device.isSamsungGalaxyWatch &&
+            if (hasWidgetFrozenBug &&
                 lastWatchBatteryStatus is WatchBatteryStatus.DataReceived) {
                 ensureBatteryDataIsUpToDateOrReload(lastWatchBatteryStatus)
             }
@@ -422,6 +424,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             invalidate()
 
             handleGalaxyWatch4WearOSJanuaryBug()
+            handleAmbientScreenGoingOffBug()
         }
 
         // ------------------------------------
@@ -461,6 +464,33 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error while handling january wearos bug", e)
+            }
+        }
+
+        private fun handleAmbientScreenGoingOffBug() {
+            if (!hasAmbientDisplayGoingOffBug || !isAmbientMode()) {
+                return
+            }
+
+            if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastScreenOnTimeMs}")
+
+            if (System.currentTimeMillis() - lastScreenOnTimeMs >= FOURTEEN_MINS_MS) {
+                if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: Start activity")
+
+                this.lastScreenOnTimeMs = System.currentTimeMillis()
+
+                try {
+                    val pw = getSystemService(Context.POWER_SERVICE) as PowerManager
+                    val wl: PowerManager.WakeLock = pw.newWakeLock(
+                        PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                        "pixelwatchface:awakescreen"
+                    )
+
+                    wl.acquire(1000)
+                    wl.release()
+                } catch (e : Exception) {
+                    Log.e(TAG, "handleAmbientScreenGoingOffBug: Error while acquiring WL", e)
+                }
             }
         }
 
@@ -514,6 +544,12 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             super.onAmbientModeChanged(inAmbient)
 
             if (DEBUG_LOGS) Log.d(TAG, "onAmbientModeChanged, ambient: $inAmbient")
+
+            // If is in ambient now and wasn't before
+            if (inAmbient && !ambient) {
+                if (DEBUG_LOGS) Log.d(TAG, "onAmbientModeChanged, updating lastScreenOnTimeMs")
+                lastScreenOnTimeMs = System.currentTimeMillis()
+            }
 
             ambient = inAmbient
 
@@ -715,11 +751,11 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             // Update battery subscription if needed
             if( storage.isUserPremium() &&
-                (storage.showWatchBattery() != shouldShowBattery || (Device.isSamsungGalaxyWatch && !didForceGalaxyWatch4BatterySubscription)) ) {
+                (storage.showWatchBattery() != shouldShowBattery || (hasWidgetFrozenBug && !didForceGalaxyWatch4BatterySubscription)) ) {
                 shouldShowBattery = storage.showWatchBattery()
                 didForceGalaxyWatch4BatterySubscription = true
 
-                if( shouldShowBattery || Device.isSamsungGalaxyWatch ) {
+                if( shouldShowBattery || hasWidgetFrozenBug ) {
                     subscribeToBatteryComplicationData()
                 } else {
                     unsubscribeToBatteryComplicationData()
@@ -1012,6 +1048,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
     companion object {
         private const val HALF_HOUR_MS = 1000*60*30
+        private const val FOURTEEN_MINS_MS = 1000*60*14
 
         const val LEFT_COMPLICATION_ID = 100
         const val RIGHT_COMPLICATION_ID = 101
