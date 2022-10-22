@@ -26,9 +26,9 @@ android {
     defaultConfig {
         applicationId "com.benoitletondor.pixelminimalwatchface"
         minSdkVersion 25
-        targetSdkVersion 32
-        versionCode 151
-        versionName "2.1.7"
+        targetSdkVersion 33
+        versionCode 152
+        versionName "2.2.0"
         multiDexEnabled true
 
         buildConfigField "String", "COMPANION_APP_PLAYSTORE_URL", '"https://play.google.com/store/apps/details?id=com.benoitletondor.pixelminimalwatchface"'
@@ -86,7 +86,7 @@ dependencies {
 
     implementation 'androidx.wear:wear:1.2.0'
     implementation 'com.google.android.support:wearable:2.8.1'
-    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
+    implementation 'com.google.android.gms:play-services-wearable:18.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.activity:activity-ktx:1.6.0'

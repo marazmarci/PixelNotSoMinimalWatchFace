@@ -475,7 +475,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastScreenOnTimeMs}")
 
-            if (System.currentTimeMillis() - lastScreenOnTimeMs >= FOURTEEN_MINS_MS) {
+            if (System.currentTimeMillis() - lastScreenOnTimeMs >= TEN_MINS_MS) {
                 if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: Start activity")
 
                 this.lastScreenOnTimeMs = System.currentTimeMillis()
@@ -1051,7 +1051,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
     companion object {
         private const val HALF_HOUR_MS = 1000*60*30
-        private const val FOURTEEN_MINS_MS = 1000*60*14
+        private const val TEN_MINS_MS = 1000*60*10
 
         const val LEFT_COMPLICATION_ID = 100
         const val RIGHT_COMPLICATION_ID = 101

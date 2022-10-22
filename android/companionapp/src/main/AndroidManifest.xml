@@ -127,7 +127,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.service.notification.disabled_filter_types"
-                android:value="silent">
+                android:value="ongoing|silent">
             </meta-data>
         </service>
     </application>

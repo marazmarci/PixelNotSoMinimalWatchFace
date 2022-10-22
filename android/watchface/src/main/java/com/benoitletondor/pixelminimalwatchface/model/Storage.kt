@@ -54,7 +54,7 @@ private const val KEY_SECONDS_RING = "secondsRing"
 private const val KEY_SHOW_WEATHER = "showWeather"
 private const val KEY_SHOW_WATCH_BATTERY = "showBattery"
 private const val KEY_SHOW_PHONE_BATTERY = "showPhoneBattery"
-private const val KEY_FEATURE_DROP_2022_NOTIFICATION = "featureDrop2022Notification_2"
+private const val KEY_FEATURE_DROP_2022_NOTIFICATION = "featureDrop2022Notification_3"
 private const val KEY_USE_SHORT_DATE_FORMAT = "useShortDateFormat"
 private const val KEY_SHOW_DATE_AMBIENT = "showDateAmbient"
 private const val KEY_TIME_COLOR = "timeAndDateColor"
@@ -115,8 +115,8 @@ interface Storage {
     fun showWatchBattery(): Boolean
     fun setShowWatchBattery(show: Boolean)
     fun watchShowWatchBattery(): Flow<Boolean>
-    fun hasFeatureDropSummer2022NotificationBeenShown(): Boolean
-    fun setFeatureDropSummer2022NotificationShown()
+    fun hasFeatureDropAutumn2022NotificationBeenShown(): Boolean
+    fun setFeatureDropAutumn2022NotificationShown()
     fun getUseShortDateFormat(): Boolean
     fun setUseShortDateFormat(useShortDateFormat: Boolean)
     fun watchUseShortDateFormat(): Flow<Boolean>
@@ -487,11 +487,11 @@ class StorageImpl(
 
     override fun setBetaNotificationsDisclaimerShown() = betaNotificationsDisclaimerShownCache.set(true)
 
-    override fun hasFeatureDropSummer2022NotificationBeenShown(): Boolean {
+    override fun hasFeatureDropAutumn2022NotificationBeenShown(): Boolean {
         return sharedPreferences.getBoolean(KEY_FEATURE_DROP_2022_NOTIFICATION, false)
     }
 
-    override fun setFeatureDropSummer2022NotificationShown() {
+    override fun setFeatureDropAutumn2022NotificationShown() {
         sharedPreferences.edit().putBoolean(KEY_FEATURE_DROP_2022_NOTIFICATION, true).apply()
     }
 
