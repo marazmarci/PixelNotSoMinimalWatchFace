@@ -29,10 +29,17 @@ interface WatchFaceDrawer {
     fun initializeComplicationDrawables(drawableCallback: Drawable.Callback): IntArray
     fun onApplyWindowInsets(insets: WindowInsets)
     fun onSurfaceChanged(width: Int, height: Int)
-    fun onComplicationColorsUpdate(complicationColors: ComplicationColors, complicationsData: SparseArray<ComplicationData>)
-    fun onComplicationDataUpdate(complicationId: Int,
-                                 data: ComplicationData?,
-                                 complicationColors: ComplicationColors)
+    fun onComplicationColorsUpdate(
+        complicationColors: ComplicationColors,
+        complicationsData: SparseArray<ComplicationData>,
+        showComplicationsColorsInAmbient: Boolean,
+    )
+    fun onComplicationDataUpdate(
+        complicationId: Int,
+        data: ComplicationData?,
+        complicationColors: ComplicationColors,
+        showComplicationsColorsInAmbient: Boolean,
+    )
     fun tapIsOnComplication(x: Int, y: Int): Boolean
     fun tapIsOnWeather(x: Int, y: Int): Boolean
     fun tapIsInCenterOfScreen(x: Int, y: Int): Boolean

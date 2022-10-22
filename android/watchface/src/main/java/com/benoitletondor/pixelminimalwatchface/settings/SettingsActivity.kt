@@ -723,6 +723,21 @@ class SettingsActivity : ComponentActivity() {
                 )
             }
         }
+        
+        if (Device.isWearOS3) {
+            item(key = "showColorsInAmbient") {
+                val showComplicationsColorInAmbient by storage.watchShowColorsInAmbientMode().collectAsState(storage.showColorsInAmbientMode())
+
+                SettingToggleChip(
+                    label = "Colors in ambient mode",
+                    secondaryLabel = "Caution: can increase battery usage",
+                    checked = showComplicationsColorInAmbient,
+                    onCheckedChange = { storage.setShowColorsInAmbientMode(it) },
+                    iconDrawable = R.drawable.ic_palette_24,
+                    modifier = Modifier.heightIn(min = 90.dp),
+                )
+            }
+        }
     }
 
     private fun LazyListScope.SupportSection(

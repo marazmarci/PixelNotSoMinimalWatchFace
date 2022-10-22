@@ -45,6 +45,7 @@ private const val KEY_RATING_NOTIFICATION_SENT = "ratingNotificationSent"
 private const val KEY_APP_VERSION = "appVersion"
 private const val KEY_SHOW_WEAR_OS_LOGO = "showWearOSLogo"
 private const val KEY_SHOW_COMPLICATIONS_AMBIENT = "showComplicationsAmbient"
+private const val KEY_SHOW_COLORS_AMBIENT = "showColorsAmbient"
 private const val KEY_USE_NORMAL_TIME_STYLE_IN_AMBIENT = "filledTimeAmbient"
 private const val KEY_USE_THIN_TIME_STYLE_IN_REGULAR = "thinTimeRegularMode"
 private const val KEY_TIME_SIZE = "timeSize"
@@ -90,6 +91,9 @@ interface Storage {
     fun showComplicationsInAmbientMode(): Boolean
     fun setShowComplicationsInAmbientMode(show: Boolean)
     fun watchShowComplicationsInAmbientMode(): Flow<Boolean>
+    fun showColorsInAmbientMode(): Boolean
+    fun setShowColorsInAmbientMode(show: Boolean)
+    fun watchShowColorsInAmbientMode(): Flow<Boolean>
     fun useNormalTimeStyleInAmbientMode(): Boolean
     fun setUseNormalTimeStyleInAmbientMode(useNormalTime: Boolean)
     fun watchUseNormalTimeStyleInAmbientMode(): Flow<Boolean>
@@ -172,6 +176,7 @@ class StorageImpl(
     private val use24hFormatCache = StorageCachedBoolValue(sharedPreferences, KEY_USE_24H_TIME_FORMAT, true)
     private val showWearOSLogoCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WEAR_OS_LOGO, true)
     private val showComplicationsInAmbientModeCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_COMPLICATIONS_AMBIENT, false)
+    private val showColorsInAmbientModeCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_COLORS_AMBIENT, false)
     private val showSecondsRingCache = StorageCachedBoolValue(sharedPreferences, KEY_SECONDS_RING, false)
     private val showWeatherCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WEATHER, false)
     private val showWatchBattery = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WATCH_BATTERY, false)
@@ -358,6 +363,12 @@ class StorageImpl(
     override fun setShowComplicationsInAmbientMode(show: Boolean) = showComplicationsInAmbientModeCache.set(show)
 
     override fun watchShowComplicationsInAmbientMode(): Flow<Boolean> = showComplicationsInAmbientModeCache.watchChanges()
+
+    override fun showColorsInAmbientMode(): Boolean = showColorsInAmbientModeCache.get()
+
+    override fun setShowColorsInAmbientMode(show: Boolean) = showColorsInAmbientModeCache.set(show)
+
+    override fun watchShowColorsInAmbientMode(): Flow<Boolean> = showColorsInAmbientModeCache.watchChanges()
 
     override fun useNormalTimeStyleInAmbientMode(): Boolean = useNormalTimeStyleInAmbientModeCache.get()
 
