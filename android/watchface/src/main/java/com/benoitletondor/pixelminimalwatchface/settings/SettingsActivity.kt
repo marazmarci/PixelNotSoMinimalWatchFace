@@ -53,6 +53,7 @@ import com.benoitletondor.pixelminimalwatchface.drawer.digital.android12.Android
 import com.benoitletondor.pixelminimalwatchface.drawer.digital.regular.RegularDigitalWatchFaceDrawer
 import com.benoitletondor.pixelminimalwatchface.helper.*
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.model.ComplicationColorsProvider
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchface.model.Storage
 import com.benoitletondor.pixelminimalwatchface.rating.FeedbackActivity
@@ -353,7 +354,7 @@ class SettingsActivity : ComponentActivity() {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
                             this@SettingsActivity,
-                            ComplicationColor(getColor(R.color.white), getString(R.string.color_default), true)
+                            ComplicationColor(getColor(R.color.white), ComplicationColorsProvider.defaultColorName, true)
                         ),
                         BATTERY_COLOR_REQUEST_CODE
                     )
@@ -413,7 +414,7 @@ class SettingsActivity : ComponentActivity() {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
                             this@SettingsActivity,
-                            ComplicationColor(getColor(R.color.white), getString(R.string.color_default), true)
+                            ComplicationColor(getColor(R.color.white), ComplicationColorsProvider.defaultColorName, true)
                         ),
                         NOTIFICATIONS_COLOR_REQUEST_CODE
                     )
@@ -547,7 +548,7 @@ class SettingsActivity : ComponentActivity() {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
                             this@SettingsActivity,
-                            ComplicationColor(getColor(R.color.white), getString(R.string.color_default), true)
+                            ComplicationColor(getColor(R.color.white), ComplicationColorsProvider.defaultColorName, true)
                         ),
                         TIME_COLOR_REQUEST_CODE
                     )
@@ -567,7 +568,7 @@ class SettingsActivity : ComponentActivity() {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
                             this@SettingsActivity,
-                            ComplicationColor(getColor(R.color.white), getString(R.string.color_default), true)
+                            ComplicationColor(getColor(R.color.white), ComplicationColorsProvider.defaultColorName, true)
                         ),
                         DATE_COLOR_REQUEST_CODE
                     )
@@ -597,7 +598,7 @@ class SettingsActivity : ComponentActivity() {
                                 startActivityForResult(
                                     ColorSelectionActivity.createIntent(
                                         this@SettingsActivity,
-                                        ComplicationColor(getColor(R.color.white), getString(R.string.color_default), true)
+                                        ComplicationColor(getColor(R.color.white), ComplicationColorsProvider.defaultColorName, true)
                                     ),
                                     SECONDS_RING_COLOR_REQUEST_CODE
                                 )

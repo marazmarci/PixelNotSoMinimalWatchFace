@@ -15,160 +15,154 @@
  */
 package com.benoitletondor.pixelminimalwatchface.model
 
-import android.content.Context
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import androidx.core.content.ContextCompat
-import com.benoitletondor.pixelminimalwatchface.R
 
 object ComplicationColorsProvider {
+    const val defaultColorName = "Default"
 
-    fun getDefaultComplicationColors(context: Context): ComplicationColors {
-        val leftColor = ContextCompat.getColor(context, R.color.complication_default_left_color)
-        val middleColor = ContextCompat.getColor(context, R.color.complication_default_middle_color)
-        val rightColor = ContextCompat.getColor(context, R.color.complication_default_right_color)
-        val bottomColor = ContextCompat.getColor(context, R.color.complication_default_bottom_color)
+    private val wearOSBlueColor = Color.parseColor("#5484f8")
+    private val wearOSYellowColor = Color.parseColor("#F2BD00")
+    private val wearOSRedColor = Color.parseColor("#da482f")
+    private val wearOSGreenColor = Color.parseColor("#54A74C")
 
+    private val wearOSColors = linkedMapOf(
+        wearOSBlueColor to "WearOS blue",
+        wearOSYellowColor to "WearOS yellow",
+        wearOSRedColor to "WearOS red",
+        wearOSGreenColor to "WearOS green",
+    )
+
+    private val material1Colors: Map<Int, String> by lazy { linkedMapOf(
+        Color.parseColor("#FFFFFF") to "White",
+        Color.parseColor("#FFEB3B") to "Yellow",
+        Color.parseColor("#FFC107") to "Amber",
+        Color.parseColor("#FF9800") to "Orange",
+        Color.parseColor("#FF5722") to "Deep orange",
+        Color.parseColor("#F44336") to "Red",
+        Color.parseColor("#E91E63") to "Pink",
+        Color.parseColor("#9C27B0") to "Purple",
+        Color.parseColor("#673AB7") to "Deep purple",
+        Color.parseColor("#3F51B5") to "Indigo",
+        Color.parseColor("#2196F3") to "Blue",
+        Color.parseColor("#03A9F4") to "Light blue",
+        Color.parseColor("#00BCD4") to "Cyan",
+        Color.parseColor("#009688") to "Teal",
+        Color.parseColor("#4CAF50") to "Green",
+        Color.parseColor("#8BC34A") to "Lime green",
+        Color.parseColor("#CDDC39") to "Lime",
+        Color.parseColor("#607D8B") to "Blue grey",
+        Color.parseColor("#9E9E9E") to "Grey",
+        Color.parseColor("#795548") to "Brown",
+    ) }
+
+    private val pixelWatchColors: Map<Int, String> by lazy { linkedMapOf(
+        Color.parseColor("#949494") to "Graphite",
+        Color.parseColor("#E4E4E4") to "Cloud",
+        Color.parseColor("#FCF7EB") to "Almond",
+        Color.parseColor("#FF7B78") to "Watermelon",
+        Color.parseColor("#F99586") to "Coral",
+        Color.parseColor("#FFA49F") to "Pomelo",
+        Color.parseColor("#FFC1BD") to "Guava",
+        Color.parseColor("#FDB78F") to "Peach",
+        Color.parseColor("#FFD4B6") to "Champagne",
+        Color.parseColor("#D8AB77") to "Chai",
+        Color.parseColor("#C4B575") to "Sand",
+        Color.parseColor("#F8C67C") to "Honey",
+        Color.parseColor("#FFD88A") to "Melon",
+        Color.parseColor("#FFE9B9") to "Wheat",
+        Color.parseColor("#FFFA86") to "Dandelion",
+        Color.parseColor("#FCFFB6") to "Limoncello",
+        Color.parseColor("#EBFFC3") to "Lemongrass",
+        Color.parseColor("#E6FF7B") to "Lime",
+        Color.parseColor("#C7FF81") to "Pear",
+        Color.parseColor("#ADF7B9") to "Spearmint",
+        Color.parseColor("#77D9A4") to "Fern",
+        Color.parseColor("#67887B") to "Forest",
+        Color.parseColor("#ABFFDF") to "Mint",
+        Color.parseColor("#BEECDB") to "Jade",
+        Color.parseColor("#CCE4DF") to "Sage",
+        Color.parseColor("#B0E4EC") to "Stream",
+        Color.parseColor("#99F3FF") to "Aqua",
+        Color.parseColor("#B6DAF1") to "Sky",
+        Color.parseColor("#A2C2F7") to "Ocean",
+        Color.parseColor("#81ACF4") to "Sapphire",
+        Color.parseColor("#AEB4FF") to "Amethyst",
+        Color.parseColor("#D6C3FF") to "Lilac",
+        Color.parseColor("#E4B0FD") to "Lavender",
+        Color.parseColor("#FABBFF") to "Flamingo",
+        Color.parseColor("#FFCAED") to "Bubble Gum",
+        Color.parseColor("#FFF6E2") to "Milkshake",
+        Color.parseColor("#FFCAED") to "Verbena",
+        Color.parseColor("#FAE7D5") to "Salmon",
+        Color.parseColor("#FFD88A") to "Amber",
+        Color.parseColor("#F8EFCD") to "Cantaloupe",
+        Color.parseColor("#C4B575") to "Mustard",
+        Color.parseColor("#E4E4E4") to "Key Lime",
+        Color.parseColor("#C7FF81") to "Spring",
+        Color.parseColor("#67887B") to "Avocado",
+        Color.parseColor("#E4E4E4") to "Polar",
+        Color.parseColor("#A2C2F7") to "Arctic",
+        Color.parseColor("#AEB4FF") to "Winter",
+        Color.parseColor("#E4B0FD") to "Macaron",
+        Color.parseColor("#B6DAF1") to "Sunset",
+        Color.parseColor("#CCE4DF") to "Seafoam",
+        Color.parseColor("#616161") to "Charcoal",
+    ) }
+
+    fun getDefaultComplicationColors(): ComplicationColors {
         return ComplicationColors(
-            ComplicationColor(leftColor, context.getString(R.string.color_default), true),
-            ComplicationColor(middleColor, context.getString(R.string.color_default), true),
-            ComplicationColor(rightColor, context.getString(R.string.color_default), true),
-            ComplicationColor(bottomColor, context.getString(R.string.color_default), true),
-            ComplicationColor(leftColor, context.getString(R.string.color_default), true),
-            ComplicationColor(rightColor, context.getString(R.string.color_default), true),
-            ComplicationColor(middleColor, context.getString(R.string.color_default), true),
-            ComplicationColor(bottomColor, context.getString(R.string.color_default), true),
+            ComplicationColor(wearOSBlueColor, defaultColorName, true),
+            ComplicationColor(wearOSYellowColor, defaultColorName, true),
+            ComplicationColor(wearOSRedColor, defaultColorName, true),
+            ComplicationColor(wearOSGreenColor, defaultColorName, true),
+            ComplicationColor(wearOSBlueColor, defaultColorName, true),
+            ComplicationColor(wearOSRedColor, defaultColorName, true),
+            ComplicationColor(wearOSYellowColor, defaultColorName, true),
+            ComplicationColor(wearOSGreenColor, defaultColorName, true),
         )
     }
 
-    fun getLabelForColor(context: Context, @ColorInt color: Int): String {
-        return when(color) {
-            Color.parseColor("#FFFFFF") -> context.getString(R.string.color_white)
-            Color.parseColor("#FFEB3B") -> context.getString(R.string.color_yellow)
-            Color.parseColor("#FFC107") -> context.getString(R.string.color_amber)
-            Color.parseColor("#FF9800") -> context.getString(R.string.color_orange)
-            Color.parseColor("#FF5722") -> context.getString(R.string.color_deep_orange)
-            Color.parseColor("#F44336") -> context.getString(R.string.color_red)
-            Color.parseColor("#E91E63") -> context.getString(R.string.color_pink)
-            Color.parseColor("#9C27B0") -> context.getString(R.string.color_purple)
-            Color.parseColor("#673AB7") -> context.getString(R.string.color_deep_purple)
-            Color.parseColor("#3F51B5") -> context.getString(R.string.color_indigo)
-            Color.parseColor("#2196F3") -> context.getString(R.string.color_blue)
-            Color.parseColor("#03A9F4") -> context.getString(R.string.color_light_blue)
-            Color.parseColor("#00BCD4") -> context.getString(R.string.color_cyan)
-            Color.parseColor("#009688") -> context.getString(R.string.color_teal)
-            Color.parseColor("#4CAF50") -> context.getString(R.string.color_green)
-            Color.parseColor("#8BC34A") -> context.getString(R.string.color_lime_green)
-            Color.parseColor("#CDDC39") -> context.getString(R.string.color_lime)
-            Color.parseColor("#607D8B") -> context.getString(R.string.color_blue_grey)
-            Color.parseColor("#9E9E9E") -> context.getString(R.string.color_grey)
-            Color.parseColor("#795548") -> context.getString(R.string.color_brown)
-            else -> context.getString(R.string.color_default)
-        }
+    fun getLabelForColor(@ColorInt color: Int): String {
+        return wearOSColors[color] ?: pixelWatchColors[color] ?: material1Colors[color] ?: defaultColorName
     }
 
-    fun getAllComplicationColors(context: Context): List<ComplicationColor> {
+    fun getAllComplicationColors(): List<ComplicationColorCategory> {
+        val wearOSColors = wearOSColors.map { (color, name) ->
+            ComplicationColor(
+                color,
+                name,
+                false
+            )
+        }
+        val pixelWatchColors = pixelWatchColors.map { (color, name) ->
+            ComplicationColor(
+                color,
+                name,
+                false
+            )
+        }
+        val material1Colors = material1Colors.map { (color, name) ->
+            ComplicationColor(
+                color,
+                name,
+                false
+            )
+        }
+
         return listOf(
-            ComplicationColor(
-                Color.parseColor("#FFFFFF"),
-                context.getString(R.string.color_white),
-                false
-            ), // White
-            ComplicationColor(
-                Color.parseColor("#FFEB3B"),
-                context.getString(R.string.color_yellow),
-                false
-            ), // Yellow
-            ComplicationColor(
-                Color.parseColor("#FFC107"),
-                context.getString(R.string.color_amber),
-                false
-            ), // Amber
-            ComplicationColor(
-                Color.parseColor("#FF9800"),
-                context.getString(R.string.color_orange),
-                false
-            ), // Orange
-            ComplicationColor(
-                Color.parseColor("#FF5722"),
-                context.getString(R.string.color_deep_orange),
-                false
-            ), // Deep Orange
-            ComplicationColor(
-                Color.parseColor("#F44336"),
-                context.getString(R.string.color_red),
-                false
-            ), // Red
-            ComplicationColor(
-                Color.parseColor("#E91E63"),
-                context.getString(R.string.color_pink),
-                false
-            ), // Pink
-            ComplicationColor(
-                Color.parseColor("#9C27B0"),
-                context.getString(R.string.color_purple),
-                false
-            ), // Purple
-            ComplicationColor(
-                Color.parseColor("#673AB7"),
-                context.getString(R.string.color_deep_purple),
-                false
-            ), // Deep Purple
-            ComplicationColor(
-                Color.parseColor("#3F51B5"),
-                context.getString(R.string.color_indigo),
-                false
-            ), // Indigo
-            ComplicationColor(
-                Color.parseColor("#2196F3"),
-                context.getString(R.string.color_blue),
-                false
-            ), // Blue
-            ComplicationColor(
-                Color.parseColor("#03A9F4"),
-                context.getString(R.string.color_light_blue),
-                false
-            ), // Light Blue
-            ComplicationColor(
-                Color.parseColor("#00BCD4"),
-                context.getString(R.string.color_cyan),
-                false
-            ), // Cyan
-            ComplicationColor(
-                Color.parseColor("#009688"),
-                context.getString(R.string.color_teal),
-                false
-            ), // Teal
-            ComplicationColor(
-                Color.parseColor("#4CAF50"),
-                context.getString(R.string.color_green),
-                false
-            ), // Green
-            ComplicationColor(
-                Color.parseColor("#8BC34A"),
-                context.getString(R.string.color_lime_green),
-                false
-            ), // Lime Green
-            ComplicationColor(
-                Color.parseColor("#CDDC39"),
-                context.getString(R.string.color_lime),
-                false
-            ), // Lime
-            ComplicationColor(
-                Color.parseColor("#607D8B"),
-                context.getString(R.string.color_blue_grey),
-                false
-            ), // Blue Grey
-            ComplicationColor(
-                Color.parseColor("#9E9E9E"),
-                context.getString(R.string.color_grey),
-                false
-            ), // Grey
-            ComplicationColor(
-                Color.parseColor("#795548"),
-                context.getString(R.string.color_brown),
-                false
-            ) // Brown
+            ComplicationColorCategory(
+                label = "WearOS",
+                colors = wearOSColors,
+            ),
+            ComplicationColorCategory(
+                label = "Pixel",
+                colors = pixelWatchColors,
+            ),
+            ComplicationColorCategory(
+                label = "Original",
+                colors = material1Colors,
+            )
         )
     }
 }

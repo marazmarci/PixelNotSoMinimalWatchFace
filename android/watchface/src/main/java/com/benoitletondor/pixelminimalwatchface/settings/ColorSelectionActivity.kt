@@ -22,8 +22,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
 import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
 import com.benoitletondor.pixelminimalwatchface.compose.component.RotatoryAwareLazyColumn
+import com.benoitletondor.pixelminimalwatchface.compose.component.SettingSectionItem
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationColor
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationColorsProvider
 
@@ -41,27 +44,63 @@ class ColorSelectionActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val defaultColor = intent.getParcelableExtra<ComplicationColor>(EXTRA_DEFAULT_COLOR)!!
-        val availableColors = ComplicationColorsProvider.getAllComplicationColors(this)
+        val availableColors = ComplicationColorsProvider.getAllComplicationColors()
 
         setContent {
             WearTheme {
                 RotatoryAwareLazyColumn {
-                    listOf(defaultColor).plus(availableColors).forEach { color ->
-                        item {
-                            ColorItem(
-                                color = color,
-                                onClick = {
-                                    setResult(RESULT_OK, Intent().apply {
-                                        putExtra(RESULT_SELECTED_COLOR, color)
-                                    })
+                    ColorCategory(
+                        title = "Default",
+                        colors = listOf(defaultColor),
+                        includeTopPadding = false,
+                        onColorClick = { color ->
+                            setResult(RESULT_OK, Intent().apply {
+                                putExtra(RESULT_SELECTED_COLOR, color)
+                            })
 
-                                    finish()
-                                }
-                            )
+                            finish()
                         }
+                    )
 
+                    availableColors.forEach { colorCategory ->
+                        ColorCategory(
+                            title = colorCategory.label,
+                            colors = colorCategory.colors,
+                            onColorClick =  { color ->
+                                setResult(RESULT_OK, Intent().apply {
+                                    putExtra(RESULT_SELECTED_COLOR, color)
+                                })
+
+                                finish()
+                            }
+                        )
                     }
                 }
+            }
+        }
+    }
+
+    private fun LazyListScope.ColorCategory(
+        title: String,
+        colors: List<ComplicationColor>,
+        includeTopPadding: Boolean = true,
+        onColorClick: (ComplicationColor) -> Unit,
+    ) {
+        item {
+            SettingSectionItem(
+                label = title,
+                includeTopPadding = includeTopPadding,
+            )
+        }
+
+        colors.forEach { color ->
+            item {
+                val callback = remember("colorCallback${color.color}") { { onColorClick(color) } }
+
+                ColorItem(
+                    color = color,
+                    onClick = callback,
+                )
             }
         }
     }
