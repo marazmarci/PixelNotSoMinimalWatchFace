@@ -120,6 +120,7 @@ class SettingsActivity : ComponentActivity() {
         val showPhoneBattery by storage.watchShowPhoneBattery().collectAsState(storage.showPhoneBattery())
         val showNotifications by storage.watchIsNotificationsSyncActivated().collectAsState(storage.isNotificationsSyncActivated())
         val showWearOSLogo by storage.watchShowWearOSLogo().collectAsState(storage.showWearOSLogo())
+        val showComplicationsColorInAmbient by storage.watchShowColorsInAmbientMode().collectAsState(storage.showColorsInAmbientMode())
 
         WearTheme {
             RotatoryAwareLazyColumn {
@@ -178,6 +179,7 @@ class SettingsActivity : ComponentActivity() {
                     showNotifications = showNotifications,
                     useAndroid12 = useAndroid12,
                     showWearOSLogo = showWearOSLogo,
+                    showComplicationsColorInAmbient = showComplicationsColorInAmbient,
                 )
 
                 SupportSection(
@@ -291,6 +293,7 @@ class SettingsActivity : ComponentActivity() {
     private fun LazyListScope.BatteryIndicatorSection(
         useAndroid12: Boolean,
         showWatchBattery: Boolean,
+        showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "BatteryIndicatorSection") {
             SettingSectionItem(
@@ -349,7 +352,7 @@ class SettingsActivity : ComponentActivity() {
         item(key = "BatteryIndicatorsColor") {
             SettingChip(
                 label = "Battery indicators colors",
-                secondaryLabel = "(doesn't affect ambient)",
+                secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
@@ -367,6 +370,7 @@ class SettingsActivity : ComponentActivity() {
 
     private fun LazyListScope.NotificationsDisplaySection(
         useAndroid12: Boolean,
+        showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "NotificationsDisplaySection") {
             SettingSectionItem(
@@ -409,7 +413,7 @@ class SettingsActivity : ComponentActivity() {
         item(key = "NotificationsDisplayColor") {
             SettingChip(
                 label = "Notification icons colors",
-                secondaryLabel = "(doesn't affect ambient)",
+                secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
@@ -429,6 +433,7 @@ class SettingsActivity : ComponentActivity() {
         isUserPremium: Boolean,
         isScreenRound: Boolean,
         weatherProviderInfo: WeatherProviderInfo?,
+        showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "DateTimeSection") {
             SettingSectionItem(
@@ -543,7 +548,7 @@ class SettingsActivity : ComponentActivity() {
         item(key = "TimeColor") {
             SettingChip(
                 label = "Time color",
-                secondaryLabel = "(doesn't affect ambient)",
+                secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
@@ -563,7 +568,7 @@ class SettingsActivity : ComponentActivity() {
         item(key = "DateColor") {
             SettingChip(
                 label = "Date color",
-                secondaryLabel = "(doesn't affect ambient)",
+                secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
                     startActivityForResult(
                         ColorSelectionActivity.createIntent(
@@ -651,6 +656,7 @@ class SettingsActivity : ComponentActivity() {
         showNotifications: Boolean,
         useAndroid12: Boolean,
         showWearOSLogo: Boolean,
+        showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "AmbientSection") {
             SettingSectionItem(
@@ -726,8 +732,6 @@ class SettingsActivity : ComponentActivity() {
         
         if (Device.isWearOS3) {
             item(key = "showColorsInAmbient") {
-                val showComplicationsColorInAmbient by storage.watchShowColorsInAmbientMode().collectAsState(storage.showColorsInAmbientMode())
-
                 SettingToggleChip(
                     label = "Colors in ambient mode",
                     secondaryLabel = "Caution: can increase battery usage",
