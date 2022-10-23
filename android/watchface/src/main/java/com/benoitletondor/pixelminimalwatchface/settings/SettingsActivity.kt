@@ -155,12 +155,14 @@ class SettingsActivity : ComponentActivity() {
                     BatteryIndicatorSection(
                         useAndroid12 = useAndroid12,
                         showWatchBattery = showWatchBattery,
+                        showComplicationsColorInAmbient = showComplicationsColorInAmbient,
                     )
                 }
 
                 if (isUserPremium) {
                     NotificationsDisplaySection(
                         useAndroid12 = useAndroid12,
+                        showComplicationsColorInAmbient = showComplicationsColorInAmbient,
                     )
                 }
 
@@ -168,6 +170,7 @@ class SettingsActivity : ComponentActivity() {
                     isUserPremium = isUserPremium,
                     isScreenRound = isScreenRound,
                     weatherProviderInfo = weatherProviderInfo,
+                    showComplicationsColorInAmbient = showComplicationsColorInAmbient,
                 )
 
                 TimeStyleSection()
