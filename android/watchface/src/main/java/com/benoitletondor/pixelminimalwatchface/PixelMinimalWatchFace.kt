@@ -873,22 +873,26 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onDataChanged(dataEvents: DataEventBuffer) {
-            for (event in dataEvents) {
-                if (event.type == DataEvent.TYPE_CHANGED) {
-                    val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
+            try {
+                for (event in dataEvents) {
+                    if (event.type == DataEvent.TYPE_CHANGED) {
+                        val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
 
-                    when(event.dataItem.uri.path) {
-                        "/premium" -> {
-                            if (dataMap.containsKey(DATA_KEY_PREMIUM)) {
-                                handleIsPremiumCallback(dataMap.getBoolean(DATA_KEY_PREMIUM))
+                        when(event.dataItem.uri.path) {
+                            "/premium" -> {
+                                if (dataMap.containsKey(DATA_KEY_PREMIUM)) {
+                                    handleIsPremiumCallback(dataMap.getBoolean(DATA_KEY_PREMIUM))
+                                }
+                            }
+                            "/notifications" -> {
+                                phoneNotifications.onNewData(dataMap)
                             }
                         }
-                        "/notifications" -> {
-                            phoneNotifications.onNewData(dataMap)
-                        }
-                    }
 
+                    }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error handling new data", e)
             }
         }
 
