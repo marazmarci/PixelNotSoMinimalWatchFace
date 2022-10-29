@@ -28,6 +28,7 @@ import androidx.wear.compose.material.Text
 fun SettingSectionItem(
     modifier: Modifier = Modifier,
     label: String,
+    includeTopPadding: Boolean = true,
     includeBottomPadding: Boolean = true,
 ) {
     Text(
@@ -36,6 +37,6 @@ fun SettingSectionItem(
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         modifier = modifier
-            .padding(top = 16.dp, bottom = if (includeBottomPadding) 8.dp else 0.dp),
+            .padding(top = if (includeTopPadding) 16.dp else 0.dp , bottom = if (includeBottomPadding) 8.dp else 0.dp),
     )
 }

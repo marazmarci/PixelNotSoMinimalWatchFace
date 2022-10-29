@@ -109,8 +109,7 @@ class BillingImpl @Inject constructor(
      *
      * @return true if the user if premium, false otherwise
      */
-    override fun isUserPremium(): Boolean
-    {
+    override fun isUserPremium(): Boolean {
         return storage.isUserPremium() || iabStatus == PremiumCheckStatus.Premium
     }
 

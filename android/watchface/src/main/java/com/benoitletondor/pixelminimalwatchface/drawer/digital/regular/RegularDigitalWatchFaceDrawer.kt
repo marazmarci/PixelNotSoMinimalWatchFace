@@ -119,7 +119,11 @@ class RegularDigitalWatchFaceDrawer(
         )
     }
 
-    override fun onComplicationColorsUpdate(complicationColors: ComplicationColors, complicationsData: SparseArray<ComplicationData>) {
+    override fun onComplicationColorsUpdate(
+        complicationColors: ComplicationColors,
+        complicationsData: SparseArray<ComplicationData>,
+        showComplicationsColorsInAmbient: Boolean,
+    ) {
         ACTIVE_COMPLICATIONS.forEach { complicationId ->
             val complicationDrawable = complicationDrawableSparseArray[complicationId]
             val primaryComplicationColor = complicationColors.getPrimaryColorForComplicationId(complicationId)
@@ -129,7 +133,7 @@ class RegularDigitalWatchFaceDrawer(
             complicationDrawable.setTitleColorActive(complicationTitleColor)
             complicationDrawable.setTitleColorAmbient(complicationTitleColor)
             complicationDrawable.setIconColorActive(primaryComplicationColor)
-            complicationDrawable.setIconColorAmbient(dateAndBatteryColorDimmed)
+            complicationDrawable.setIconColorAmbient(if (showComplicationsColorsInAmbient) primaryComplicationColor.dimmed() else dateAndBatteryColorDimmed)
             complicationDrawable.setTextTypefaceActive(productSansRegularFont)
             complicationDrawable.setTitleTypefaceActive(productSansRegularFont)
             complicationDrawable.setTextTypefaceAmbient(productSansRegularFont)
@@ -137,13 +141,15 @@ class RegularDigitalWatchFaceDrawer(
             complicationDrawable.setBorderColorActive(ContextCompat.getColor(context, R.color.transparent))
             complicationDrawable.setBorderColorAmbient(ContextCompat.getColor(context, R.color.transparent))
 
-            onComplicationDataUpdate(complicationId, complicationsData[complicationId], complicationColors)
+            onComplicationDataUpdate(complicationId, complicationsData[complicationId], complicationColors, showComplicationsColorsInAmbient)
         }
     }
 
-    override fun onComplicationDataUpdate(complicationId: Int,
-                                          data: ComplicationData?,
-                                          complicationColors: ComplicationColors
+    override fun onComplicationDataUpdate(
+        complicationId: Int,
+        data: ComplicationData?,
+        complicationColors: ComplicationColors,
+        showComplicationsColorsInAmbient: Boolean,
     ) {
         val complicationDrawable = complicationDrawableSparseArray[complicationId] ?: kotlin.run {
             if (DEBUG_LOGS) Log.d(TAG, "Ignoring update for complicationId: $complicationId")
@@ -153,10 +159,11 @@ class RegularDigitalWatchFaceDrawer(
         complicationDrawable.setComplicationData(data)
 
         val primaryComplicationColor = complicationColors.getPrimaryColorForComplicationId(complicationId)
+        val primaryComplicationColorDimmed = primaryComplicationColor.dimmed()
         if( data != null && data.icon != null ) {
             if( complicationId == PixelMinimalWatchFace.BOTTOM_COMPLICATION_ID && ( data.longTitle != null ) ) {
                 complicationDrawable.setTextColorActive(primaryComplicationColor)
-                complicationDrawable.setTextColorAmbient(dateAndBatteryColorDimmed)
+                complicationDrawable.setTextColorAmbient(if (showComplicationsColorsInAmbient) primaryComplicationColorDimmed else dateAndBatteryColorDimmed)
             } else {
                 complicationDrawable.setTextColorActive(complicationTitleColor)
                 complicationDrawable.setTextColorAmbient(complicationTitleColor)
@@ -171,7 +178,7 @@ class RegularDigitalWatchFaceDrawer(
             }
         } else {
             complicationDrawable.setTextColorActive(primaryComplicationColor)
-            complicationDrawable.setTextColorAmbient(dateAndBatteryColorDimmed)
+            complicationDrawable.setTextColorAmbient(if (showComplicationsColorsInAmbient) primaryComplicationColorDimmed else dateAndBatteryColorDimmed)
             complicationDrawable.setTextSizeActive(textSize)
             complicationDrawable.setTextSizeAmbient(textSize)
         }
@@ -422,7 +429,8 @@ class RegularDigitalWatchFaceDrawer(
         } else {
             timeFormatter12H.calendar = calendar
             timeFormatter12H.format(Date(calendar.timeInMillis))
-        }
+        }.let { if (it.take(3) == "24:") "00${it.substring(2)}" else it } // Make sure 24h is converted to 00
+
         val timeXOffset = centerX - (timePaint.measureText(timeText) / 2f)
         canvas.drawText(timeText, timeXOffset, timeYOffset, timePaint)
 
@@ -510,27 +518,27 @@ class RegularDigitalWatchFaceDrawer(
         timePaint.apply {
             isAntiAlias = !(ambient && lowBitAmbient)
             style = if(shouldUseStrokeStyle) { Paint.Style.STROKE } else { Paint.Style.FILL }
-            color = if( ambient ) { timeColorDimmed } else { storage.getTimeColor() }
+            color = if( ambient ) { if (storage.showColorsInAmbientMode()) storage.getTimeColor().dimmed() else timeColorDimmed } else { storage.getTimeColor() }
         }
 
         datePaint.apply {
             isAntiAlias = !(ambient && lowBitAmbient)
-            color = if( ambient ) { dateAndBatteryColorDimmed } else { storage.getDateColor() }
+            color = if( ambient ) { if (storage.showColorsInAmbientMode()) storage.getDateColor().dimmed() else dateAndBatteryColorDimmed } else { storage.getDateColor() }
         }
 
         weatherIconPaint.apply {
             isAntiAlias = !ambient
-            colorFilter = if( ambient ) { weatherAndBatteryIconColorFilterDimmed } else { storage.getDateColorFilter() }
+            colorFilter = if( ambient ) { if (storage.showColorsInAmbientMode()) storage.getDateColor().dimmed().colorFilter() else weatherAndBatteryIconColorFilterDimmed } else { storage.getDateColorFilter() }
         }
 
         batteryLevelPaint.apply {
             isAntiAlias = !(ambient && lowBitAmbient)
-            color = if( ambient ) { dateAndBatteryColorDimmed } else { storage.getBatteryIndicatorColor() }
+            color = if( ambient ) { if (storage.showColorsInAmbientMode()) storage.getBatteryIndicatorColor().dimmed() else dateAndBatteryColorDimmed } else { storage.getBatteryIndicatorColor() }
         }
 
         batteryIconPaint.apply {
             isAntiAlias = !(ambient && lowBitAmbient)
-            colorFilter = if( ambient ) { weatherAndBatteryIconColorFilterDimmed } else { storage.getBatteryIndicatorColorFilter() }
+            colorFilter = if( ambient ) { if (storage.showColorsInAmbientMode()) storage.getBatteryIndicatorColor().dimmed().colorFilter() else weatherAndBatteryIconColorFilterDimmed } else { storage.getBatteryIndicatorColorFilter() }
         }
 
         secondsRingPaint.apply {
@@ -539,7 +547,7 @@ class RegularDigitalWatchFaceDrawer(
 
         notificationsPaint.apply {
             isAntiAlias = !(ambient && lowBitAmbient)
-            colorFilter = if( ambient ) { weatherAndBatteryIconColorFilterDimmed } else { storage.getNotificationIconsColorFilter() }
+            colorFilter = if( ambient ) { if (storage.showColorsInAmbientMode()) storage.getNotificationIconsColor().dimmed().colorFilter() else weatherAndBatteryIconColorFilterDimmed } else { storage.getNotificationIconsColorFilter() }
         }
 
         ACTIVE_COMPLICATIONS.forEach {

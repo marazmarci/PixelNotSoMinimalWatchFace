@@ -75,7 +75,7 @@ class FeatureDropActivity : ComponentActivity() {
 
         item(key = "Subtitle") {
             Text(
-                text = "Summer feature drop",
+                text = "Autumn feature drop",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillParentMaxWidth(),
                 fontSize = 16.sp,
@@ -85,7 +85,7 @@ class FeatureDropActivity : ComponentActivity() {
 
         item(key = "Intro") {
             Text(
-                text = "New features available:",
+                text = "New options to play with:",
                 modifier = Modifier.padding(
                     top = 16.dp,
                     bottom = 8.dp,
@@ -95,40 +95,38 @@ class FeatureDropActivity : ComponentActivity() {
 
         item(key = "Item1") {
             Text(
-                text = "- Premium: (Beta) notification icons! Icons of your phone's notifications, just like Pixel phones!",
+                text = "- Lots of new colors have been added to match the new Pixel Watch ones. Enjoy!",
             )
         }
 
-        item(key = "Item1_2") {
-            Text(
-                text = "Requires sync between phone and watch via the companion app (a watch face cannot access notifications directly, sadly).",
-                fontSize = 13.sp,
-                modifier = Modifier.padding(
-                    bottom = 6.dp
-                ),
-            )
-        }
+        if (Device.isWearOS3) {
+            item(key = "Item2") {
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = "- You can now enable colors in ambient mode",
+                )
+            }
 
-        item(key = "Item2") {
-            Text(
-                text = "- You can now select a different color for time and date",
-            )
+            item(key = "Item2_2") {
+                Text(
+                    text = "Use with caution: it can increase battery usage and might cause image retention issues.",
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(
+                        bottom = 6.dp
+                    ),
+                )
+            }
         }
 
         item(key = "Item3") {
             Text(
-                text = "- You can now hide WearOS logo in ambient mode",
+                text = "- (Premium) Phone notification icons: Some background notifications should now be ignored correctly.",
             )
         }
 
         item(key = "Item4") {
             Text(
-                text = "- Revamped settings with a clearer WearOS 3 inspired interface",
-            )
-        }
-
-        item(key = "Item5") {
-            Text(
+                modifier = Modifier.padding(top = 4.dp),
                 text = "- Bug fixes and optimisations",
             )
         }

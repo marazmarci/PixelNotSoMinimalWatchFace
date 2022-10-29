@@ -45,6 +45,7 @@ private const val KEY_RATING_NOTIFICATION_SENT = "ratingNotificationSent"
 private const val KEY_APP_VERSION = "appVersion"
 private const val KEY_SHOW_WEAR_OS_LOGO = "showWearOSLogo"
 private const val KEY_SHOW_COMPLICATIONS_AMBIENT = "showComplicationsAmbient"
+private const val KEY_SHOW_COLORS_AMBIENT = "showColorsAmbient"
 private const val KEY_USE_NORMAL_TIME_STYLE_IN_AMBIENT = "filledTimeAmbient"
 private const val KEY_USE_THIN_TIME_STYLE_IN_REGULAR = "thinTimeRegularMode"
 private const val KEY_TIME_SIZE = "timeSize"
@@ -53,7 +54,7 @@ private const val KEY_SECONDS_RING = "secondsRing"
 private const val KEY_SHOW_WEATHER = "showWeather"
 private const val KEY_SHOW_WATCH_BATTERY = "showBattery"
 private const val KEY_SHOW_PHONE_BATTERY = "showPhoneBattery"
-private const val KEY_FEATURE_DROP_2022_NOTIFICATION = "featureDrop2022Notification_2"
+private const val KEY_FEATURE_DROP_2022_NOTIFICATION = "featureDrop2022Notification_3"
 private const val KEY_USE_SHORT_DATE_FORMAT = "useShortDateFormat"
 private const val KEY_SHOW_DATE_AMBIENT = "showDateAmbient"
 private const val KEY_TIME_COLOR = "timeAndDateColor"
@@ -90,6 +91,9 @@ interface Storage {
     fun showComplicationsInAmbientMode(): Boolean
     fun setShowComplicationsInAmbientMode(show: Boolean)
     fun watchShowComplicationsInAmbientMode(): Flow<Boolean>
+    fun showColorsInAmbientMode(): Boolean
+    fun setShowColorsInAmbientMode(show: Boolean)
+    fun watchShowColorsInAmbientMode(): Flow<Boolean>
     fun useNormalTimeStyleInAmbientMode(): Boolean
     fun setUseNormalTimeStyleInAmbientMode(useNormalTime: Boolean)
     fun watchUseNormalTimeStyleInAmbientMode(): Flow<Boolean>
@@ -111,8 +115,8 @@ interface Storage {
     fun showWatchBattery(): Boolean
     fun setShowWatchBattery(show: Boolean)
     fun watchShowWatchBattery(): Flow<Boolean>
-    fun hasFeatureDropSummer2022NotificationBeenShown(): Boolean
-    fun setFeatureDropSummer2022NotificationShown()
+    fun hasFeatureDropAutumn2022NotificationBeenShown(): Boolean
+    fun setFeatureDropAutumn2022NotificationShown()
     fun getUseShortDateFormat(): Boolean
     fun setUseShortDateFormat(useShortDateFormat: Boolean)
     fun watchUseShortDateFormat(): Flow<Boolean>
@@ -172,6 +176,7 @@ class StorageImpl(
     private val use24hFormatCache = StorageCachedBoolValue(sharedPreferences, KEY_USE_24H_TIME_FORMAT, true)
     private val showWearOSLogoCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WEAR_OS_LOGO, true)
     private val showComplicationsInAmbientModeCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_COMPLICATIONS_AMBIENT, false)
+    private val showColorsInAmbientModeCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_COLORS_AMBIENT, false)
     private val showSecondsRingCache = StorageCachedBoolValue(sharedPreferences, KEY_SECONDS_RING, false)
     private val showWeatherCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WEATHER, false)
     private val showWatchBattery = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WATCH_BATTERY, false)
@@ -247,17 +252,17 @@ class StorageImpl(
             baseColor
         )
 
-        val defaultColors = ComplicationColorsProvider.getDefaultComplicationColors(appContext)
+        val defaultColors = ComplicationColorsProvider.getDefaultComplicationColors()
 
         return ComplicationColors(
-            if( leftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.leftColor } else { ComplicationColor(leftColor, ComplicationColorsProvider.getLabelForColor(appContext, leftColor),false) },
-            if( middleColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.middleColor } else { ComplicationColor(middleColor, ComplicationColorsProvider.getLabelForColor(appContext, middleColor),false) },
-            if( rightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.rightColor } else { ComplicationColor(rightColor, ComplicationColorsProvider.getLabelForColor(appContext, rightColor),false) },
-            if( bottomColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.bottomColor } else { ComplicationColor(bottomColor, ComplicationColorsProvider.getLabelForColor(appContext, bottomColor),false) },
-            if( android12TopLeftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12TopLeftColor } else { ComplicationColor(android12TopLeftColor, ComplicationColorsProvider.getLabelForColor(appContext, android12TopLeftColor),false) },
-            if( android12TopRightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12TopRightColor } else { ComplicationColor(android12TopRightColor, ComplicationColorsProvider.getLabelForColor(appContext, android12TopRightColor),false) },
-            if( android12BottomLeftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12BottomLeftColor } else { ComplicationColor(android12BottomLeftColor, ComplicationColorsProvider.getLabelForColor(appContext, android12BottomLeftColor),false) },
-            if( android12BottomRightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12BottomRightColor } else { ComplicationColor(android12BottomRightColor, ComplicationColorsProvider.getLabelForColor(appContext, android12BottomRightColor),false) },
+            if( leftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.leftColor } else { ComplicationColor(leftColor, ComplicationColorsProvider.getLabelForColor(leftColor),false) },
+            if( middleColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.middleColor } else { ComplicationColor(middleColor, ComplicationColorsProvider.getLabelForColor(middleColor),false) },
+            if( rightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.rightColor } else { ComplicationColor(rightColor, ComplicationColorsProvider.getLabelForColor(rightColor),false) },
+            if( bottomColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.bottomColor } else { ComplicationColor(bottomColor, ComplicationColorsProvider.getLabelForColor(bottomColor),false) },
+            if( android12TopLeftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12TopLeftColor } else { ComplicationColor(android12TopLeftColor, ComplicationColorsProvider.getLabelForColor(android12TopLeftColor),false) },
+            if( android12TopRightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12TopRightColor } else { ComplicationColor(android12TopRightColor, ComplicationColorsProvider.getLabelForColor(android12TopRightColor),false) },
+            if( android12BottomLeftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12BottomLeftColor } else { ComplicationColor(android12BottomLeftColor, ComplicationColorsProvider.getLabelForColor(android12BottomLeftColor),false) },
+            if( android12BottomRightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12BottomRightColor } else { ComplicationColor(android12BottomRightColor, ComplicationColorsProvider.getLabelForColor(android12BottomRightColor),false) },
         )
     }
 
@@ -358,6 +363,12 @@ class StorageImpl(
     override fun setShowComplicationsInAmbientMode(show: Boolean) = showComplicationsInAmbientModeCache.set(show)
 
     override fun watchShowComplicationsInAmbientMode(): Flow<Boolean> = showComplicationsInAmbientModeCache.watchChanges()
+
+    override fun showColorsInAmbientMode(): Boolean = showColorsInAmbientModeCache.get()
+
+    override fun setShowColorsInAmbientMode(show: Boolean) = showColorsInAmbientModeCache.set(show)
+
+    override fun watchShowColorsInAmbientMode(): Flow<Boolean> = showColorsInAmbientModeCache.watchChanges()
 
     override fun useNormalTimeStyleInAmbientMode(): Boolean = useNormalTimeStyleInAmbientModeCache.get()
 
@@ -476,11 +487,11 @@ class StorageImpl(
 
     override fun setBetaNotificationsDisclaimerShown() = betaNotificationsDisclaimerShownCache.set(true)
 
-    override fun hasFeatureDropSummer2022NotificationBeenShown(): Boolean {
+    override fun hasFeatureDropAutumn2022NotificationBeenShown(): Boolean {
         return sharedPreferences.getBoolean(KEY_FEATURE_DROP_2022_NOTIFICATION, false)
     }
 
-    override fun setFeatureDropSummer2022NotificationShown() {
+    override fun setFeatureDropAutumn2022NotificationShown() {
         sharedPreferences.edit().putBoolean(KEY_FEATURE_DROP_2022_NOTIFICATION, true).apply()
     }
 

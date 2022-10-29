@@ -181,14 +181,14 @@ class WidgetConfigurationActivity : ComponentActivity() {
                                 },
                                 onClick = {
                                     val defaultColor = when(complicationLocation) {
-                                        ComplicationLocation.LEFT -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).leftColor
-                                        ComplicationLocation.MIDDLE -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).middleColor
-                                        ComplicationLocation.RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).rightColor
-                                        ComplicationLocation.BOTTOM -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).bottomColor
-                                        ComplicationLocation.ANDROID_12_TOP_LEFT -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).android12TopLeftColor
-                                        ComplicationLocation.ANDROID_12_TOP_RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).android12TopRightColor
-                                        ComplicationLocation.ANDROID_12_BOTTOM_LEFT -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).android12BottomLeftColor
-                                        ComplicationLocation.ANDROID_12_BOTTOM_RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors(this@WidgetConfigurationActivity).android12BottomRightColor
+                                        ComplicationLocation.LEFT -> ComplicationColorsProvider.getDefaultComplicationColors().leftColor
+                                        ComplicationLocation.MIDDLE -> ComplicationColorsProvider.getDefaultComplicationColors().middleColor
+                                        ComplicationLocation.RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors().rightColor
+                                        ComplicationLocation.BOTTOM -> ComplicationColorsProvider.getDefaultComplicationColors().bottomColor
+                                        ComplicationLocation.ANDROID_12_TOP_LEFT -> ComplicationColorsProvider.getDefaultComplicationColors().android12TopLeftColor
+                                        ComplicationLocation.ANDROID_12_TOP_RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors().android12TopRightColor
+                                        ComplicationLocation.ANDROID_12_BOTTOM_LEFT -> ComplicationColorsProvider.getDefaultComplicationColors().android12BottomLeftColor
+                                        ComplicationLocation.ANDROID_12_BOTTOM_RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors().android12BottomRightColor
                                     }
 
                                     startActivityForResult(ColorSelectionActivity.createIntent(this@WidgetConfigurationActivity, defaultColor), UPDATE_COLORS_CONFIG_REQUEST_CODE)

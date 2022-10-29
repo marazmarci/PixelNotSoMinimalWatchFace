@@ -94,6 +94,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         private val complicationProviderInfoRetriever = ProviderInfoRetriever(this@PixelMinimalWatchFace, Executors.newSingleThreadExecutor())
         private val complicationProviderSparseArray: SparseArray<ComplicationProviderInfo> = SparseArray(COMPLICATION_IDS.size)
         private var complicationsColors: ComplicationColors = storage.getComplicationColors()
+        private var showComplicationColorsInAmbient: Boolean = storage.showColorsInAmbientMode()
         private val rawComplicationDataSparseArray: SparseArray<ComplicationData> = SparseArray(COMPLICATION_IDS.size)
         private val complicationDataSparseArray: SparseArray<ComplicationData> = SparseArray(COMPLICATION_IDS.size)
 
@@ -199,7 +200,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             setActiveComplications(*activeComplicationIds.plus(WEATHER_COMPLICATION_ID).plus(BATTERY_COMPLICATION_ID))
 
-            watchFaceDrawer.onComplicationColorsUpdate(complicationsColors, complicationDataSparseArray)
+            watchFaceDrawer.onComplicationColorsUpdate(complicationsColors, complicationDataSparseArray, storage.showColorsInAmbientMode())
 
             updateComplicationProvidersInfoAsync()
         }
@@ -474,7 +475,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastScreenOnTimeMs}")
 
-            if (System.currentTimeMillis() - lastScreenOnTimeMs >= FOURTEEN_MINS_MS) {
+            if (System.currentTimeMillis() - lastScreenOnTimeMs >= TEN_MINS_MS) {
                 if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: Start activity")
 
                 this.lastScreenOnTimeMs = System.currentTimeMillis()
@@ -645,7 +646,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             )
 
             complicationDataSparseArray.put(watchFaceComplicationId, data)
-            watchFaceDrawer.onComplicationDataUpdate(watchFaceComplicationId, data, complicationsColors)
+            watchFaceDrawer.onComplicationDataUpdate(watchFaceComplicationId, data, complicationsColors, storage.showColorsInAmbientMode())
 
             // Update time dependent complication
             val nextShortTextChangeTime = data.shortText?.getNextChangeTime(System.currentTimeMillis())
@@ -832,9 +833,11 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                     calendar.timeZone = TimeZone.getDefault()
 
                     val newComplicationColors = storage.getComplicationColors()
-                    if( newComplicationColors != complicationsColors ) {
+                    val newShowComplicationsColorsInAmbient = storage.showColorsInAmbientMode()
+                    if( newComplicationColors != complicationsColors || showComplicationColorsInAmbient != newShowComplicationsColorsInAmbient ) {
                         complicationsColors = newComplicationColors
-                        setComplicationsActiveAndAmbientColors(complicationsColors)
+                        showComplicationColorsInAmbient = newShowComplicationsColorsInAmbient
+                        setComplicationsActiveAndAmbientColors(complicationsColors, newShowComplicationsColorsInAmbient)
                     }
 
                     invalidate()
@@ -865,27 +868,31 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             service.unregisterReceiver(timeZoneReceiver)
         }
 
-        private fun setComplicationsActiveAndAmbientColors(complicationColors: ComplicationColors) {
-            watchFaceDrawer.onComplicationColorsUpdate(complicationColors, complicationDataSparseArray)
+        private fun setComplicationsActiveAndAmbientColors(complicationColors: ComplicationColors, showComplicationsColorsInAmbient: Boolean) {
+            watchFaceDrawer.onComplicationColorsUpdate(complicationColors, complicationDataSparseArray, showComplicationsColorsInAmbient)
         }
 
         override fun onDataChanged(dataEvents: DataEventBuffer) {
-            for (event in dataEvents) {
-                if (event.type == DataEvent.TYPE_CHANGED) {
-                    val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
+            try {
+                for (event in dataEvents) {
+                    if (event.type == DataEvent.TYPE_CHANGED) {
+                        val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
 
-                    when(event.dataItem.uri.path) {
-                        "/premium" -> {
-                            if (dataMap.containsKey(DATA_KEY_PREMIUM)) {
-                                handleIsPremiumCallback(dataMap.getBoolean(DATA_KEY_PREMIUM))
+                        when(event.dataItem.uri.path) {
+                            "/premium" -> {
+                                if (dataMap.containsKey(DATA_KEY_PREMIUM)) {
+                                    handleIsPremiumCallback(dataMap.getBoolean(DATA_KEY_PREMIUM))
+                                }
+                            }
+                            "/notifications" -> {
+                                phoneNotifications.onNewData(dataMap)
                             }
                         }
-                        "/notifications" -> {
-                            phoneNotifications.onNewData(dataMap)
-                        }
-                    }
 
+                    }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error handling new data", e)
             }
         }
 
@@ -1048,7 +1055,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
     companion object {
         private const val HALF_HOUR_MS = 1000*60*30
-        private const val FOURTEEN_MINS_MS = 1000*60*14
+        private const val TEN_MINS_MS = 1000*60*10
 
         const val LEFT_COMPLICATION_ID = 100
         const val RIGHT_COMPLICATION_ID = 101

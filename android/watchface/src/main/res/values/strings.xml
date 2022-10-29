@@ -45,28 +45,6 @@
     <string name="feature_drop_notification_message">New features are available for Pixel Minimal Watch Face!</string>
     <string name="feature_drop_notification_cta">See what\'s new</string>
 
-    <string name="color_default">Default</string>
-    <string name="color_yellow">Yellow</string>
-    <string name="color_blue">Blue</string>
-    <string name="color_light_blue">Light blue</string>
-    <string name="color_grey">Grey</string>
-    <string name="color_blue_grey">Blue grey</string>
-    <string name="color_green">Green</string>
-    <string name="color_red">Red</string>
-    <string name="color_white">White</string>
-    <string name="color_amber">Amber</string>
-    <string name="color_orange">Orange</string>
-    <string name="color_deep_orange">Deep orange</string>
-    <string name="color_pink">Pink</string>
-    <string name="color_purple">Purple</string>
-    <string name="color_deep_purple">Deep purple</string>
-    <string name="color_indigo">Indigo</string>
-    <string name="color_cyan">Cyan</string>
-    <string name="color_teal">Teal</string>
-    <string name="color_lime_green">Lime green</string>
-    <string name="color_lime">Lime</string>
-    <string name="color_brown">Brown</string>
-
     <string name="time_size_0">smaller</string>
     <string name="time_size_25">small</string>
     <string name="time_size_50">default</string>
