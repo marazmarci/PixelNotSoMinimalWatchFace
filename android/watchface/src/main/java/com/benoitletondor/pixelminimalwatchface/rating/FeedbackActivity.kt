@@ -39,6 +39,8 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.widget.ConfirmationOverlay
 import com.benoitletondor.pixelminimalwatchface.R
+import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailAddress
+import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailSubject
 import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
 import com.benoitletondor.pixelminimalwatchface.compose.component.ChipButton
 import com.benoitletondor.pixelminimalwatchface.compose.component.ExplanationText
@@ -171,8 +173,8 @@ class FeedbackActivity : ComponentActivity() {
                     ChipButton(
                         backgroundColor = MaterialTheme.colors.secondary,
                         onClick = {
-                            val mail = getString(R.string.rating_feedback_email)
-                            val subject = getString(R.string.rating_feedback_send_subject)
+                            val mail = getEmailAddress()
+                            val subject = getEmailSubject()
                             val body = getString(R.string.rating_feedback_send_text)
 
                             val sendIntent = Intent()

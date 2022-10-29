@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.AutoCenteringParams
 import androidx.wear.compose.material.Text
 import com.benoitletondor.pixelminimalwatchface.R
+import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailAddress
 import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
 import com.benoitletondor.pixelminimalwatchface.compose.component.ExplanationText
 import com.benoitletondor.pixelminimalwatchface.compose.component.RotatoryAwareLazyColumn
@@ -93,7 +94,7 @@ class PhoneBatterySyncTroubleshootActivity : ComponentActivity() {
                             )
 
                             Text(
-                                text = stringResource(R.string.rating_feedback_email),
+                                text = getEmailAddress(),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillParentMaxWidth()

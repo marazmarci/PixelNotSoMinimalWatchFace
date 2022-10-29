@@ -18,29 +18,15 @@ package com.benoitletondor.pixelminimalwatchfacecompanion.helper
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.util.Log
-import com.benoitletondor.pixelminimalwatchfacecompanion.R
-
-private const val PLAY_STORE_PACKAGE_NAME = "com.android.vending"
+import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailAddress
+import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailSubject
 
 fun Context.startSupportEmailActivity(): Boolean {
-    val isFromPlayStore = try {
-        if (Build.VERSION.SDK_INT >= 30) {
-            packageManager.getInstallSourceInfo(packageName).installingPackageName == PLAY_STORE_PACKAGE_NAME
-        } else {
-            packageManager.getInstallerPackageName(packageName) == PLAY_STORE_PACKAGE_NAME
-        }
-    } catch (e: Exception) {
-        Log.e("PackageManager", "Error detecting installer package name", e)
-        false
-    }
-
     val sendIntent = Intent()
     sendIntent.action = Intent.ACTION_SENDTO
     sendIntent.data = Uri.parse("mailto:") // only email apps should handle this
-    sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(resources.getString(R.string.feedback_email)))
-    sendIntent.putExtra(Intent.EXTRA_SUBJECT, if (isFromPlayStore) resources.getString(R.string.feedback_send_subject) else {resources.getString(R.string.feedback_send_subject_non_play)})
+    sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getEmailAddress()))
+    sendIntent.putExtra(Intent.EXTRA_SUBJECT, getEmailSubject())
 
     if ( sendIntent.resolveActivity(packageManager) != null) {
         startActivity(sendIntent)
