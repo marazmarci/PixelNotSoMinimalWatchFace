@@ -276,7 +276,7 @@ class Android12DigitalWatchFaceDrawer(
                 ambient,
                 storage.isUserPremium(),
                 storage.showSecondsRing(),
-                storage.useSweepingSecondsMotion(),
+                storage.useSweepingSecondsRingMotion(),
                 storage.showWatchBattery(),
                 storage.showPhoneBattery(),
                 !ambient || storage.getShowDateInAmbient(),

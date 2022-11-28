@@ -136,7 +136,7 @@ class SettingsActivity : ComponentActivity() {
                     SettingToggleChip(
                         label = "Android 12 style",
                         checked = useAndroid12,
-                        onCheckedChange = { storage.setUseAndroid12Style(it) },
+                        onCheckedChange = storage::setUseAndroid12Style,
                         iconDrawable = R.drawable.ic_baseline_android,
                         modifier = Modifier.padding(top = 10.dp),
                     )
@@ -236,9 +236,7 @@ class SettingsActivity : ComponentActivity() {
 
                 SettingSlider(
                     iconDrawable = R.drawable.ic_baseline_photo_size_select_small_24,
-                    onValueChange = { newValue ->
-                        storage.setWidgetsSize(newValue)
-                    },
+                    onValueChange = storage::setWidgetsSize,
                     value = widgetsSize,
                     title = "Size of widgets: ${context.fontDisplaySizeToHumanReadableString(widgetsSize)}",
                     modifier = Modifier.padding(top = 6.dp),
@@ -285,7 +283,7 @@ class SettingsActivity : ComponentActivity() {
                 SettingToggleChip(
                     label = if (useAndroid12 || !isUserPremium) { "Show WearOS logo" } else { "WearOS logo as middle widget" },
                     checked = showWearOSLogo,
-                    onCheckedChange = { storage.setShowWearOSLogo(it) },
+                    onCheckedChange = storage::setShowWearOSLogo,
                     iconDrawable = R.drawable.ic_wear_os_logo_white,
                     modifier = Modifier.padding(top = 10.dp),
                 )
@@ -451,7 +449,7 @@ class SettingsActivity : ComponentActivity() {
             SettingToggleChip(
                 label = "Use short date format",
                 checked = useShortDateFormat,
-                onCheckedChange = { storage.setUseShortDateFormat(it) },
+                onCheckedChange = storage::setUseShortDateFormat,
                 iconDrawable = R.drawable.ic_baseline_short_text,
                 modifier = Modifier.padding(top = 10.dp),
             )
@@ -513,7 +511,7 @@ class SettingsActivity : ComponentActivity() {
             SettingToggleChip(
                 label = "Use 24h time format",
                 checked = use24hTimeFormat,
-                onCheckedChange = { storage.setUse24hTimeFormat(it) },
+                onCheckedChange = storage::setUse24hTimeFormat,
                 iconDrawable = R.drawable.ic_access_time,
             )
         }
@@ -524,9 +522,7 @@ class SettingsActivity : ComponentActivity() {
 
             SettingSlider(
                 iconDrawable = R.drawable.ic_baseline_format_size,
-                onValueChange = { newValue ->
-                    storage.setTimeSize(newValue)
-                },
+                onValueChange = storage::setTimeSize,
                 value = timeSize,
                 title = "Size of time: ${context.fontDisplaySizeToHumanReadableString(timeSize)}",
                 modifier = Modifier.padding(top = 8.dp),
@@ -539,9 +535,7 @@ class SettingsActivity : ComponentActivity() {
 
             SettingSlider(
                 iconDrawable = R.drawable.ic_baseline_format_size,
-                onValueChange = { newValue ->
-                    storage.setDateAndBatterySize(newValue)
-                },
+                onValueChange = storage::setDateAndBatterySize,
                 value = dateAndBatterySize,
                 title = "Size of date & battery: ${context.fontDisplaySizeToHumanReadableString(dateAndBatterySize)}",
                 modifier = Modifier.padding(top = 8.dp),
@@ -590,13 +584,13 @@ class SettingsActivity : ComponentActivity() {
         if( isScreenRound ) {
             item(key = "ShowSecondsRing") {
                 val showSecondsRing by storage.watchShowSecondsRing().collectAsState(storage.showSecondsRing())
-                val useSweepingSecondsMotion by storage.watchUseSweepingSecondsMotion().collectAsState(storage.useSweepingSecondsMotion())
+                val useSweepingSecondsMotion by storage.watchUseSweepingSecondsRingMotion().collectAsState(storage.useSweepingSecondsRingMotion())
 
                 Column {
                     SettingToggleChip(
                         label = "Show seconds ring",
                         checked = showSecondsRing,
-                        onCheckedChange = { storage.setShowSecondsRing(it) },
+                        onCheckedChange = storage::setShowSecondsRing,
                         iconDrawable = R.drawable.ic_baseline_panorama_fish_eye,
                     )
 
@@ -618,9 +612,9 @@ class SettingsActivity : ComponentActivity() {
 
                         SettingToggleChip(
                             checked = useSweepingSecondsMotion,
-                            onCheckedChange = { storage.setUseSweepingSecondsMotion(it) },
-                            label = "Use Sweeping Motion",
-                            iconDrawable = R.drawable.ic_baseline_panorama_fish_eye,
+                            onCheckedChange = storage::setUseSweepingSecondsRingMotion,
+                            label = "Smooth ring motion",
+                            iconDrawable = R.drawable.ic_baseline_refresh_24,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
@@ -642,7 +636,7 @@ class SettingsActivity : ComponentActivity() {
             SettingToggleChip(
                 label = "Use thin time style when watch is on",
                 checked = useThinTimeStyleInRegularMode,
-                onCheckedChange = { storage.setUseThinTimeStyleInRegularMode(it) },
+                onCheckedChange = storage::setUseThinTimeStyleInRegularMode,
                 iconDrawable = R.drawable.ic_baseline_invert_colors,
                 modifier = Modifier.heightIn(min = 70.dp),
             )
@@ -654,7 +648,7 @@ class SettingsActivity : ComponentActivity() {
             SettingToggleChip(
                 label = "Use normal in place of thin time style in ambient mode",
                 checked = useNormalTimeStyleInAmbientMode,
-                onCheckedChange = { storage.setUseNormalTimeStyleInAmbientMode(it) },
+                onCheckedChange = storage::setUseNormalTimeStyleInAmbientMode,
                 iconDrawable = R.drawable.ic_baseline_invert_colors_off,
                 modifier = Modifier.heightIn(min = 70.dp),
             )
@@ -682,7 +676,7 @@ class SettingsActivity : ComponentActivity() {
             SettingToggleChip(
                 label = "Show date in ambient mode",
                 checked = showDateInAmbient,
-                onCheckedChange = { storage.setShowDateInAmbient(it) },
+                onCheckedChange = storage::setShowDateInAmbient,
                 iconDrawable = R.drawable.ic_outline_calendar_today,
             )
         }
@@ -694,7 +688,7 @@ class SettingsActivity : ComponentActivity() {
                 SettingToggleChip(
                     label = "Widgets in ambient mode",
                     checked = showComplicationsInAmbient,
-                    onCheckedChange = { storage.setShowComplicationsInAmbientMode(it) },
+                    onCheckedChange = storage::setShowComplicationsInAmbientMode,
                     iconDrawable = R.drawable.ic_settings_power,
                 )
             }
@@ -721,7 +715,7 @@ class SettingsActivity : ComponentActivity() {
                 SettingToggleChip(
                     label = "Show notifications in ambient mode",
                     checked = showNotificationsInAmbient,
-                    onCheckedChange = { storage.setShowNotificationsInAmbient(it) },
+                    onCheckedChange = storage::setShowNotificationsInAmbient,
                     iconDrawable = R.drawable.ic_baseline_notifications_none_24,
                     modifier = Modifier.heightIn(min = 70.dp),
                 )
@@ -735,7 +729,7 @@ class SettingsActivity : ComponentActivity() {
                 SettingToggleChip(
                     label = "Show Wear OS logo in ambient mode",
                     checked = showWearOSLogoInAmbient,
-                    onCheckedChange = { storage.setShowWearOSLogoInAmbient(it) },
+                    onCheckedChange = storage::setShowWearOSLogoInAmbient,
                     iconDrawable = R.drawable.ic_wear_os_logo_white,
                     modifier = Modifier.heightIn(min = 70.dp),
                 )
@@ -748,7 +742,7 @@ class SettingsActivity : ComponentActivity() {
                     label = "Colors in ambient mode",
                     secondaryLabel = "Caution: can increase battery usage",
                     checked = showComplicationsColorInAmbient,
-                    onCheckedChange = { storage.setShowColorsInAmbientMode(it) },
+                    onCheckedChange = storage::setShowColorsInAmbientMode,
                     iconDrawable = R.drawable.ic_palette_24,
                     modifier = Modifier.heightIn(min = 90.dp),
                 )
