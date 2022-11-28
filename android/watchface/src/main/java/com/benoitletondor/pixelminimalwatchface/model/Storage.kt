@@ -51,6 +51,7 @@ private const val KEY_USE_THIN_TIME_STYLE_IN_REGULAR = "thinTimeRegularMode"
 private const val KEY_TIME_SIZE = "timeSize"
 private const val KEY_DATE_AND_BATTERY_SIZE = "dateSize"
 private const val KEY_SECONDS_RING = "secondsRing"
+private const val KEY_USE_SWEEPING_SECONDS_MOTION = "useSweepingSecondsMotion"
 private const val KEY_SHOW_WEATHER = "showWeather"
 private const val KEY_SHOW_WATCH_BATTERY = "showBattery"
 private const val KEY_SHOW_PHONE_BATTERY = "showPhoneBattery"
@@ -109,6 +110,9 @@ interface Storage {
     fun showSecondsRing(): Boolean
     fun setShowSecondsRing(showSecondsRing: Boolean)
     fun watchShowSecondsRing(): Flow<Boolean>
+    fun useSweepingSecondsMotion(): Boolean
+    fun setUseSweepingSecondsMotion(useSweepingSecondsMotion: Boolean)
+    fun watchUseSweepingSecondsMotion(): Flow<Boolean>
     fun showWeather(): Boolean
     fun setShowWeather(show: Boolean)
     fun watchShowWeather(): Flow<Boolean>
@@ -178,6 +182,7 @@ class StorageImpl(
     private val showComplicationsInAmbientModeCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_COMPLICATIONS_AMBIENT, false)
     private val showColorsInAmbientModeCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_COLORS_AMBIENT, false)
     private val showSecondsRingCache = StorageCachedBoolValue(sharedPreferences, KEY_SECONDS_RING, false)
+    private val useSweepingSecondsMotionCache = StorageCachedBoolValue(sharedPreferences, KEY_USE_SWEEPING_SECONDS_MOTION, false)
     private val showWeatherCache = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WEATHER, false)
     private val showWatchBattery = StorageCachedBoolValue(sharedPreferences, KEY_SHOW_WATCH_BATTERY, false)
     private val useShortDateFormatCache = StorageCachedBoolValue(sharedPreferences, KEY_USE_SHORT_DATE_FORMAT, false)
@@ -399,6 +404,16 @@ class StorageImpl(
     override fun setShowSecondsRing(showSecondsRing: Boolean) = showSecondsRingCache.set(showSecondsRing)
 
     override fun watchShowSecondsRing(): Flow<Boolean> = showSecondsRingCache.watchChanges()
+
+    override fun useSweepingSecondsMotion() = useSweepingSecondsMotionCache.get()
+
+    override fun setUseSweepingSecondsMotion(useSweepingSecondsMotion: Boolean) {
+        useSweepingSecondsMotionCache.set(useSweepingSecondsMotion)
+    }
+
+    override fun watchUseSweepingSecondsMotion(): Flow<Boolean> {
+        return useSweepingSecondsMotionCache.watchChanges()
+    }
 
     override fun showWeather(): Boolean = showWeatherCache.get()
 

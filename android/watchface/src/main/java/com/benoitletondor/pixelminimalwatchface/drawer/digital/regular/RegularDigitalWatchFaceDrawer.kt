@@ -266,6 +266,7 @@ class RegularDigitalWatchFaceDrawer(
                 ambient,
                 storage.isUserPremium(),
                 storage.showSecondsRing(),
+                storage.useSweepingSecondsMotion(),
                 storage.showWatchBattery(),
                 storage.showPhoneBattery(),
                 !ambient || storage.getShowDateInAmbient(),
@@ -415,6 +416,7 @@ class RegularDigitalWatchFaceDrawer(
         ambient:Boolean,
         isUserPremium: Boolean,
         drawSecondsRing: Boolean,
+        useSweepingSecondsMotion: Boolean,
         drawBattery: Boolean,
         drawPhoneBattery: Boolean,
         drawDate: Boolean,
@@ -450,7 +452,7 @@ class RegularDigitalWatchFaceDrawer(
         }
 
         if( drawSecondsRing && !ambient ) {
-            drawSecondRing(canvas, calendar, secondsRingPaint)
+            drawSecondRing(canvas, calendar, secondsRingPaint, useSweepingSecondsMotion)
         }
 
         if( isUserPremium && (drawBattery || drawPhoneBattery) && (!ambient || !storage.hideBatteryInAmbient()) ) {

@@ -590,6 +590,7 @@ class SettingsActivity : ComponentActivity() {
         if( isScreenRound ) {
             item(key = "ShowSecondsRing") {
                 val showSecondsRing by storage.watchShowSecondsRing().collectAsState(storage.showSecondsRing())
+                val useSweepingSecondsMotion by storage.watchUseSweepingSecondsMotion().collectAsState(storage.useSweepingSecondsMotion())
 
                 Column {
                     SettingToggleChip(
@@ -613,6 +614,14 @@ class SettingsActivity : ComponentActivity() {
                             },
                             iconDrawable = R.drawable.ic_palette_24,
                             modifier = Modifier.padding(top = 4.dp),
+                        )
+
+                        SettingToggleChip(
+                            checked = useSweepingSecondsMotion,
+                            onCheckedChange = { storage.setUseSweepingSecondsMotion(it) },
+                            label = "Use Sweeping Motion",
+                            iconDrawable = R.drawable.ic_baseline_panorama_fish_eye,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
                 }
