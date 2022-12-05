@@ -18,6 +18,10 @@ package com.benoitletondor.pixelminimalwatchface
 import android.content.Context
 import com.benoitletondor.pixelminimalwatchface.helper.isServiceAvailable
 
+private const val GOOGLE_WEATHER_APP_PACKAGE = "com.google.android.wearable.weather"
+private const val GOOGLE_WEATHER_PROVIDER_SERVICE = "com.google.android.wearable.weather.complications.WeatherProviderService"
+private const val GOOGLE_WEATHER_ACTIVITY_NAME = "com.google.android.wearable.weather.activity.WeatherActivity"
+
 private const val WEAR_OS_APP_PACKAGE = "com.google.android.wearable.app"
 private const val WEAR_OS_WEATHER_PROVIDER_SERVICE = "com.google.android.clockwork.home.weather.WeatherProviderService"
 private const val WEAR_OS_WEATHER_ACTIVITY_NAME = "com.google.android.clockwork.home.weather.WeatherActivity"
@@ -38,6 +42,11 @@ data class WeatherProviderInfo(
 
 private enum class WeatherProviders(val info: WeatherProviderInfo) {
     GOOGLE(WeatherProviderInfo(
+        GOOGLE_WEATHER_APP_PACKAGE,
+        GOOGLE_WEATHER_PROVIDER_SERVICE,
+        GOOGLE_WEATHER_ACTIVITY_NAME,
+    )),
+    WEAR_OS(WeatherProviderInfo(
         WEAR_OS_APP_PACKAGE,
         WEAR_OS_WEATHER_PROVIDER_SERVICE,
         WEAR_OS_WEATHER_ACTIVITY_NAME,

@@ -21,15 +21,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,7 +48,7 @@ fun Loaded(
             text = "I'm an indie developer, making Pixel Minimal Watch Face on my free time, open source, doing my best to provide a great experience.",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 17.sp,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             lineHeight = 22.sp,
         )
 
@@ -59,7 +58,7 @@ fun Loaded(
             text = "By being premium you're already supporting a lot but if you feel like donating a bit more, it would really help!",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 17.sp,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             lineHeight = 22.sp,
         )
 
@@ -103,7 +102,7 @@ private fun DonationItemLayout(
            modifier = Modifier
                .size(50.dp)
                .clip(RoundedCornerShape(size = 16.dp))
-               .background(MaterialTheme.colors.secondary)
+               .background(MaterialTheme.colorScheme.secondary)
                .padding(8.dp),
         )
 
@@ -113,7 +112,7 @@ private fun DonationItemLayout(
             Text(
                 text = donationItem.title,
                 fontSize = 17.sp,
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
             )
 
@@ -122,7 +121,7 @@ private fun DonationItemLayout(
             Text(
                 text = donationItem.description,
                 fontSize = 17.sp,
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
 

@@ -22,7 +22,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,8 +59,10 @@ fun Premium(
         donateButtonPressed = viewModel::onDonateButtonPressed,
         onSupportButtonPressed = viewModel::onSupportButtonPressed,
         isBatterySyncActivated = step.isBatterySyncActivated,
+        isNotificationsSyncActivated = step.isNotificationsSyncActivated,
         maybeWarning = step.maybeWarning,
         debugPhoneBatteryIndicatorButtonPressed = viewModel::onDebugPhoneBatteryIndicatorButtonPressed,
+        setupNotificationsSyncButtonPressed = viewModel::onSetupNotificationsSyncButtonPressed,
     )
 }
 
@@ -62,8 +74,10 @@ private fun PremiumLayout(
     donateButtonPressed: () -> Unit,
     onSupportButtonPressed: () -> Unit,
     isBatterySyncActivated: Boolean,
+    isNotificationsSyncActivated: Boolean,
     maybeWarning: String?,
     debugPhoneBatteryIndicatorButtonPressed: () -> Unit,
+    setupNotificationsSyncButtonPressed: () -> Unit,
 ) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -78,10 +92,14 @@ private fun PremiumLayout(
                 onSupportButtonPressed = onSupportButtonPressed,
                 syncPremiumStatusButtonPressed = syncPremiumStatusButtonPressed,
                 isBatterySyncActivated = isBatterySyncActivated,
+                isNotificationsSyncActivated = isNotificationsSyncActivated,
                 debugPhoneBatteryIndicatorButtonPressed = debugPhoneBatteryIndicatorButtonPressed,
+                setupNotificationsSyncButtonPressed = setupNotificationsSyncButtonPressed,
             )
         },
         sheetPeekHeight = 0.dp,
+        backgroundColor = MaterialTheme.colorScheme.background,
+        sheetBackgroundColor = Color.DarkGray,
     ) {
         PremiumLayoutContent(
             bottomSheetScaffoldState,
@@ -122,7 +140,7 @@ private fun PremiumLayoutContent(
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -131,7 +149,7 @@ private fun PremiumLayoutContent(
             text = "Thank you so much for your support :)",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         if (maybeWarning != null) {
@@ -148,7 +166,7 @@ private fun PremiumLayoutContent(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colors.onBackground,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -158,7 +176,7 @@ private fun PremiumLayoutContent(
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colors.onBackground,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
             }
         }
@@ -169,7 +187,7 @@ private fun PremiumLayoutContent(
             text = "Setup the watch face",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
         )
 
@@ -177,7 +195,7 @@ private fun PremiumLayoutContent(
 
         Text(
             text = stringResource(R.string.setup_watch_face_instructions),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -186,7 +204,7 @@ private fun PremiumLayoutContent(
             text = "Troubleshooting",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
         )
 
@@ -196,7 +214,7 @@ private fun PremiumLayoutContent(
             text = "You have any issue with the watch face? Something's not working?",
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -213,7 +231,7 @@ private fun PremiumLayoutContent(
             },
             colors = blueButtonColors(),
         ) {
-            Text(text = "Troubleshoot".uppercase())
+            Text(text = "Troubleshoot")
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -229,7 +247,7 @@ private fun PremiumLayoutContent(
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -237,11 +255,11 @@ private fun PremiumLayoutContent(
             Button(
                 onClick = donateButtonPressed,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.White,
+                    containerColor = Color.White,
                     contentColor = primaryGreen,
                 ),
             ) {
-                Text(text = "Donate".uppercase())
+                Text(text = "Donate")
             }
         }
 
@@ -257,7 +275,9 @@ private fun TroubleShootBottomSheet(
     syncPremiumStatusButtonPressed: () -> Unit,
     onSupportButtonPressed: () -> Unit,
     isBatterySyncActivated: Boolean,
+    isNotificationsSyncActivated: Boolean,
     debugPhoneBatteryIndicatorButtonPressed: () -> Unit,
+    setupNotificationsSyncButtonPressed: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -286,7 +306,9 @@ private fun TroubleShootBottomSheet(
             }
         },
         isBatterySyncActivated = isBatterySyncActivated,
+        isNotificationsSyncActivated = isNotificationsSyncActivated,
         debugPhoneBatteryIndicatorButtonPressed = debugPhoneBatteryIndicatorButtonPressed,
+        setupNotificationsSyncButtonPressed = setupNotificationsSyncButtonPressed,
     )
 }
 
@@ -297,7 +319,9 @@ private fun TroubleshootingContent(
     onSupportButtonPressed: () -> Unit,
     onCloseButtonPressed: () -> Unit,
     isBatterySyncActivated: Boolean,
+    isNotificationsSyncActivated: Boolean,
     debugPhoneBatteryIndicatorButtonPressed: () -> Unit,
+    setupNotificationsSyncButtonPressed: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -312,7 +336,7 @@ private fun TroubleshootingContent(
                 .width(40.dp)
                 .height(40.dp),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.White,
+                containerColor = Color.White,
                 contentColor = Color.Black,
             ),
             contentPadding = PaddingValues(0.dp),
@@ -331,7 +355,7 @@ private fun TroubleshootingContent(
             Text(
                 text = "Troubleshooting",
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = 18.sp,
             )
@@ -342,7 +366,7 @@ private fun TroubleshootingContent(
                 text = "Watch face is not installed on your watch?",
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
             )
 
@@ -353,7 +377,7 @@ private fun TroubleshootingContent(
                 colors = blueButtonColors(),
             ) {
                 Text(
-                    text = "Install watch face".uppercase(),
+                    text = "Install watch face",
                     textAlign = TextAlign.Center,
                 )
             }
@@ -364,7 +388,7 @@ private fun TroubleshootingContent(
                 text = "Watch face doesn't recognize you as premium?",
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
             )
 
@@ -375,7 +399,7 @@ private fun TroubleshootingContent(
                 colors = blueButtonColors(),
             ) {
                 Text(
-                    text = "Sync premium with Watch".uppercase(),
+                    text = "Sync premium with Watch",
                     textAlign = TextAlign.Center,
                 )
             }
@@ -387,7 +411,7 @@ private fun TroubleshootingContent(
                     text = "Phone battery indicator sync issue?",
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colors.onBackground,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                 )
 
@@ -398,7 +422,31 @@ private fun TroubleshootingContent(
                     colors = blueButtonColors(),
                 ) {
                     Text(
-                        text = "Debug phone battery indicator".uppercase(),
+                        text = "Debug phone battery indicator",
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
+            if (isNotificationsSyncActivated) {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Manage notification icons display?",
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                TextButton(
+                    onClick = setupNotificationsSyncButtonPressed,
+                    colors = blueButtonColors(),
+                ) {
+                    Text(
+                        text = "Setup notification icons sync",
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -410,7 +458,7 @@ private fun TroubleshootingContent(
                 text = "Sync doesn't work? Have another issue? I'm here to help",
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
             )
 
@@ -420,7 +468,7 @@ private fun TroubleshootingContent(
                 onClick = onSupportButtonPressed,
             ) {
                 Text(
-                    text = "Contact me for support".uppercase(),
+                    text = "Contact me for support",
                     textAlign = TextAlign.Center,
                 )
             }
@@ -431,7 +479,7 @@ private fun TroubleshootingContent(
                 text = "I'll help you within less than 24h",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 13.sp,
             )
 
@@ -450,8 +498,10 @@ private fun Preview() {
             donateButtonPressed = {},
             onSupportButtonPressed = {},
             isBatterySyncActivated = true,
+            isNotificationsSyncActivated = true,
             maybeWarning = null,
             debugPhoneBatteryIndicatorButtonPressed = {},
+            setupNotificationsSyncButtonPressed = {},
         )
     }
 }
@@ -466,8 +516,10 @@ private fun PreviewWarning() {
             donateButtonPressed = {},
             onSupportButtonPressed = {},
             isBatterySyncActivated = true,
+            isNotificationsSyncActivated = true,
             maybeWarning = "This is a warning",
             debugPhoneBatteryIndicatorButtonPressed = {},
+            setupNotificationsSyncButtonPressed = {},
         )
     }
 }
@@ -482,7 +534,9 @@ private fun TroubleshootPreview() {
             syncPremiumStatusButtonPressed = {},
             onCloseButtonPressed = {},
             isBatterySyncActivated = false,
+            isNotificationsSyncActivated = false,
             debugPhoneBatteryIndicatorButtonPressed = {},
+            setupNotificationsSyncButtonPressed = {},
         )
     }
 }
@@ -497,7 +551,43 @@ private fun TroubleshootPreviewBatterySyncActivated() {
             syncPremiumStatusButtonPressed = {},
             onCloseButtonPressed = {},
             isBatterySyncActivated = true,
+            isNotificationsSyncActivated = false,
             debugPhoneBatteryIndicatorButtonPressed = {},
+            setupNotificationsSyncButtonPressed = {},
+        )
+    }
+}
+
+@Composable
+@Preview(name = "Troubleshooting battery sync activated")
+private fun TroubleshootPreviewNotificationsSyncActivated() {
+    AppMaterialTheme {
+        TroubleshootingContent(
+            onSupportButtonPressed = {},
+            installWatchFaceButtonPressed = {},
+            syncPremiumStatusButtonPressed = {},
+            onCloseButtonPressed = {},
+            isBatterySyncActivated = false,
+            isNotificationsSyncActivated = true,
+            debugPhoneBatteryIndicatorButtonPressed = {},
+            setupNotificationsSyncButtonPressed = {},
+        )
+    }
+}
+
+@Composable
+@Preview(name = "Troubleshooting battery sync activated")
+private fun TroubleshootPreviewNotificationsAndBatterySyncActivated() {
+    AppMaterialTheme {
+        TroubleshootingContent(
+            onSupportButtonPressed = {},
+            installWatchFaceButtonPressed = {},
+            syncPremiumStatusButtonPressed = {},
+            onCloseButtonPressed = {},
+            isBatterySyncActivated = true,
+            isNotificationsSyncActivated = true,
+            debugPhoneBatteryIndicatorButtonPressed = {},
+            setupNotificationsSyncButtonPressed = {},
         )
     }
 }

@@ -21,6 +21,7 @@ import android.support.wearable.complications.ComplicationData
 import android.util.SparseArray
 import android.view.WindowInsets
 import com.benoitletondor.pixelminimalwatchface.PhoneBatteryStatus
+import com.benoitletondor.pixelminimalwatchface.PhoneNotifications
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationColors
 import java.util.*
 
@@ -28,14 +29,22 @@ interface WatchFaceDrawer {
     fun initializeComplicationDrawables(drawableCallback: Drawable.Callback): IntArray
     fun onApplyWindowInsets(insets: WindowInsets)
     fun onSurfaceChanged(width: Int, height: Int)
-    fun onComplicationColorsUpdate(complicationColors: ComplicationColors, complicationsData: SparseArray<ComplicationData>)
-    fun onComplicationDataUpdate(complicationId: Int,
-                                 data: ComplicationData?,
-                                 complicationColors: ComplicationColors)
+    fun onComplicationColorsUpdate(
+        complicationColors: ComplicationColors,
+        complicationsData: SparseArray<ComplicationData>,
+        showComplicationsColorsInAmbient: Boolean,
+    )
+    fun onComplicationDataUpdate(
+        complicationId: Int,
+        data: ComplicationData?,
+        complicationColors: ComplicationColors,
+        showComplicationsColorsInAmbient: Boolean,
+    )
     fun tapIsOnComplication(x: Int, y: Int): Boolean
     fun tapIsOnWeather(x: Int, y: Int): Boolean
     fun tapIsInCenterOfScreen(x: Int, y: Int): Boolean
     fun tapIsOnBattery(x: Int, y: Int): Boolean
+    fun isTapOnNotifications(x: Int, y: Int): Boolean
 
     fun draw(
         canvas: Canvas,
@@ -47,5 +56,6 @@ interface WatchFaceDrawer {
         weatherComplicationData: ComplicationData?,
         batteryComplicationData: ComplicationData?,
         phoneBatteryStatus: PhoneBatteryStatus?,
+        notificationsState: PhoneNotifications.NotificationState?,
     )
 }

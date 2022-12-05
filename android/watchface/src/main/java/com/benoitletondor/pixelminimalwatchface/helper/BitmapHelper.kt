@@ -16,19 +16,15 @@
 package com.benoitletondor.pixelminimalwatchface.helper
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.drawable.toBitmap
 
-fun Drawable.toBitmap(desiredWidth: Int = -1, desiredHeight: Int = -1): Bitmap {
-    val bitmap = Bitmap.createBitmap(
-        if( desiredWidth > 0 ) { desiredWidth } else { intrinsicWidth },
-        if( desiredHeight > 0 ) { desiredHeight } else { intrinsicHeight },
-        Bitmap.Config.ARGB_8888
-    )
+fun Drawable.toBitmap(
+    desiredWidth: Int = -1,
+    desiredHeight: Int = -1,
+): Bitmap {
+    val width = if( desiredWidth > 0 ) { desiredWidth } else { intrinsicWidth }
+    val height = if( desiredHeight > 0 ) { desiredHeight } else { intrinsicHeight }
 
-    val canvas = Canvas(bitmap)
-    setBounds(0, 0, canvas.width, canvas.height)
-    draw(canvas)
-
-    return bitmap
+    return toBitmap(width, height)
 }

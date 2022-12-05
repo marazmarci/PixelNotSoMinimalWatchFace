@@ -25,6 +25,9 @@ interface Storage {
     fun isBatterySyncActivatedFlow(): Flow<Boolean>
     fun isBatterySyncActivated(): Boolean
     fun setBatterySyncActivated(activated: Boolean)
+    fun isNotificationsSyncActivated(): Boolean
+    fun setNotificationsSyncActivated(activated: Boolean)
+    fun isNotificationsSyncActivatedFlow(): Flow<Boolean>
     fun isForegroundServiceEnabled(): Boolean
     fun setForegroundServiceEnabled(enabled: Boolean)
 }

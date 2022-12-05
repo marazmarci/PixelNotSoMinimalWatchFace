@@ -15,9 +15,9 @@
  */
 package com.benoitletondor.pixelminimalwatchfacecompanion.ui
 
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -29,9 +29,8 @@ val orange = Color(0xFFbc5100)
 @Composable
 fun AppMaterialTheme(content: @Composable () -> Unit) {
     return MaterialTheme(
-        colors = Colors(
+        colorScheme = darkColorScheme(
             primary = primaryRed,
-            primaryVariant = primaryRed,
             background = Color.Black,
             surface = Color.Black,
             onPrimary = Color.White,
@@ -39,9 +38,7 @@ fun AppMaterialTheme(content: @Composable () -> Unit) {
             error = Color.Red,
             onSurface = Color.White,
             secondary = primaryBlue,
-            secondaryVariant = primaryBlue,
             onSecondary = Color.White,
-            isLight = false,
             onError = Color.White,
         ),
         content = content,
@@ -50,12 +47,12 @@ fun AppMaterialTheme(content: @Composable () -> Unit) {
 
 @Composable
 fun blueButtonColors() = ButtonDefaults.buttonColors(
-    backgroundColor = primaryBlue,
+    containerColor = primaryBlue,
     contentColor = Color.White,
 )
 
 @Composable
 fun whiteTextButtonColors() = ButtonDefaults.buttonColors(
-    backgroundColor = Color.Transparent,
+    containerColor = Color.Transparent,
     contentColor = Color.White,
 )

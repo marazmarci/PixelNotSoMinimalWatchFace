@@ -23,10 +23,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +81,7 @@ private fun NotPremiumLayout(
             text = "Setup the watch face",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
         )
 
@@ -89,51 +89,51 @@ private fun NotPremiumLayout(
 
         Text(
             text = stringResource(R.string.setup_watch_face_instructions),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Unlock premium features",
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Pager(
             drawViewPager = drawViewPager,
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(5.dp))
 
         Text(
-            text = "To unlock widgets, weather and battery indicators, become a premium user:",
+            text = "To unlock widgets, weather, battery indicators and notification icons, become a premium user:",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Button(onClick = becomePremiumButtonPressed) {
-            Text(text = "Become premium".uppercase())
+            Text(text = "Become premium")
         }
         Text(
             text = "(1 time payment, no hidden fees)",
             textAlign = TextAlign.Center,
             fontSize = 13.sp,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(5.dp))
 
         TextButton(onClick = redeemPromoCodeButtonPressed) {
-            Text(text = "Redeem code".uppercase())
+            Text(text = "Redeem code")
         }
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -146,7 +146,7 @@ private fun NotPremiumLayout(
         ) {
             Text(
                 text = "Watch face not installed on your watch?",
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -157,7 +157,7 @@ private fun NotPremiumLayout(
                 onClick = installWatchFaceButtonPressed,
                 colors = blueButtonColors(),
             ) {
-                Text(text = "Install watch face".uppercase())
+                Text(text = "Install watch face")
             }
         }
 
@@ -190,13 +190,13 @@ private fun Pager(drawViewPager: Boolean = true) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp),
+                .height(240.dp),
         )
     } else {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
+                .height(240.dp)
                 .background(Color.DarkGray),
         )
     }

@@ -26,12 +26,13 @@ import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.*
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
@@ -45,8 +46,10 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBar
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarScaffold
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.debugphonebatterysync.DebugPhoneBatterySync
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.donation.Donation
-import com.benoitletondor.pixelminimalwatchfacecompanion.view.onboarding.OnboardingActivity
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.subviews.*
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.NotificationsSyncView
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.onboarding.OnboardingView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -55,6 +58,7 @@ private const val NAV_MAIN_ROUTE = "main"
 private const val NAV_DONATION_ROUTE = "donation"
 private const val NAV_ONBOARDING_ROUTE = "onboarding"
 private const val NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE = "phoneBatterySyncDebug"
+private const val NAV_NOTIFICATIONS_SYNC_ROUTE = "notificationsSync"
 private const val DEEPLINK_SCHEME = "pixelminimalwatchface"
 
 @AndroidEntryPoint
@@ -90,8 +94,14 @@ private fun MainView() {
             ) {
                 DebugPhoneBatterySync(navController, hiltViewModel())
             }
-            activity(route = NAV_ONBOARDING_ROUTE) {
-                activityClass = OnboardingActivity::class
+            composable(route = NAV_ONBOARDING_ROUTE) {
+                OnboardingView(navController, hiltViewModel())
+            }
+            composable(
+                route = NAV_NOTIFICATIONS_SYNC_ROUTE,
+                deepLinks = listOf(navDeepLink { uriPattern = "$DEEPLINK_SCHEME://notifications" }),
+            ) {
+                NotificationsSyncView(navController, hiltViewModel())
             }
         }
     }
@@ -114,7 +124,7 @@ private fun Main(navController: NavController, mainViewModel: MainViewModel) {
                     }
                     is MainViewModel.NavigationDestination.VoucherRedeem -> {
                         if ( !context.launchRedeemVoucherFlow(navDestination.voucherCode) ) {
-                            AlertDialog.Builder(context)
+                            MaterialAlertDialogBuilder(context)
                                 .setTitle(R.string.iab_purchase_error_title)
                                 .setMessage(R.string.iab_purchase_error_message)
                                 .setPositiveButton(android.R.string.ok, null)
@@ -123,6 +133,9 @@ private fun Main(navController: NavController, mainViewModel: MainViewModel) {
                     }
                     MainViewModel.NavigationDestination.DebugBatterySync -> {
                         navController.navigate(NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE)
+                    }
+                    MainViewModel.NavigationDestination.SetupNotificationsSync -> {
+                        navController.navigate(NAV_NOTIFICATIONS_SYNC_ROUTE)
                     }
                 }
             }
@@ -134,21 +147,21 @@ private fun Main(navController: NavController, mainViewModel: MainViewModel) {
             mainViewModel.errorEventFlow.collect { errorType ->
                 when(errorType) {
                     is MainViewModel.ErrorType.ErrorWhileSyncingWithWatch -> {
-                        AlertDialog.Builder(context)
+                        MaterialAlertDialogBuilder(context)
                             .setTitle(R.string.error_syncing_title)
                             .setMessage(context.getString(R.string.error_syncing_message, errorType.error.message))
                             .setPositiveButton(android.R.string.ok, null)
                             .show()
                     }
                     MainViewModel.ErrorType.UnableToOpenPlayStoreOnWatch -> {
-                        AlertDialog.Builder(context)
+                        MaterialAlertDialogBuilder(context)
                             .setTitle(R.string.playstore_not_opened_on_watch_title)
                             .setMessage(R.string.playstore_not_opened_on_watch_message)
                             .setPositiveButton(android.R.string.ok, null)
                             .show()
                     }
                     is MainViewModel.ErrorType.UnableToPay -> {
-                        AlertDialog.Builder(context)
+                        MaterialAlertDialogBuilder(context)
                             .setTitle(R.string.error_paying_title)
                             .setMessage(context.getString(R.string.error_paying_message, errorType.error.message))
                             .setPositiveButton(android.R.string.ok, null)
@@ -188,20 +201,23 @@ private fun Main(navController: NavController, mainViewModel: MainViewModel) {
             AppTopBarMoreMenuItem {
                 DropdownMenuItem(
                     onClick = mainViewModel::onSupportButtonPressed,
-                ) {
-                    Text(stringResource(R.string.send_feedback_cta))
-                }
+                    text = {
+                        Text(stringResource(R.string.send_feedback_cta), fontSize = 18.sp)
+                    },
+                )
                 DropdownMenuItem(
                     onClick = mainViewModel::onDonateButtonPressed,
-                ) {
-                    Text("Donate")
-                }
+                    text = {
+                        Text("Donate", fontSize = 18.sp)
+                    },
+                )
                 DropdownMenuItem(
                     enabled = false,
                     onClick = {},
-                ) {
-                    Text("Version ${BuildConfig.VERSION_NAME}. Made by Benoit Letondor")
-                }
+                    text = {
+                        Text("Version ${BuildConfig.VERSION_NAME}. Made by Benoit Letondor", fontSize = 18.sp)
+                    },
+                )
             }
         },
         content = {
@@ -233,7 +249,7 @@ private fun Context.showRedeemVoucherUI(onVoucherInput: (String) -> Unit) {
     val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_redeem_voucher, null)
     val voucherEditText: EditText = dialogView.findViewById(R.id.voucher)
 
-    val builder = android.app.AlertDialog.Builder(this)
+    val builder = MaterialAlertDialogBuilder(this)
         .setTitle(R.string.voucher_redeem_dialog_title)
         .setMessage(R.string.voucher_redeem_dialog_message)
         .setView(dialogView)

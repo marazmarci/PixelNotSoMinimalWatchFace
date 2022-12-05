@@ -23,10 +23,10 @@ import android.graphics.Rect
 import android.support.wearable.complications.ComplicationData
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
 import com.benoitletondor.pixelminimalwatchface.PhoneBatteryStatus
 import com.benoitletondor.pixelminimalwatchface.R
 import com.benoitletondor.pixelminimalwatchface.getBatteryText
-import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
 import java.util.*
 
 interface BatteryDrawer {

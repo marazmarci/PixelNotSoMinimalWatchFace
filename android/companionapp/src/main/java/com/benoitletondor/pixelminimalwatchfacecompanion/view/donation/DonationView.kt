@@ -16,15 +16,15 @@
 package com.benoitletondor.pixelminimalwatchfacecompanion.view.donation
 
 import android.app.Activity
-import androidx.appcompat.app.AlertDialog
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import com.benoitletondor.pixelminimalwatchfacecompanion.helper.startSupportEmailActivity
@@ -33,7 +33,7 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBar
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.donation.subviews.Loaded
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.donation.subviews.Error
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.donation.subviews.Loading
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 @Composable
 fun Donation(navController: NavController, donationViewModel: DonationViewModel) {
@@ -42,7 +42,7 @@ fun Donation(navController: NavController, donationViewModel: DonationViewModel)
 
     LaunchedEffect("events") {
         donationViewModel.donationSuccessEventFlow.collect { skuPrice ->
-            AlertDialog.Builder(context)
+            MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.donation_success_title)
                 .setMessage(context.getString(R.string.donation_success_message, skuPrice))
                 .setPositiveButton(android.R.string.ok, null)
@@ -52,7 +52,7 @@ fun Donation(navController: NavController, donationViewModel: DonationViewModel)
 
     LaunchedEffect("error") {
         donationViewModel.errorPayingEventFlow.collect { error ->
-            AlertDialog.Builder(context)
+            MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.donation_error_title)
                 .setMessage(context.getString(R.string.donation_error_message, error.message))
                 .setPositiveButton(android.R.string.ok, null)
@@ -68,9 +68,10 @@ fun Donation(navController: NavController, donationViewModel: DonationViewModel)
             AppTopBarMoreMenuItem {
                 DropdownMenuItem(
                     onClick = { context.startSupportEmailActivity() },
-                ) {
-                    Text(stringResource(R.string.send_feedback_cta))
-                }
+                    text = {
+                        Text(stringResource(R.string.send_feedback_cta), fontSize = 18.sp)
+                    },
+                )
             }
         },
         content = {

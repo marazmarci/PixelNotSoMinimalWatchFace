@@ -23,7 +23,7 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/not_premium_view_pager"
         android:layout_width="0dp"
-        android:layout_height="230dp"
+        android:layout_height="220dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

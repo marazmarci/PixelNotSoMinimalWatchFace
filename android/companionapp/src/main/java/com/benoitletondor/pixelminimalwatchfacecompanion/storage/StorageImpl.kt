@@ -28,10 +28,12 @@ private const val PREMIUM_KEY = "premium"
 private const val ONBOARDING_FINISHED_KEY = "onboarding_finished"
 private const val BATTERY_SYNC_ACTIVATED = "onboarding_finished"
 private const val FOREGROUND_SERVICE_ENABLED_KEY = "foreground_service_enabled"
+private const val NOTIFICATIONS_SYNC_ENABLED_KEY = "notifications_sync_enabled"
 
 class StorageImpl @Inject constructor(@ApplicationContext context: Context) : Storage {
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
     private val batterySyncActivatedMutableFlow = MutableStateFlow(isBatterySyncActivated())
+    private val notificationsSyncActivatedMutableFlow = MutableStateFlow(isNotificationsSyncActivated())
 
     override fun isUserPremium(): Boolean
         = sharedPreferences.getBoolean(PREMIUM_KEY, false)
@@ -63,6 +65,19 @@ class StorageImpl @Inject constructor(@ApplicationContext context: Context) : St
 
         batterySyncActivatedMutableFlow.value = activated
     }
+
+    override fun isNotificationsSyncActivated(): Boolean
+        = sharedPreferences.getBoolean(NOTIFICATIONS_SYNC_ENABLED_KEY, false)
+
+    override fun setNotificationsSyncActivated(activated: Boolean) {
+        sharedPreferences.edit {
+            putBoolean(NOTIFICATIONS_SYNC_ENABLED_KEY, activated)
+        }
+
+        notificationsSyncActivatedMutableFlow.value = activated
+    }
+
+    override fun isNotificationsSyncActivatedFlow(): Flow<Boolean> = notificationsSyncActivatedMutableFlow
 
     override fun isForegroundServiceEnabled(): Boolean = sharedPreferences.getBoolean(FOREGROUND_SERVICE_ENABLED_KEY, false)
 

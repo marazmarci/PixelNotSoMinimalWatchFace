@@ -16,15 +16,13 @@
 package com.benoitletondor.pixelminimalwatchfacecompanion.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.benoitletondor.pixelminimalwatchfacecompanion.R
 
 @Composable
 fun LoadingLayout(
@@ -41,7 +39,7 @@ fun LoadingLayout(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = text,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }

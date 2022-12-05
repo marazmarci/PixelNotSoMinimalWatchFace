@@ -23,7 +23,9 @@ import android.content.pm.PackageManager
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import androidx.core.app.NotificationManagerCompat
 import com.benoitletondor.pixelminimalwatchfacecompanion.ForegroundService
+import com.benoitletondor.pixelminimalwatchfacecompanion.NotificationsListener
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
@@ -81,6 +83,16 @@ class DeviceImpl @Inject constructor(
 
     override fun finishForegroundService() = ForegroundService.stop(context)
 
+    override fun hasNotificationsListenerPermission(): Boolean {
+        return try {
+            val enabledNotificationListeners = NotificationManagerCompat.getEnabledListenerPackages(context)
+            enabledNotificationListeners.contains(context.packageName)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to check notification listener permission", e)
+            false
+        }
+    }
+
     private fun hasActivityToResolveIgnoreBatteryOptimization(context: Context): Boolean {
         val powerIntents = getIgnoreBatteryOptimizationIntents(context)
         for (intent in powerIntents) {
@@ -106,5 +118,9 @@ class DeviceImpl @Inject constructor(
         val powerIntents = arrayListOf(miuiIntent, systemIntent)
         powerIntents.addAll(powerManagerIntents)
         return powerIntents
+    }
+
+    companion object {
+        private const val TAG = "Device"
     }
 }

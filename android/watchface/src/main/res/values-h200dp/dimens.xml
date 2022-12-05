@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="time_text_size">59dp</dimen>
+    <dimen name="time_text_size_round">62dp</dimen>
+    <dimen name="space_between_time_and_date">8dp</dimen>
+    <dimen name="space_between_time_and_top_widgets">6dp</dimen>
+</resources>

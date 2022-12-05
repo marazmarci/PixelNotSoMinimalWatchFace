@@ -15,7 +15,6 @@
  */
 package com.benoitletondor.pixelminimalwatchfacecompanion.helper
 
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -28,7 +27,6 @@ class MutableLiveFlow<T> : Flow<T>, FlowCollector<T> {
     private val buffer = mutableListOf<T>()
     private val mutex = Mutex()
 
-    @OptIn(InternalCoroutinesApi::class)
     override suspend fun collect(collector: FlowCollector<T>) {
         wrapped
             .onSubscription {

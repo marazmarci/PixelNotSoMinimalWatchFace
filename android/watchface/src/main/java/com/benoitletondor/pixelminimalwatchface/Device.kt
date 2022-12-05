@@ -36,4 +36,5 @@ object Device {
     fun isSamsungGalaxyWatchBigScreen(context: Context) = isSamsungGalaxyWatch && context.resources.displayMetrics.heightPixels >= 450
     val isSamsungGalaxyWatch4: Boolean = isSamsungGalaxyWatch && galaxyWatch4ModelNumbers.contains(Build.MODEL)
     val isOppoWatch: Boolean = Build.BRAND == "OPPO" && Build.MODEL == "OPPO Watch"
+    val isPixelWatch: Boolean = isWearOS3 && Build.BRAND.equals("google", ignoreCase = true)
 }

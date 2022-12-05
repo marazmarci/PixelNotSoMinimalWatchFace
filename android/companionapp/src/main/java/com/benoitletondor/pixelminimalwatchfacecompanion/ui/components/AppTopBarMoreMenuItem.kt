@@ -18,9 +18,11 @@ package com.benoitletondor.pixelminimalwatchfacecompanion.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +41,7 @@ fun AppTopBarMoreMenuItem(content: @Composable ColumnScope.() -> Unit) {
         Icon(
             Icons.Default.MoreVert,
             contentDescription = "Menu",
-            tint = MaterialTheme.colors.onBackground,
+            tint = MaterialTheme.colorScheme.onBackground,
         )
         DropdownMenu(
             expanded = showMenu,

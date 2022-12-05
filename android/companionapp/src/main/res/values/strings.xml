@@ -16,7 +16,7 @@
 <resources>
     <string name="app_name">Pixel Minimal Watch Face</string>
 
-    <string name="setup_watch_face_instructions">To access all the settings, everything happens on your watch: on the watch face, long press on the time. After 1s, you\'ll see a button appear at the bottom, tap on it to customize.</string>
+    <string name="setup_watch_face_instructions">To access the settings, everything happens on your watch: on the watch face, long press on the time. After 1s, you\'ll see a button appear at the bottom, tap on it to customize.</string>
 
     <string name="premium_error">Unable to reach PlayStore to verify your premium status.\n\nPlease check your connection and try again.\n(%s)</string>
     <string name="error_syncing_title">Error syncing with watch</string>
@@ -31,11 +31,6 @@
     <string name="iab_purchase_error_title">Oops</string>
     <string name="iab_purchase_error_message">An error occurred, check your connection and try again later.</string>
     <string name="send_feedback_cta">Send feedback or report bug</string>
-    <string name="feedback_email" translatable="false">pixelwatchface@benoitletondor.com</string>
-    <string name="feedback_send_subject" translatable="false">Pixel Watch Face - Feedback</string>
-    <string name="onboarding_title">Welcome to Pixel Minimal Watch Face companion app</string>
-    <string name="onboarding_text">This companion phone app will help you install the watch face on your watch and become premium to unlock widgets and weather.\n\nIf you have any issue, please contact me using the app menu for support.</string>
-    <string name="onboarding_finish_cta">Let\'s go</string>
     <string name="playstore_opened_on_watch_message">Opening PlayStore on Watch…\n\nCheck your watch to continue.</string>
     <string name="playstore_not_opened_on_watch_title">Unable to open PlayStore</string>
     <string name="playstore_not_opened_on_watch_message">An error occurred opening the PlayStore on your Watch.\n\nInstall the Watch Face on your watch manually.</string>
@@ -46,5 +41,5 @@
     <string name="donation_loading_error">Unable to contact the PlayStore for donation details (%s).\n\nPlease try again later or contact me using the menu.</string>
     <string name="premium_1_title">4 customisable widgets, weather info, battery indicators, beautifully integrated</string>
     <string name="premium_2_title">Choose the widgets you want</string>
-    <string name="premium_3_title">Customize widgets &amp; battery indicators accent color</string>
+    <string name="premium_3_title">Choose between the regular layout and an Android 12 inspired one</string>
 </resources>

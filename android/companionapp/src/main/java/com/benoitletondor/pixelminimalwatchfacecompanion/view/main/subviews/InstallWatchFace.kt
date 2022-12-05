@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +37,6 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.sync.Sync
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.blueButtonColors
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.primaryGreen
-import com.benoitletondor.pixelminimalwatchfacecompanion.ui.whiteTextButtonColors
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.MainViewModel
 
 @Composable
@@ -74,7 +73,7 @@ private fun InstallWatchFaceLayout(
             text = "Install the watch face on your watch",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
         )
@@ -123,7 +122,7 @@ private fun Installed(
 ) {
     Text(
         text = "Watch face detected on your watch",
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -138,7 +137,7 @@ private fun Installed(
 
     Text(
         text = "Make sure you activate it as your watch face",
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -149,7 +148,7 @@ private fun Installed(
         onClick = onWatchFaceInstalledButtonPressed,
         colors = blueButtonColors(),
     ) {
-        Text("Continue".uppercase())
+        Text("Continue")
     }
 
     Spacer(modifier = Modifier.height(30.dp))
@@ -158,7 +157,7 @@ private fun Installed(
         text = "Watch face not installed?",
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 18.sp,
     )
 
@@ -215,7 +214,7 @@ private fun VerifyingInstallStatus() {
         text = "Verifying install status...",
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 }
 
@@ -228,7 +227,7 @@ private fun InstallAutoLayout(
         text = "Follow those 4 steps to install it on your watch",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(10.dp))
@@ -237,18 +236,18 @@ private fun InstallAutoLayout(
         text = "1. Tap the button below to open the PlayStore on your watch, directly on the watch face page ",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Button(
         onClick = onOpenPlayStoreButtonPressed,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.White,
+            containerColor = Color.White,
             contentColor = primaryGreen,
         ),
     ) {
         Text(
-            text = "Open PlayStore on watch".uppercase(),
+            text = "Open PlayStore on watch",
         )
     }
 
@@ -260,7 +259,7 @@ private fun InstallAutoLayout(
         modifier = Modifier.fillMaxWidth()
             .background(color = Color(0x22FFFFFF), shape = RoundedCornerShape(10))
             .padding(horizontal = 10.dp, vertical = 6.dp),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 13.sp,
     )
 
@@ -270,7 +269,7 @@ private fun InstallAutoLayout(
         text = "2. Tap the install button",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -279,7 +278,7 @@ private fun InstallAutoLayout(
         text = "3. Once installed, activate it as your watch face",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(10.dp))
@@ -288,7 +287,7 @@ private fun InstallAutoLayout(
         onClick = onWatchFaceInstalledButtonPressed,
         colors = blueButtonColors(),
     ) {
-        Text("Continue".uppercase())
+        Text("Continue")
     }
 }
 
@@ -300,7 +299,7 @@ private fun InstallManuallyLayout(
         text = "Follow those 4 steps to install it on your watch",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -311,7 +310,7 @@ private fun InstallManuallyLayout(
         modifier = Modifier.fillMaxWidth()
             .background(color = Color(0x22FFFFFF), shape = RoundedCornerShape(10))
             .padding(horizontal = 10.dp, vertical = 6.dp),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 13.sp,
     )
 
@@ -321,7 +320,7 @@ private fun InstallManuallyLayout(
         text = "1. Open the PlayStore on your watch",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -330,7 +329,7 @@ private fun InstallManuallyLayout(
         text = "2. Search for \"Pixel Minimal Watch Face\"",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -339,7 +338,7 @@ private fun InstallManuallyLayout(
         text = "3. Tap the install button",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -348,7 +347,7 @@ private fun InstallManuallyLayout(
         text = "4. Once installed, activate it as your watch face",
         textAlign = TextAlign.Left,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(10.dp))
@@ -357,7 +356,7 @@ private fun InstallManuallyLayout(
         onClick = onWatchFaceInstalledButtonPressed,
         colors = blueButtonColors(),
     ) {
-        Text("Continue".uppercase())
+        Text("Continue")
     }
 }
 
@@ -371,7 +370,7 @@ private fun SkipInstallLayout(
         text = "Watch face already installed?",
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 18.sp,
     )
 
@@ -381,7 +380,7 @@ private fun SkipInstallLayout(
         text = "If the watch face is already installed on your watch, make sure you activate it and you can continue",
         textAlign = TextAlign.Start,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     Spacer(modifier = Modifier.height(10.dp))
@@ -390,7 +389,7 @@ private fun SkipInstallLayout(
         onClick = onWatchFaceInstalledButtonPressed,
         colors = blueButtonColors(),
     ) {
-        Text("Continue".uppercase())
+        Text("Continue")
     }
 }
 
@@ -408,7 +407,7 @@ private fun SupportLayout(
     ) {
         Text(
             text = "Install doesn't work? Have another issue? I'm here to help",
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -418,7 +417,7 @@ private fun SupportLayout(
         Button(
             onClick = onSupportButtonPressed,
         ) {
-            Text(text = "Contact me for support".uppercase())
+            Text(text = "Contact me for support")
         }
     }
 }

@@ -66,6 +66,7 @@ class MainViewModel @Inject constructor(
         isSyncingStateFlow,
         userForcedInstallStatusFlow,
         storage.isBatterySyncActivatedFlow(),
+        storage.isNotificationsSyncActivatedFlow(),
         flow { emit(config.getWarning()) },
         ::computeStep,
     ).stateIn(viewModelScope, SharingStarted.Eagerly, Step.Loading)
@@ -206,6 +207,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onSetupNotificationsSyncButtonPressed() {
+        viewModelScope.launch {
+            navigationEventMutableFlow.emit(NavigationDestination.SetupNotificationsSync)
+        }
+    }
+
     fun onInstallWatchFaceButtonPressed() {
         viewModelScope.launch {
             try {
@@ -250,7 +257,11 @@ class MainViewModel @Inject constructor(
         class Error(val error: Throwable) : Step()
         class InstallWatchFace(val appInstalledStatus: AppInstalledStatus) : Step()
         object NotPremium : Step()
-        class Premium(val isBatterySyncActivated: Boolean, val maybeWarning: String?) : Step()
+        class Premium(
+            val isBatterySyncActivated: Boolean,
+            val isNotificationsSyncActivated: Boolean,
+            val maybeWarning: String?,
+        ) : Step()
     }
 
     sealed class NavigationDestination {
@@ -258,6 +269,7 @@ class MainViewModel @Inject constructor(
         class VoucherRedeem(val voucherCode: String) : NavigationDestination()
         object Donate : NavigationDestination()
         object DebugBatterySync : NavigationDestination()
+        object SetupNotificationsSync : NavigationDestination()
     }
 
     sealed class ErrorType {
@@ -291,6 +303,7 @@ class MainViewModel @Inject constructor(
             isSyncing: Boolean,
             userForcedInstallStatus: UserForcedInstallStatus,
             isBatterySyncActivated: Boolean,
+            isNotificationsSyncActivated: Boolean,
             maybeWarning: String?,
         ) : Step {
             if (userIsBuyingPremium) {
@@ -310,7 +323,11 @@ class MainViewModel @Inject constructor(
                 is PremiumCheckStatus.Error -> Step.Error(premiumStatus.error)
                 PremiumCheckStatus.Initializing -> Step.Loading
                 PremiumCheckStatus.NotPremium -> Step.NotPremium
-                PremiumCheckStatus.Premium -> Step.Premium(isBatterySyncActivated, maybeWarning)
+                PremiumCheckStatus.Premium -> Step.Premium(
+                    isBatterySyncActivated,
+                    isNotificationsSyncActivated,
+                    maybeWarning,
+                )
             }
         }
     }

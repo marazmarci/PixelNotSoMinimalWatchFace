@@ -22,14 +22,13 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.storage.Storage
 import com.benoitletondor.pixelminimalwatchfacecompanion.sync.Sync
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.MessageEvent
-import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.WearableListenerService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WatchMessageReceiver : WearableListenerService(), CoroutineScope by CoroutineScope(SupervisorJob() + Dispatchers.Default) {
+class WatchMessageReceiver : WearableListenerService(), CoroutineScope by CoroutineScope(SupervisorJob() + Dispatchers.IO) {
     @Inject lateinit var sync: Sync
     @Inject lateinit var storage: Storage
     @Inject lateinit var device: Device
@@ -43,9 +42,12 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
         super.onMessageReceived(messageEvent)
 
         when(messageEvent.path) {
-            QUERY_SYNC_STATUS_PATH -> sendSyncStatus(messageEvent.data)
-            QUERY_ACTIVATED_SYNC_PATH -> activateSync()
-            QUERY_DEACTIVATED_SYNC_PATH -> deactivateSync()
+            QUERY_BATTERY_SYNC_STATUS_PATH -> sendBatterySyncStatus(messageEvent.data)
+            QUERY_BATTERY_ACTIVATED_SYNC_PATH -> activateBatterySync()
+            QUERY_BATTERY_DEACTIVATED_SYNC_PATH -> deactivateBatterySync()
+            QUERY_NOTIFICATIONS_SYNC_STATUS_PATH -> sendNotificationsSyncStatus(messageEvent.data)
+            QUERY_NOTIFICATIONS_ACTIVATED_SYNC_PATH -> activateNotificationsSync()
+            QUERY_NOTIFICATIONS_DEACTIVATED_SYNC_PATH -> deactivateNotificationsSync()
             else -> Log.e(TAG, "Received message with unknown path: ${messageEvent.path}")
         }
     }
@@ -60,31 +62,25 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
         val watchNode = capabilityInfo.nodes.firstOrNull { it.isNearby } ?: capabilityInfo.nodes.firstOrNull()
         if (watchNode != null) {
             if (storage.isBatterySyncActivated()) {
-                activateSync()
+                activateBatterySync()
             }
         }
     }
 
-    private fun sendSyncStatus(watchData: ByteArray) {
-        launch {
-            try {
-                val syncActivatedOnWatch = watchData.first().toInt() == 1
-                if (syncActivatedOnWatch) {
-                    activateSync()
-                } else {
-                    deactivateSync()
-                }
-            } catch (t: Throwable) {
-                if (t is CancellationException) {
-                    throw t
-                }
-
-                Log.e(TAG, "Error while sending sync status", t)
+    private fun sendBatterySyncStatus(watchData: ByteArray) {
+        try {
+            val syncActivatedOnWatch = watchData.first().toInt() == 1
+            if (syncActivatedOnWatch) {
+                activateBatterySync()
+            } else {
+                deactivateBatterySync()
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while sending battery sync status", e)
         }
     }
 
-    private fun deactivateSync() {
+    private fun deactivateBatterySync() {
         storage.setBatterySyncActivated(false)
         BatteryStatusBroadcastReceiver.unsubscribeFromUpdates(this)
 
@@ -94,17 +90,15 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
         launch {
             try {
                 sync.sendBatterySyncStatus(false)
-            } catch (t: Throwable) {
-                if (t is CancellationException) {
-                    throw t
-                }
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
 
-                Log.e(TAG, "Error while deactivating sync", t)
+                Log.e(TAG, "Error while deactivating battery sync", e)
             }
         }
     }
 
-    private fun activateSync() {
+    private fun activateBatterySync() {
         storage.setBatterySyncActivated(true)
         BatteryStatusBroadcastReceiver.subscribeToUpdates(this)
 
@@ -112,12 +106,64 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
             try {
                 sync.sendBatterySyncStatus(true)
                 sync.sendBatteryStatus(BatteryStatusBroadcastReceiver.getCurrentBatteryLevel(this@WatchMessageReceiver))
-            } catch (t: Throwable) {
-                if (t is CancellationException) {
-                    throw t
-                }
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
 
-                Log.e(TAG, "Error while activating sync", t)
+                Log.e(TAG, "Error while activating battery sync", e)
+            }
+        }
+    }
+
+    private fun sendNotificationsSyncStatus(watchData: ByteArray) {
+        try {
+            val syncActivatedOnWatch = watchData.first().toInt() == 1
+            if (syncActivatedOnWatch) {
+                activateNotificationsSync()
+            } else {
+                deactivateNotificationsSync()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error while sending notifications sync status", e)
+        }
+    }
+
+    private fun deactivateNotificationsSync() {
+        storage.setNotificationsSyncActivated(false)
+
+        launch {
+            try {
+                sync.sendNotificationsSyncStatus(Sync.NotificationsSyncStatus.DEACTIVATED)
+            } catch (t: Throwable) {
+                if (t is CancellationException) throw t
+
+                Log.e(TAG, "Error while deactivating notifications sync", t)
+            }
+        }
+    }
+
+    private fun activateNotificationsSync() {
+        storage.setNotificationsSyncActivated(true)
+
+        if (device.hasNotificationsListenerPermission()) {
+            launch {
+                try {
+                    sync.sendNotificationsSyncStatus(Sync.NotificationsSyncStatus.ACTIVATED)
+                    NotificationsListener.onSyncActivated()
+                } catch (t: Throwable) {
+                    if (t is CancellationException) throw t
+
+                    Log.e(TAG, "Error while activating notifications sync", t)
+                }
+            }
+        } else {
+            launch {
+                try {
+                    sync.sendNotificationsSyncStatus(Sync.NotificationsSyncStatus.ACTIVATED_MISSING_PERMISSION)
+                } catch (t: Throwable) {
+                    if (t is CancellationException) throw t
+
+                    Log.e(TAG, "Error while activating notifications sync", t)
+                }
             }
         }
     }
@@ -125,8 +171,11 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
     companion object {
         private const val TAG = "WatchMessageReceiver"
 
-        private const val QUERY_SYNC_STATUS_PATH = "/batterySync/queryStatus"
-        private const val QUERY_ACTIVATED_SYNC_PATH = "/batterySync/activate"
-        private const val QUERY_DEACTIVATED_SYNC_PATH = "/batterySync/deactivate"
+        private const val QUERY_BATTERY_SYNC_STATUS_PATH = "/batterySync/queryStatus"
+        private const val QUERY_BATTERY_ACTIVATED_SYNC_PATH = "/batterySync/activate"
+        private const val QUERY_BATTERY_DEACTIVATED_SYNC_PATH = "/batterySync/deactivate"
+        private const val QUERY_NOTIFICATIONS_SYNC_STATUS_PATH = "/notificationsSync/queryStatus"
+        private const val QUERY_NOTIFICATIONS_ACTIVATED_SYNC_PATH = "/notificationsSync/activate"
+        private const val QUERY_NOTIFICATIONS_DEACTIVATED_SYNC_PATH = "/notificationsSync/deactivate"
     }
 }

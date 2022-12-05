@@ -17,6 +17,8 @@ package com.benoitletondor.pixelminimalwatchface.helper
 
 import android.os.Handler
 import android.os.Message
+import android.util.Log
+import com.benoitletondor.pixelminimalwatchface.DEBUG_LOGS
 import com.benoitletondor.pixelminimalwatchface.PixelMinimalWatchFace
 import java.lang.ref.WeakReference
 
@@ -26,6 +28,8 @@ class ComplicationTimeDependentUpdateHandler(
 ) : Handler() {
 
     override fun handleMessage(msg: Message) {
+        if (DEBUG_LOGS) Log.d(TAG, "handleMessage")
+
         super.handleMessage(msg)
 
         val engine = engine.get() ?: return
@@ -33,18 +37,25 @@ class ComplicationTimeDependentUpdateHandler(
         hasUpdateScheduled = false
 
         if( !engine.isAmbientMode() && engine.isVisible ) {
+            if (DEBUG_LOGS) Log.d(TAG, "invalidate")
             engine.invalidate()
         }
     }
 
     fun cancelUpdate() {
         if( hasUpdateScheduled ) {
+            if (DEBUG_LOGS) Log.d(TAG, "cancelUpdate: Cancelling")
+
             hasUpdateScheduled = false
             removeMessages(MSG_UPDATE_TIME)
+        } else {
+            if (DEBUG_LOGS) Log.d(TAG, "cancelUpdate: No-op")
         }
     }
 
     fun scheduleUpdate(delay: Long) {
+        if (DEBUG_LOGS) Log.d(TAG, "scheduleUpdate")
+
         if( hasUpdateScheduled ) {
             cancelUpdate()
         }
@@ -56,6 +67,7 @@ class ComplicationTimeDependentUpdateHandler(
     fun hasUpdateScheduled(): Boolean = hasUpdateScheduled
 
     companion object {
+        private const val TAG = "TimeDependentUpdateHandler"
         private const val MSG_UPDATE_TIME = 0
     }
 }

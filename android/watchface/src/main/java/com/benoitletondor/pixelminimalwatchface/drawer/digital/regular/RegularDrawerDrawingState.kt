@@ -16,6 +16,7 @@
 package com.benoitletondor.pixelminimalwatchface.drawer.digital.regular
 
 import android.content.Context
+import android.graphics.Rect
 import com.benoitletondor.pixelminimalwatchface.drawer.digital.*
 
 sealed class RegularDrawerDrawingState {
@@ -42,10 +43,12 @@ sealed class RegularDrawerDrawingState {
     ) : RegularDrawerDrawingState(),
         BatteryDrawer by BatteryDrawerImpl(context, centerX, screenWidth, batteryIconSize, batteryLevelBottomY, batteryIconBottomY),
         SecondsRingDrawer by SecondRingDrawerImpl(screenWidth, screenHeight),
-        DateAndWeatherDrawer by DateAndWeatherDrawerImpl(context, dateHeight, dateYOffset, centerX)
+        DateAndWeatherDrawer by DateAndWeatherDrawerImpl(context, dateHeight, dateYOffset, centerX),
+        NotificationsDrawer by NotificationsDrawerImpl(context, centerX, complicationsDrawingCache.notificationsRect)
 }
 
 data class ComplicationsDrawingCache(
     val iconXOffset: Float,
-    val iconYOffset: Float
+    val iconYOffset: Float,
+    val notificationsRect: Rect,
 )

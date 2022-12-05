@@ -24,10 +24,10 @@ import android.graphics.drawable.Icon
 import android.support.wearable.complications.ComplicationData
 import android.support.wearable.complications.ComplicationText
 import android.text.format.DateUtils
+import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
 import com.benoitletondor.pixelminimalwatchface.helper.capitalize
 import com.benoitletondor.pixelminimalwatchface.helper.dpToPx
 import com.benoitletondor.pixelminimalwatchface.helper.sameAs
-import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
 import java.util.*
 
 interface DateAndWeatherDrawer {
@@ -132,7 +132,7 @@ class DateAndWeatherDrawerImpl(
             cachedWeatherBitmap
         } else {
             try {
-                val bitmap = weatherIcon.loadDrawable(context).toBitmap(weatherIconRect.right - weatherIconRect.left, weatherIconRect.bottom - weatherIconRect.top)
+                val bitmap = weatherIcon.loadDrawable(context)?.toBitmap(weatherIconRect.right - weatherIconRect.left, weatherIconRect.bottom - weatherIconRect.top)
 
                 currentWeatherBitmap = bitmap
                 currentWeatherIcon = weatherIcon

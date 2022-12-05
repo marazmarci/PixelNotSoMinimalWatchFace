@@ -46,11 +46,11 @@ class AppUpdateReceiver : BroadcastReceiver() {
 
     @Suppress("SameParameterValue", "UNUSED_PARAMETER")
     private fun onAppUpgrade(context: Context, oldVersion: Int, newVersion: Int) {
-        if( oldVersion < 65 ) {
+        if( oldVersion < 152 ) {
             val storage = Injection.storage(context)
 
-            if( !storage.hasFeatureDropSummer2021NotificationBeenShown() ) {
-                storage.setFeatureDropSummer2021NotificationShown()
+            if( !storage.hasFeatureDropAutumn2022NotificationBeenShown() ) {
+                storage.setFeatureDropAutumn2022NotificationShown()
                 showFeatureDropNotification(context)
             }
         }
@@ -85,16 +85,16 @@ class AppUpdateReceiver : BroadcastReceiver() {
 
                 val notification = NotificationCompat.Builder(context, MISC_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(context.getString(R.string.feature_drop_2021_notification_title))
-                    .setContentText(context.getString(R.string.feature_drop_2021_notification_message))
+                    .setContentTitle(context.getString(R.string.feature_drop_notification_title))
+                    .setContentText(context.getString(R.string.feature_drop_notification_message))
                     .setStyle(
                         NotificationCompat.BigTextStyle()
-                            .bigText(context.getString(R.string.feature_drop_2021_notification_message))
+                            .bigText(context.getString(R.string.feature_drop_notification_message))
                     )
                     .addAction(
                         NotificationCompat.Action(
                             R.drawable.ic_baseline_new_releases,
-                            context.getString(R.string.feature_drop_2021_notification_cta),
+                            context.getString(R.string.feature_drop_notification_cta),
                             pendingIntent
                         )
                     )
@@ -102,8 +102,8 @@ class AppUpdateReceiver : BroadcastReceiver() {
                     .build()
 
                 NotificationManagerCompat.from(context).notify(193729, notification)
-            } catch (t: Throwable) {
-                Log.e("PixelWatchFace", "Error performing update actions", t)
+            } catch (e: Exception) {
+                Log.e("AppUpdateReceiver", "Error showing feature drop notification", e)
             }
         }
     }

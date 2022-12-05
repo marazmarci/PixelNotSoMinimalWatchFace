@@ -17,36 +17,35 @@ package com.benoitletondor.pixelminimalwatchface.helper
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
-import android.content.Context
-import android.graphics.drawable.Icon
-import android.net.Uri
-import android.support.wearable.complications.ComplicationData
-import android.support.wearable.complications.ComplicationText
-import android.util.Log
-import com.benoitletondor.pixelminimalwatchface.Device
-import com.benoitletondor.pixelminimalwatchface.R
-import org.json.JSONObject
-import kotlin.math.roundToInt
 import android.content.ComponentName
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.database.ContentObserver
+import android.graphics.drawable.Icon
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.support.wearable.complications.ComplicationData
 import android.support.wearable.complications.ComplicationProviderInfo
+import android.support.wearable.complications.ComplicationText
+import android.util.Log
 import androidx.core.content.pm.PackageInfoCompat
+import com.benoitletondor.pixelminimalwatchface.Device
 import com.benoitletondor.pixelminimalwatchface.PixelMinimalWatchFace
+import com.benoitletondor.pixelminimalwatchface.R
 import com.benoitletondor.pixelminimalwatchface.model.Storage
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.onFailure
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 private val galaxyWatch4AODBuggyWearOSVersions = setOf(
     "EVA8",
@@ -54,7 +53,15 @@ private val galaxyWatch4AODBuggyWearOSVersions = setOf(
 )
 
 val isGalaxyWatch4AODBuggyWearOSVersion = Device.isSamsungGalaxyWatch && Build.VERSION.INCREMENTAL.takeLast(4) in galaxyWatch4AODBuggyWearOSVersions
-val isGalaxyWatch4CalendarBuggyWearOSVersion = Device.isSamsungGalaxyWatch && Build.VERSION.SECURITY_PATCH.startsWith("2022")
+val isGalaxyWatch4CalendarBuggyWearOSVersion = Device.isSamsungGalaxyWatch && (
+    Build.VERSION.SECURITY_PATCH.startsWith("2022-01") ||
+    Build.VERSION.SECURITY_PATCH.startsWith("2022-02") ||
+    Build.VERSION.SECURITY_PATCH.startsWith("2022-03") ||
+    Build.VERSION.SECURITY_PATCH.startsWith("2022-04")
+)
+
+val hasWidgetFrozenBug = Device.isWearOS3
+val hasAmbientDisplayGoingOffBug = Device.isPixelWatch
 
 fun Context.getTopAndBottomMargins(): Float {
     return when {
@@ -199,7 +206,7 @@ fun ComplicationProviderInfo.isSamsungHeartRateProvider(): Boolean {
 }
 
 private fun Context.getShealthAppVersion(): Long {
-    val packageInfo = packageManager.getPackageInfo(S_HEALTH_PACKAGE_NAME, 0);
+    val packageInfo = packageManager.getPackageInfo(S_HEALTH_PACKAGE_NAME, 0)
     return PackageInfoCompat.getLongVersionCode(packageInfo)
 }
 
@@ -273,12 +280,10 @@ fun Context.watchSamsungHeartRateUpdates(): Flow<Unit> = callbackFlow {
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
 
-            try {
-                sendBlocking(Unit)
-            } catch (e: CancellationException) {
-                unregister(this)
-                throw e
-            }
+            trySendBlocking(Unit)
+                .onFailure {
+                    unregister(this)
+                }
         }
     }
 
@@ -393,6 +398,11 @@ private val oneUIWatchHomeAppNames = setOf(
 private val samsungHealthAppNames = setOf(
     "Samsung Health",
     "三星健康",
+    "S 健康",
+    "S Health",
+    "Sབདེ་ཐང་།",
+    "삼성 헬스",
+    "S헬스",
 )
 
 private val waterProviderNames = setOf(
@@ -833,7 +843,6 @@ private val heartRateProviderNames = setOf(
     "شرح قلب",
     "Yurak puls",
     "Nhịp tim",
-    "心率",
     "心率",
     "心跳率",
 )

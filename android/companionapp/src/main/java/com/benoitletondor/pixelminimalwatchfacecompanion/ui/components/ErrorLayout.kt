@@ -16,9 +16,9 @@
 package com.benoitletondor.pixelminimalwatchfacecompanion.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,17 +43,17 @@ fun ErrorLayout(
     ) {
         Text(
             text = errorTitle,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 22.sp,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = errorMessage,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
         )
         Spacer(modifier = Modifier.height(30.dp))
         Button(onClick = onRetryButtonClicked) {
-            Text("Retry".uppercase())
+            Text("Retry")
         }
     }
 }

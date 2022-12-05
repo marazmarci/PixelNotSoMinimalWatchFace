@@ -31,6 +31,11 @@ data class ComplicationColors(
     val android12BottomRightColor: ComplicationColor,
 )
 
+data class ComplicationColorCategory(
+    val label: String,
+    val colors: List<ComplicationColor>,
+)
+
 data class ComplicationColor(
     @ColorInt val color: Int,
     val label: String,

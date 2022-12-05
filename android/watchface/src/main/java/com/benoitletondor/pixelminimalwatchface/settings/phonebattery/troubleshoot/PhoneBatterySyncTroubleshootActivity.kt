@@ -15,48 +15,96 @@
  */
 package com.benoitletondor.pixelminimalwatchface.settings.phonebattery.troubleshoot
 
-import android.app.Activity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.AutoCenteringParams
+import androidx.wear.compose.material.Text
 import com.benoitletondor.pixelminimalwatchface.R
-import com.benoitletondor.pixelminimalwatchface.databinding.ActivityPhoneBatteryTroubleshootBinding
+import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailAddress
+import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
+import com.benoitletondor.pixelminimalwatchface.compose.component.ExplanationText
+import com.benoitletondor.pixelminimalwatchface.compose.component.RotatoryAwareLazyColumn
 
-class PhoneBatterySyncTroubleshootActivity : Activity() {
-    private lateinit var binding: ActivityPhoneBatteryTroubleshootBinding
+class PhoneBatterySyncTroubleshootActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPhoneBatteryTroubleshootBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        binding.wearableRecyclerView.apply {
-            isEdgeItemsCenteringEnabled = true
-            layoutManager = LinearLayoutManager(this@PhoneBatterySyncTroubleshootActivity)
-            setHasFixedSize(true)
-            adapter = ContentAdapter()
+        setContent {
+            WearTheme {
+                RotatoryAwareLazyColumn(
+                    horizontalPadding = 20.dp,
+                ) {
+                    item {
+                        Text(
+                            text = "(Beta) Phone battery sync troubleshoot",
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(bottom = 10.dp)
+                        )
+                    }
+
+                    item {
+                        ExplanationText(
+                            text = "To sync your phone battery with your watch, your phone needs to be able to send updates to your watch.",
+                        )
+                    }
+
+                    item {
+                        ExplanationText(
+                            text = "This is still in beta as multiple things can fail during this process, from bluetooth issues to WearOS specific problems.",
+                        )
+                    }
+
+                    item {
+                        Column {
+                            ExplanationText(
+                                text = "Here are a few things you can try to make it work:",
+                            )
+
+                            ExplanationText(
+                                text = "1. Make sure you have \"Pixel Minimal Watch Face\" app installed on your phone too\n(open it once to make sure it's alive)",
+                            )
+
+                            ExplanationText(
+                                text = "2. Ensure both \"Pixel Minimal Watch Face\" and \"WearOS\" apps on your phone are up-to-date",
+                            )
+
+                            ExplanationText(
+                                text = "3. Try disabling battery optimisation for \"Pixel Minimal Watch Face\" on your phone.",
+                            )
+                        }
+                    }
+
+                    item {
+                        Column {
+                            ExplanationText(
+                                text = "If you cannot make it work, please send me an email and I'll try to help:",
+                            )
+
+                            Text(
+                                text = getEmailAddress(),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillParentMaxWidth()
+                                    .padding(bottom = 20.dp),
+                            )
+                        }
+
+                    }
+                }
+            }
         }
     }
-}
-
-private class ContentAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == 0) {
-            return object : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.phone_battery_sync_troubleshoot_title, parent, false)) {}
-        }
-
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.phone_battery_sync_troubleshoot, parent, false))
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {}
-
-    override fun getItemCount(): Int = 2
-
-    override fun getItemViewType(position: Int): Int = position
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

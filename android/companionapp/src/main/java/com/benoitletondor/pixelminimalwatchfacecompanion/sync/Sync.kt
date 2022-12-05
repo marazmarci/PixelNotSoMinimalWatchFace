@@ -15,6 +15,8 @@
  */
 package com.benoitletondor.pixelminimalwatchfacecompanion.sync
 
+import android.graphics.drawable.Icon
+import android.service.notification.StatusBarNotification
 import com.google.android.gms.wearable.CapabilityClient
 
 interface Sync {
@@ -27,10 +29,24 @@ interface Sync {
     suspend fun sendBatterySyncStatus(syncActivated: Boolean)
     suspend fun sendBatteryStatus(batteryPercentage: Int)
 
+    suspend fun sendNotificationsSyncStatus(syncActivated: NotificationsSyncStatus)
+    suspend fun sendActiveNotifications(notifications: NotificationsData)
+
     sealed class WearableStatus {
         object AvailableAppNotInstalled : WearableStatus()
         object AvailableAppInstalled: WearableStatus()
         object NotAvailable: WearableStatus()
         class Error(val error: Throwable): WearableStatus()
+    }
+
+    class NotificationsData(
+        val iconIds: List<Int>,
+        val iconIdsToIcons: Map<Int, Icon>,
+    )
+
+    enum class NotificationsSyncStatus(val intValue: Int) {
+        DEACTIVATED(0),
+        ACTIVATED(1),
+        ACTIVATED_MISSING_PERMISSION(2),
     }
 }

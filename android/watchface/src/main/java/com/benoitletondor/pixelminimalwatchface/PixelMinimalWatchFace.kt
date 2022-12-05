@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.support.wearable.complications.*
 import android.support.wearable.watchface.CanvasWatchFaceService
 import android.support.wearable.watchface.WatchFaceService
@@ -45,6 +46,7 @@ import com.benoitletondor.pixelminimalwatchface.model.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchface.model.DEFAULT_APP_VERSION
 import com.benoitletondor.pixelminimalwatchface.model.Storage
 import com.benoitletondor.pixelminimalwatchface.rating.FeedbackActivity
+import com.benoitletondor.pixelminimalwatchface.settings.notificationssync.NotificationsSyncConfigurationActivity
 import com.benoitletondor.pixelminimalwatchface.settings.phonebattery.*
 import com.google.android.gms.wearable.*
 import kotlinx.coroutines.*
@@ -53,7 +55,6 @@ import java.lang.ref.WeakReference
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.Executors
-import kotlin.collections.HashSet
 import kotlin.math.max
 
 const val MISC_NOTIFICATION_CHANNEL_ID = "rating"
@@ -75,7 +76,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             storage.setAppVersion(BuildConfig.VERSION_CODE)
         }
 
-        if (DEBUG_LOGS) Log.d(TAG, "onCreateEngine. Security Patch: ${Build.VERSION.SECURITY_PATCH}, OS version : ${Build.VERSION.INCREMENTAL}")
+        if (DEBUG_LOGS) Log.d(TAG, "onCreateEngine. Security Patch: ${Build.VERSION.SECURITY_PATCH}, OS version : ${Build.VERSION.INCREMENTAL}, Brand: ${Build.BRAND}, Model: ${Build.MODEL}")
 
         return Engine(this, storage)
     }
@@ -93,6 +94,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         private val complicationProviderInfoRetriever = ProviderInfoRetriever(this@PixelMinimalWatchFace, Executors.newSingleThreadExecutor())
         private val complicationProviderSparseArray: SparseArray<ComplicationProviderInfo> = SparseArray(COMPLICATION_IDS.size)
         private var complicationsColors: ComplicationColors = storage.getComplicationColors()
+        private var showComplicationColorsInAmbient: Boolean = storage.showColorsInAmbientMode()
         private val rawComplicationDataSparseArray: SparseArray<ComplicationData> = SparseArray(COMPLICATION_IDS.size)
         private val complicationDataSparseArray: SparseArray<ComplicationData> = SparseArray(COMPLICATION_IDS.size)
 
@@ -129,6 +131,10 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         private var screenHeight = -1
         private var windowInsets: WindowInsets? = null
 
+        private lateinit var phoneNotifications: PhoneNotifications
+
+        private var lastScreenOnTimeMs: Long = System.currentTimeMillis()
+
         private val timeZoneReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 calendar.timeZone = TimeZone.getDefault()
@@ -148,12 +154,14 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             )
 
             calendar = Calendar.getInstance()
+            phoneNotifications = PhoneNotifications(this@PixelMinimalWatchFace)
 
             initWatchFaceDrawer()
 
             Wearable.getDataClient(service).addListener(this)
             Wearable.getMessageClient(service).addListener(this)
             syncPhoneBatteryStatus()
+            syncNotificationsDisplayStatus()
             complicationProviderInfoRetriever.init()
         }
 
@@ -192,7 +200,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             setActiveComplications(*activeComplicationIds.plus(WEATHER_COMPLICATION_ID).plus(BATTERY_COMPLICATION_ID))
 
-            watchFaceDrawer.onComplicationColorsUpdate(complicationsColors, complicationDataSparseArray)
+            watchFaceDrawer.onComplicationColorsUpdate(complicationsColors, complicationDataSparseArray, storage.showColorsInAmbientMode())
 
             updateComplicationProvidersInfoAsync()
         }
@@ -346,6 +354,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             Wearable.getMessageClient(service).removeListener(this)
             timeDependentUpdateHandler.cancelUpdate()
             complicationProviderInfoRetriever.release()
+            phoneNotifications.onDestroy()
             cancel()
 
             super.onDestroy()
@@ -402,7 +411,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             }
 
             val lastWatchBatteryStatus = lastWatchBatteryStatus
-            if (Device.isSamsungGalaxyWatch &&
+            if (hasWidgetFrozenBug &&
                 lastWatchBatteryStatus is WatchBatteryStatus.DataReceived) {
                 ensureBatteryDataIsUpToDateOrReload(lastWatchBatteryStatus)
             }
@@ -416,6 +425,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             invalidate()
 
             handleGalaxyWatch4WearOSJanuaryBug()
+            handleAmbientScreenGoingOffBug()
         }
 
         // ------------------------------------
@@ -455,6 +465,33 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error while handling january wearos bug", e)
+            }
+        }
+
+        private fun handleAmbientScreenGoingOffBug() {
+            if (!hasAmbientDisplayGoingOffBug || !isAmbientMode()) {
+                return
+            }
+
+            if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: ${System.currentTimeMillis() - lastScreenOnTimeMs}")
+
+            if (System.currentTimeMillis() - lastScreenOnTimeMs >= TEN_MINS_MS) {
+                if (DEBUG_LOGS) Log.d(TAG, "handleAmbientScreenGoingOffBug: Start activity")
+
+                this.lastScreenOnTimeMs = System.currentTimeMillis()
+
+                try {
+                    val pw = getSystemService(Context.POWER_SERVICE) as PowerManager
+                    val wl: PowerManager.WakeLock = pw.newWakeLock(
+                        PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                        "pixelwatchface:awakescreen"
+                    )
+
+                    wl.acquire(1000)
+                    wl.release()
+                } catch (e : Exception) {
+                    Log.e(TAG, "handleAmbientScreenGoingOffBug: Error while acquiring WL", e)
+                }
             }
         }
 
@@ -508,6 +545,12 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             super.onAmbientModeChanged(inAmbient)
 
             if (DEBUG_LOGS) Log.d(TAG, "onAmbientModeChanged, ambient: $inAmbient")
+
+            // If is in ambient now and wasn't before
+            if (inAmbient && !ambient) {
+                if (DEBUG_LOGS) Log.d(TAG, "onAmbientModeChanged, updating lastScreenOnTimeMs")
+                lastScreenOnTimeMs = System.currentTimeMillis()
+            }
 
             ambient = inAmbient
 
@@ -573,8 +616,11 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
                 try {
                     complicationData.shortText?.getText(this@PixelMinimalWatchFace, System.currentTimeMillis())?.let { text ->
+                        val percentIndex = text.indexOf("%")
+                        val batteryChargePercentage = text.substring(0, if (percentIndex > 0) {percentIndex} else {text.length} ).toInt()
+
                         lastWatchBatteryStatus = WatchBatteryStatus.DataReceived(
-                            batteryPercentage = text.substring(0, text.indexOf("%")).toInt(),
+                            batteryPercentage = batteryChargePercentage,
                         )
 
                         if (DEBUG_LOGS) Log.d(TAG, "onComplicationDataUpdate, batteryComplicationData saved: $lastWatchBatteryStatus")
@@ -600,7 +646,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             )
 
             complicationDataSparseArray.put(watchFaceComplicationId, data)
-            watchFaceDrawer.onComplicationDataUpdate(watchFaceComplicationId, data, complicationsColors)
+            watchFaceDrawer.onComplicationDataUpdate(watchFaceComplicationId, data, complicationsColors, storage.showColorsInAmbientMode())
 
             // Update time dependent complication
             val nextShortTextChangeTime = data.shortText?.getNextChangeTime(System.currentTimeMillis())
@@ -642,10 +688,42 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                             return
                         }
                     }
-                    if ( storage.showPhoneBattery() && phoneBatteryStatus.isStale(System.currentTimeMillis()) && watchFaceDrawer.tapIsOnBattery(x, y)) {
+                    if (storage.isUserPremium() &&
+                        storage.showPhoneBattery() &&
+                        phoneBatteryStatus.isStale(System.currentTimeMillis()) &&
+                        watchFaceDrawer.tapIsOnBattery(x, y)) {
                         startActivity(Intent(this@PixelMinimalWatchFace, PhoneBatteryConfigurationActivity::class.java).apply {
                             flags = FLAG_ACTIVITY_NEW_TASK
                         })
+                        return
+                    }
+                    if (storage.isUserPremium() &&
+                        storage.isNotificationsSyncActivated() &&
+                        watchFaceDrawer.isTapOnNotifications(x, y)) {
+
+                        when(val currentState = phoneNotifications.notificationsStateFlow.value) {
+                            is PhoneNotifications.NotificationState.DataReceived -> {
+                                if (currentState.icons.isNotEmpty()) {
+                                    Toast.makeText(
+                                        this@PixelMinimalWatchFace,
+                                        if (Device.isSamsungGalaxyWatch) {
+                                            "Swipe from left to go to notifications"
+                                        } else {
+                                            "Swipe from bottom to go to notifications"
+                                        },
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
+                                }
+                            }
+                            is PhoneNotifications.NotificationState.Unknown -> {
+                                if (currentState.isStale(System.currentTimeMillis())) {
+                                    startActivity(Intent(this@PixelMinimalWatchFace, NotificationsSyncConfigurationActivity::class.java).apply {
+                                        flags = FLAG_ACTIVITY_NEW_TASK
+                                    })
+                                }
+                            }
+                        }
+
                         return
                     }
                 }
@@ -653,6 +731,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onDraw(canvas: Canvas, bounds: Rect) {
+
             // Update drawer if needed
             if ( useAndroid12Style != storage.useAndroid12Style() ) {
                 useAndroid12Style = storage.useAndroid12Style()
@@ -673,11 +752,11 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
             // Update battery subscription if needed
             if( storage.isUserPremium() &&
-                (storage.showWatchBattery() != shouldShowBattery || (Device.isSamsungGalaxyWatch && !didForceGalaxyWatch4BatterySubscription)) ) {
+                (storage.showWatchBattery() != shouldShowBattery || (hasWidgetFrozenBug && !didForceGalaxyWatch4BatterySubscription)) ) {
                 shouldShowBattery = storage.showWatchBattery()
                 didForceGalaxyWatch4BatterySubscription = true
 
-                if( shouldShowBattery || Device.isSamsungGalaxyWatch ) {
+                if( shouldShowBattery || hasWidgetFrozenBug ) {
                     subscribeToBatteryComplicationData()
                 } else {
                     unsubscribeToBatteryComplicationData()
@@ -686,6 +765,8 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             }
 
             calendar.timeInMillis = System.currentTimeMillis()
+
+            if (DEBUG_LOGS) Log.d(TAG, "draw")
 
             watchFaceDrawer.draw(
                 canvas,
@@ -697,6 +778,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                 if( shouldShowWeather ) { weatherComplicationData } else { null },
                 if( shouldShowBattery ) { batteryComplicationData } else { null },
                 if (storage.showPhoneBattery()) { phoneBatteryStatus } else { null },
+                if (storage.isNotificationsSyncActivated()) { phoneNotifications.notificationsStateFlow.value } else { null },
             )
 
             if( !ambient && isVisible && !timeDependentUpdateHandler.hasUpdateScheduled() ) {
@@ -710,7 +792,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         @Suppress("SameParameterValue")
         private fun getNextComplicationUpdateDelay(): Long? {
             if( storage.showSecondsRing() ) {
-                return 1000
+                return if (storage.useSweepingSecondsRingMotion()) 50 else 1000
             }
 
             var minValue = Long.MAX_VALUE
@@ -751,9 +833,11 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
                     calendar.timeZone = TimeZone.getDefault()
 
                     val newComplicationColors = storage.getComplicationColors()
-                    if( newComplicationColors != complicationsColors ) {
+                    val newShowComplicationsColorsInAmbient = storage.showColorsInAmbientMode()
+                    if( newComplicationColors != complicationsColors || showComplicationColorsInAmbient != newShowComplicationsColorsInAmbient ) {
                         complicationsColors = newComplicationColors
-                        setComplicationsActiveAndAmbientColors(complicationsColors)
+                        showComplicationColorsInAmbient = newShowComplicationsColorsInAmbient
+                        setComplicationsActiveAndAmbientColors(complicationsColors, newShowComplicationsColorsInAmbient)
                     }
 
                     invalidate()
@@ -784,19 +868,31 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             service.unregisterReceiver(timeZoneReceiver)
         }
 
-        private fun setComplicationsActiveAndAmbientColors(complicationColors: ComplicationColors) {
-            watchFaceDrawer.onComplicationColorsUpdate(complicationColors, complicationDataSparseArray)
+        private fun setComplicationsActiveAndAmbientColors(complicationColors: ComplicationColors, showComplicationsColorsInAmbient: Boolean) {
+            watchFaceDrawer.onComplicationColorsUpdate(complicationColors, complicationDataSparseArray, showComplicationsColorsInAmbient)
         }
 
         override fun onDataChanged(dataEvents: DataEventBuffer) {
-            for (event in dataEvents) {
-                if (event.type == DataEvent.TYPE_CHANGED) {
-                    val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
+            try {
+                for (event in dataEvents) {
+                    if (event.type == DataEvent.TYPE_CHANGED) {
+                        val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
 
-                    if (dataMap.containsKey(DATA_KEY_PREMIUM)) {
-                        handleIsPremiumCallback(dataMap.getBoolean(DATA_KEY_PREMIUM))
+                        when(event.dataItem.uri.path) {
+                            "/premium" -> {
+                                if (dataMap.containsKey(DATA_KEY_PREMIUM)) {
+                                    handleIsPremiumCallback(dataMap.getBoolean(DATA_KEY_PREMIUM))
+                                }
+                            }
+                            "/notifications" -> {
+                                phoneNotifications.onNewData(dataMap)
+                            }
+                        }
+
                     }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error handling new data", e)
             }
         }
 
@@ -884,27 +980,82 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         }
 
         private fun syncPhoneBatteryStatus() {
+            if (DEBUG_LOGS) Log.d(TAG, "syncPhoneBatteryStatus")
+
             launch {
                 try {
                     val capabilityInfo = withTimeout(5000) {
                         Wearable.getCapabilityClient(service).getCapability(BuildConfig.COMPANION_APP_CAPABILITY, CapabilityClient.FILTER_REACHABLE).await()
                     }
 
+                    val phoneNode = capabilityInfo.nodes.findBestCompanionNode()
+                    if (DEBUG_LOGS) Log.d(TAG, "syncPhoneBatteryStatus, phone node: $phoneNode")
+
                     if (storage.showPhoneBattery()) {
-                        capabilityInfo.nodes.findBestNode()?.startPhoneBatterySync(this@PixelMinimalWatchFace)
+                        if (DEBUG_LOGS) Log.d(TAG, "syncPhoneBatteryStatus, startPhoneBatterySync")
+                        phoneNode?.startPhoneBatterySync(this@PixelMinimalWatchFace)
                     } else {
-                        capabilityInfo.nodes.findBestNode()?.stopPhoneBatterySync(this@PixelMinimalWatchFace)
+                        if (DEBUG_LOGS) Log.d(TAG, "syncPhoneBatteryStatus, stopPhoneBatterySync")
+                        phoneNode?.stopPhoneBatterySync(this@PixelMinimalWatchFace)
                     }
 
-                } catch (t: Throwable) {
-                    Log.e("PixelWatchFace", "Error while sending phone battery sync signal", t)
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+
+                    Log.e(TAG, "Error while sending phone battery sync signal", e)
                 }
+            }
+        }
+
+        private fun syncNotificationsDisplayStatus() {
+            if (DEBUG_LOGS) Log.d(TAG, "syncNotificationsDisplayStatus")
+
+            launch {
+                try {
+                    val capabilityInfo = withTimeout(5000) {
+                        Wearable.getCapabilityClient(service).getCapability(BuildConfig.COMPANION_APP_CAPABILITY, CapabilityClient.FILTER_REACHABLE).await()
+                    }
+
+                    val phoneNode = capabilityInfo.nodes.findBestCompanionNode()
+                    if (DEBUG_LOGS) Log.d(TAG, "syncNotificationsDisplayStatus, phone node: $phoneNode")
+
+                    if (storage.isNotificationsSyncActivated()) {
+                        if (DEBUG_LOGS) Log.d(TAG, "syncNotificationsDisplayStatus, startNotificationsSync")
+                        phoneNode?.startNotificationsSync(this@PixelMinimalWatchFace)
+                    } else {
+                        if (DEBUG_LOGS) Log.d(TAG, "syncNotificationsDisplayStatus, stopNotificationsSync")
+                        phoneNode?.stopNotificationsSync(this@PixelMinimalWatchFace)
+                    }
+
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+
+                    Log.e(TAG, "Error while sending notifications sync signal", e)
+                }
+            }
+
+            launch {
+                storage.watchIsNotificationsSyncActivated()
+                    .collectLatest { activated ->
+                        if (!activated) {
+                            Log.d(TAG, "Notifications from phone deactivated: invalidate")
+                            invalidate()
+                        } else {
+                            phoneNotifications.notificationsStateFlow
+                                .collect { state ->
+                                    Log.d(TAG, "Notifications from phone received, invalidate: $state")
+                                    invalidate()
+                                }
+                        }
+                    }
+
             }
         }
     }
 
     companion object {
         private const val HALF_HOUR_MS = 1000*60*30
+        private const val TEN_MINS_MS = 1000*60*10
 
         const val LEFT_COMPLICATION_ID = 100
         const val RIGHT_COMPLICATION_ID = 101
