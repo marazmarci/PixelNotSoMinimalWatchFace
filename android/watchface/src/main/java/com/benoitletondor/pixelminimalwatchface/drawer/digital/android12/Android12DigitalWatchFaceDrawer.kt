@@ -32,8 +32,10 @@ import com.benoitletondor.pixelminimalwatchface.*
 import com.benoitletondor.pixelminimalwatchface.drawer.WatchFaceDrawer
 import com.benoitletondor.pixelminimalwatchface.helper.*
 import com.benoitletondor.pixelminimalwatchface.model.ComplicationColors
+import com.benoitletondor.pixelminimalwatchface.model.ComplicationColorsProvider
 import com.benoitletondor.pixelminimalwatchface.model.Storage
 import com.benoitletondor.pixelminimalwatchface.model.getPrimaryColorForComplicationId
+import com.benoitletondor.pixelminimalwatchface.model.getSecondaryColorForComplicationId
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
@@ -66,8 +68,6 @@ class Android12DigitalWatchFaceDrawer(
     private val timeColorDimmed: Int = ContextCompat.getColor(context, R.color.face_time_dimmed)
     @ColorInt
     private val dateAndBatteryColorDimmed: Int = ContextCompat.getColor(context, R.color.face_date_dimmed)
-    @ColorInt
-    private val complicationTitleColor: Int = ContextCompat.getColor(context, R.color.complication_title_color)
     private val batteryIconPaint: Paint = Paint()
     private var batteryIconSize = 0
     private val batteryLevelPaint = Paint().apply {
@@ -135,11 +135,12 @@ class Android12DigitalWatchFaceDrawer(
         ACTIVE_COMPLICATIONS.forEach { complicationId ->
             val complicationDrawable = complicationDrawableSparseArray[complicationId]
             val primaryComplicationColor = complicationColors.getPrimaryColorForComplicationId(complicationId)
+            val secondaryComplicationColor = complicationColors.getSecondaryColorForComplicationId(complicationId)
 
             complicationDrawable.setTitleSizeActive(titleSize)
             complicationDrawable.setTitleSizeAmbient(titleSize)
-            complicationDrawable.setTitleColorActive(complicationTitleColor)
-            complicationDrawable.setTitleColorAmbient(complicationTitleColor)
+            complicationDrawable.setTitleColorActive(secondaryComplicationColor)
+            complicationDrawable.setTitleColorAmbient(if (showComplicationsColorsInAmbient && secondaryComplicationColor != ComplicationColorsProvider.defaultGrey) secondaryComplicationColor.dimmed() else ComplicationColorsProvider.defaultGrey)
             complicationDrawable.setIconColorActive(primaryComplicationColor)
             complicationDrawable.setIconColorAmbient(if (showComplicationsColorsInAmbient) primaryComplicationColor.dimmed() else dateAndBatteryColorDimmed)
             complicationDrawable.setTextTypefaceActive(productSansRegularFont)
@@ -167,10 +168,12 @@ class Android12DigitalWatchFaceDrawer(
         complicationDrawable.setComplicationData(data)
 
         val primaryComplicationColor = complicationColors.getPrimaryColorForComplicationId(complicationId)
+        val secondaryComplicationColor = complicationColors.getSecondaryColorForComplicationId(complicationId)
         val primaryComplicationColorDimmed = primaryComplicationColor.dimmed()
+        val secondaryComplicationColorDimmed = secondaryComplicationColor.dimmed()
         if( data != null && data.icon != null ) {
-            complicationDrawable.setTextColorActive(complicationTitleColor)
-            complicationDrawable.setTextColorAmbient(complicationTitleColor)
+            complicationDrawable.setTextColorActive(secondaryComplicationColor)
+            complicationDrawable.setTextColorAmbient(if (showComplicationsColorsInAmbient && secondaryComplicationColor != ComplicationColorsProvider.defaultGrey) secondaryComplicationColorDimmed else ComplicationColorsProvider.defaultGrey)
 
             if( data.shortTitle == null ) {
                 complicationDrawable.setTextSizeActive(titleSize)

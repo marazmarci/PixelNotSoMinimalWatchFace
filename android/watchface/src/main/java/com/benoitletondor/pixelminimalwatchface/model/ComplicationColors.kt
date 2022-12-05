@@ -29,6 +29,14 @@ data class ComplicationColors(
     val android12TopRightColor: ComplicationColor,
     val android12BottomLeftColor: ComplicationColor,
     val android12BottomRightColor: ComplicationColor,
+    val leftSecondaryColor: ComplicationColor,
+    val middleSecondaryColor: ComplicationColor,
+    val rightSecondaryColor: ComplicationColor,
+    val bottomSecondaryColor: ComplicationColor,
+    val android12TopLeftSecondaryColor: ComplicationColor,
+    val android12TopRightSecondaryColor: ComplicationColor,
+    val android12BottomLeftSecondaryColor: ComplicationColor,
+    val android12BottomRightSecondaryColor: ComplicationColor,
 )
 
 data class ComplicationColorCategory(
@@ -79,4 +87,17 @@ fun ComplicationColors.getPrimaryColorForComplicationId(complicationId: Int): In
     PixelMinimalWatchFace.ANDROID_12_BOTTOM_LEFT_COMPLICATION_ID -> { android12BottomLeftColor.color }
     PixelMinimalWatchFace.ANDROID_12_BOTTOM_RIGHT_COMPLICATION_ID -> { android12BottomRightColor.color }
     else -> { rightColor.color }
+}
+
+@ColorInt
+fun ComplicationColors.getSecondaryColorForComplicationId(complicationId: Int): Int = when (complicationId) {
+    PixelMinimalWatchFace.LEFT_COMPLICATION_ID -> { leftSecondaryColor.color }
+    PixelMinimalWatchFace.MIDDLE_COMPLICATION_ID -> { middleSecondaryColor.color }
+    PixelMinimalWatchFace.BOTTOM_COMPLICATION_ID -> { bottomSecondaryColor.color }
+    PixelMinimalWatchFace.RIGHT_COMPLICATION_ID -> { rightSecondaryColor.color }
+    PixelMinimalWatchFace.ANDROID_12_TOP_LEFT_COMPLICATION_ID -> { android12TopLeftSecondaryColor.color }
+    PixelMinimalWatchFace.ANDROID_12_TOP_RIGHT_COMPLICATION_ID -> { android12TopRightSecondaryColor.color }
+    PixelMinimalWatchFace.ANDROID_12_BOTTOM_LEFT_COMPLICATION_ID -> { android12BottomLeftSecondaryColor.color }
+    PixelMinimalWatchFace.ANDROID_12_BOTTOM_RIGHT_COMPLICATION_ID -> { android12BottomRightSecondaryColor.color }
+    else -> { rightSecondaryColor.color }
 }

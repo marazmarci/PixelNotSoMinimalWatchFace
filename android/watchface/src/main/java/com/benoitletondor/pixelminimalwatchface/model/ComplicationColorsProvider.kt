@@ -25,6 +25,7 @@ object ComplicationColorsProvider {
     private val wearOSYellowColor = Color.parseColor("#F2BD00")
     private val wearOSRedColor = Color.parseColor("#da482f")
     private val wearOSGreenColor = Color.parseColor("#54A74C")
+    val defaultGrey = Color.parseColor("#AAAAAA")
 
     private val wearOSColors = linkedMapOf(
         wearOSBlueColor to "WearOS blue",
@@ -112,14 +113,22 @@ object ComplicationColorsProvider {
 
     fun getDefaultComplicationColors(): ComplicationColors {
         return ComplicationColors(
-            ComplicationColor(wearOSBlueColor, defaultColorName, true),
-            ComplicationColor(wearOSYellowColor, defaultColorName, true),
-            ComplicationColor(wearOSRedColor, defaultColorName, true),
-            ComplicationColor(wearOSGreenColor, defaultColorName, true),
-            ComplicationColor(wearOSBlueColor, defaultColorName, true),
-            ComplicationColor(wearOSRedColor, defaultColorName, true),
-            ComplicationColor(wearOSYellowColor, defaultColorName, true),
-            ComplicationColor(wearOSGreenColor, defaultColorName, true),
+            leftColor = ComplicationColor(wearOSBlueColor, defaultColorName, true),
+            middleColor = ComplicationColor(wearOSYellowColor, defaultColorName, true),
+            rightColor = ComplicationColor(wearOSRedColor, defaultColorName, true),
+            bottomColor = ComplicationColor(wearOSGreenColor, defaultColorName, true),
+            android12TopLeftColor = ComplicationColor(wearOSBlueColor, defaultColorName, true),
+            android12TopRightColor = ComplicationColor(wearOSRedColor, defaultColorName, true),
+            android12BottomLeftColor = ComplicationColor(wearOSYellowColor, defaultColorName, true),
+            android12BottomRightColor = ComplicationColor(wearOSGreenColor, defaultColorName, true),
+            leftSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            middleSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            rightSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            bottomSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            android12TopLeftSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            android12TopRightSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            android12BottomLeftSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
+            android12BottomRightSecondaryColor = ComplicationColor(defaultGrey, defaultColorName, true),
         )
     }
 

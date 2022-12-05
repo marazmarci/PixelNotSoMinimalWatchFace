@@ -22,6 +22,5 @@
     <color name="face_date_dimmed">#DDD</color>
     <color name="config_footer_color">#CCC</color>
 
-    <color name="complication_title_color">#AAA</color>
     <color name="transparent">#00000000</color>
 </resources>

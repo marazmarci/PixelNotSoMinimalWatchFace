@@ -38,6 +38,14 @@ private const val KEY_ANDROID_12_TOP_LEFT_COMPLICATION_COLOR = "android12TopLeft
 private const val KEY_ANDROID_12_TOP_RIGHT_COMPLICATION_COLOR = "android12TopRightComplicationColor"
 private const val KEY_ANDROID_12_BOTTOM_LEFT_COMPLICATION_COLOR = "android12BottomLeftComplicationColor"
 private const val KEY_ANDROID_12_BOTTOM_RIGHT_COMPLICATION_COLOR = "android12BottomRightComplicationColor"
+private const val KEY_LEFT_SECONDARY_COMPLICATION_COLOR = "leftComplicationSecondaryColor"
+private const val KEY_MIDDLE_SECONDARY_COMPLICATION_COLOR = "middleComplicationSecondaryColor"
+private const val KEY_RIGHT_SECONDARY_COMPLICATION_COLOR = "rightComplicationSecondaryColor"
+private const val KEY_BOTTOM_SECONDARY_COMPLICATION_COLOR = "bottomComplicationSecondaryColor"
+private const val KEY_ANDROID_12_TOP_LEFT_SECONDARY_COMPLICATION_COLOR = "android12TopLeftComplicationSecondaryColor"
+private const val KEY_ANDROID_12_TOP_RIGHT_SECONDARY_COMPLICATION_COLOR = "android12TopRightComplicationSecondaryColor"
+private const val KEY_ANDROID_12_BOTTOM_LEFT_SECONDARY_COMPLICATION_COLOR = "android12BottomLeftComplicationSecondaryColor"
+private const val KEY_ANDROID_12_BOTTOM_RIGHT_SECONDARY_COMPLICATION_COLOR = "android12BottomRightComplicationSecondaryColor"
 private const val KEY_USER_PREMIUM = "user_premium"
 private const val KEY_USE_24H_TIME_FORMAT = "use24hTimeFormat"
 private const val KEY_INSTALL_TIMESTAMP = "installTS"
@@ -257,6 +265,46 @@ class StorageImpl(
             baseColor
         )
 
+        val leftSecondaryColor = sharedPreferences.getInt(
+            KEY_LEFT_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val middleSecondaryColor = sharedPreferences.getInt(
+            KEY_MIDDLE_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val rightSecondaryColor = sharedPreferences.getInt(
+            KEY_RIGHT_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val bottomSecondaryColor = sharedPreferences.getInt(
+            KEY_BOTTOM_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val android12TopLeftSecondaryColor = sharedPreferences.getInt(
+            KEY_ANDROID_12_TOP_LEFT_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val android12TopRightSecondaryColor = sharedPreferences.getInt(
+            KEY_ANDROID_12_TOP_RIGHT_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val android12BottomLeftSecondaryColor = sharedPreferences.getInt(
+            KEY_ANDROID_12_BOTTOM_LEFT_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
+        val android12BottomRightSecondaryColor = sharedPreferences.getInt(
+            KEY_ANDROID_12_BOTTOM_RIGHT_SECONDARY_COMPLICATION_COLOR,
+            ComplicationColorsProvider.defaultGrey,
+        )
+
         val defaultColors = ComplicationColorsProvider.getDefaultComplicationColors()
 
         return ComplicationColors(
@@ -268,6 +316,14 @@ class StorageImpl(
             if( android12TopRightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12TopRightColor } else { ComplicationColor(android12TopRightColor, ComplicationColorsProvider.getLabelForColor(android12TopRightColor),false) },
             if( android12BottomLeftColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12BottomLeftColor } else { ComplicationColor(android12BottomLeftColor, ComplicationColorsProvider.getLabelForColor(android12BottomLeftColor),false) },
             if( android12BottomRightColor == DEFAULT_COMPLICATION_COLOR ) { defaultColors.android12BottomRightColor } else { ComplicationColor(android12BottomRightColor, ComplicationColorsProvider.getLabelForColor(android12BottomRightColor),false) },
+            if( leftSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.leftSecondaryColor } else { ComplicationColor(leftSecondaryColor, ComplicationColorsProvider.getLabelForColor(leftSecondaryColor),false) },
+            if( middleSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.middleSecondaryColor } else { ComplicationColor(middleSecondaryColor, ComplicationColorsProvider.getLabelForColor(middleSecondaryColor),false) },
+            if( rightSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.rightSecondaryColor } else { ComplicationColor(rightSecondaryColor, ComplicationColorsProvider.getLabelForColor(rightSecondaryColor),false) },
+            if( bottomSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.bottomSecondaryColor } else { ComplicationColor(bottomSecondaryColor, ComplicationColorsProvider.getLabelForColor(bottomSecondaryColor),false) },
+            if( android12TopLeftSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.android12TopLeftSecondaryColor } else { ComplicationColor(android12TopLeftSecondaryColor, ComplicationColorsProvider.getLabelForColor(android12TopLeftSecondaryColor),false) },
+            if( android12TopRightSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.android12TopRightSecondaryColor } else { ComplicationColor(android12TopRightSecondaryColor, ComplicationColorsProvider.getLabelForColor(android12TopRightSecondaryColor),false) },
+            if( android12BottomLeftSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.android12BottomLeftSecondaryColor } else { ComplicationColor(android12BottomLeftSecondaryColor, ComplicationColorsProvider.getLabelForColor(android12BottomLeftSecondaryColor),false) },
+            if( android12BottomRightSecondaryColor == ComplicationColorsProvider.defaultGrey ) { defaultColors.android12BottomRightSecondaryColor } else { ComplicationColor(android12BottomRightSecondaryColor, ComplicationColorsProvider.getLabelForColor(android12BottomRightSecondaryColor),false) },
         )
     }
 
