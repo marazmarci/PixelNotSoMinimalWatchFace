@@ -19,7 +19,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.ProductDetails
 import com.benoitletondor.pixelminimalwatchfacecompanion.billing.Billing
 import com.benoitletondor.pixelminimalwatchfacecompanion.helper.MutableLiveFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,17 +54,17 @@ class DonationViewModel @Inject constructor(
                 stateMutableFlow.value = State.Loading
 
                 try {
-                    val skus = billing.getDonationsSKUs()
+                    val productDetails = billing.getDonationsProductDetails()
                     stateMutableFlow.value = State.Loaded(
-                        items = skus.map { skuDetails ->
+                        items = productDetails.map { productDetail ->
                             DonationItem(
-                                sku = skuDetails.sku,
-                                title = skuDetails.title.replace("(Pixel Minimal Watch Face)", ""),
-                                description = skuDetails.description,
-                                price = skuDetails.price,
+                                sku = productDetail.productId,
+                                title = productDetail.name,
+                                description = productDetail.description,
+                                price = productDetail.oneTimePurchaseOfferDetails?.formattedPrice ?: "?",
                             )
                         },
-                        SKUs = skus,
+                        productDetails = productDetails,
                     )
                 } catch (error: Throwable) {
                     Log.e("DonationViewModel", "Error while loading SKUs", error)
@@ -78,19 +78,19 @@ class DonationViewModel @Inject constructor(
         loadSKUs()
     }
 
-    fun onDonateButtonClicked(sku: String, activity: Activity) {
+    fun onDonateButtonClicked(productId: String, activity: Activity) {
         val loadedState = state as? State.Loaded ?: return
-        val skuDetails = loadedState.SKUs.firstOrNull { it.sku == sku } ?: return
+        val productDetails = loadedState.productDetails.firstOrNull { it.productId == productId } ?: return
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val purchaseStatus = billing.launchDonationPurchaseFlow(activity, skuDetails)
+                    val purchaseStatus = billing.launchDonationPurchaseFlow(activity, productDetails)
                     if( purchaseStatus ) {
-                        donationSuccessEventMutableFlow.emit(skuDetails.price)
+                        donationSuccessEventMutableFlow.emit(productDetails.oneTimePurchaseOfferDetails?.formattedPrice ?: "?")
                     }
                 } catch (error: Throwable) {
-                    Log.e("DonationViewModel", "Error while donation for SKU: $sku", error)
+                    Log.e("DonationViewModel", "Error while donation for SKU: $productId", error)
                     errorPayingEventMutableFlow.emit(error)
                 }
             }
@@ -100,7 +100,7 @@ class DonationViewModel @Inject constructor(
     sealed class State {
         object Loading : State()
         class ErrorLoading(val error: Throwable) : State()
-        class Loaded(val items: List<DonationItem>, val SKUs: List<SkuDetails>) : State()
+        class Loaded(val items: List<DonationItem>, val productDetails: List<ProductDetails>) : State()
     }
 
     data class DonationItem(

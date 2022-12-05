@@ -16,7 +16,7 @@
 package com.benoitletondor.pixelminimalwatchfacecompanion.billing
 
 import android.app.Activity
-import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.ProductDetails
 import kotlinx.coroutines.flow.Flow
 
 interface Billing {
@@ -26,8 +26,8 @@ interface Billing {
     fun updatePremiumStatusIfNeeded()
     suspend fun launchPremiumPurchaseFlow(activity: Activity): PremiumPurchaseFlowResult
 
-    suspend fun getDonationsSKUs(): List<SkuDetails>
-    suspend fun launchDonationPurchaseFlow(activity: Activity, sku: SkuDetails): Boolean
+    suspend fun getDonationsProductDetails(): List<ProductDetails>
+    suspend fun launchDonationPurchaseFlow(activity: Activity, sku: ProductDetails): Boolean
 }
 
 sealed class PremiumPurchaseFlowResult {
