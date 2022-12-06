@@ -26,7 +26,6 @@ import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.benoitletondor.pixelminimalwatchfacecompanion.ForegroundService
-import com.benoitletondor.pixelminimalwatchfacecompanion.NotificationsListener
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -114,7 +113,7 @@ class DeviceImpl @Inject constructor(
                         icon = context.packageManager.getApplicationIcon(it),
                     )
                 }
-                .sortedBy { it.appName }
+                .sortedBy { it.appName.lowercase() }
         }
     }
 
