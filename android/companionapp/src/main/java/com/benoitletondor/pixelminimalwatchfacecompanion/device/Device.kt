@@ -16,6 +16,9 @@
 package com.benoitletondor.pixelminimalwatchfacecompanion.device
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 
 interface Device {
     fun isBatteryOptimizationOff(): Boolean
@@ -24,4 +27,13 @@ interface Device {
     fun isForegroundServiceStarted(): Boolean
     fun finishForegroundService()
     fun hasNotificationsListenerPermission(): Boolean
+    suspend fun listAllApps(): List<AppInfo>
+
+    @Stable
+    @Immutable
+    data class AppInfo(
+        val packageName: String,
+        val appName: String,
+        val icon: Drawable,
+    )
 }

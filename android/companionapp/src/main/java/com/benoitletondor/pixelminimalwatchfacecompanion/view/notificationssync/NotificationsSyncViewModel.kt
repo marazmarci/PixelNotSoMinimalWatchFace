@@ -59,6 +59,12 @@ class NotificationsSyncViewModel @Inject constructor(
         }
     }
 
+    fun onFilterAppsButtonPressed() {
+        viewModelScope.launch {
+            eventMutableFlow.emit(Event.OpenFilterApps)
+        }
+    }
+
     fun onPermissionActivityResult() {
         hasNotificationsListenerPermissionMutableFlow.value = device.hasNotificationsListenerPermission()
     }
@@ -78,6 +84,7 @@ class NotificationsSyncViewModel @Inject constructor(
     sealed class Event {
         object OpenNotificationsPermissionActivity : Event()
         object OpenSupportEmail : Event()
+        object OpenFilterApps : Event()
     }
 
     sealed class State {

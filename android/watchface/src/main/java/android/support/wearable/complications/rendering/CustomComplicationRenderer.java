@@ -42,13 +42,13 @@ import android.view.Gravity;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import com.benoitletondor.pixelminimalwatchface.helper.ContextExtensionKt;
-
 import java.util.Objects;
 
 import static android.support.wearable.complications.ComplicationData.TYPE_RANGED_VALUE;
 import static android.support.wearable.complications.ComplicationData.TYPE_SHORT_TEXT;
 import static android.text.Layout.Alignment.ALIGN_CENTER;
+
+import com.benoitletondor.pixelminimalwatchface.common.helper.ContextExtensionKt;
 
 /**
  * This is a copy of ComplicationRenderer code with bad hacks, don't look at it, it's horrible!
