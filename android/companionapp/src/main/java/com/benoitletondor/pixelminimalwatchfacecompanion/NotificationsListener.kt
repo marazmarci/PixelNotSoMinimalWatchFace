@@ -109,6 +109,10 @@ class NotificationsListener : NotificationListenerService() {
                 val iconIds = mutableListOf<Int>()
                 val iconIdsToIcons = mutableMapOf<Int, Icon>()
                 activeNotifications.forEach { notification ->
+                    if (notification.isOngoing) {
+                        return@forEach
+                    }
+
                     if (notification.groupKey.isNullOrBlank() || notification.groupKey !in groupIds) {
                         iconIds.add(notification.notification.smallIcon.id())
                         iconIdsToIcons[notification.notification.smallIcon.id()] = notification.notification.smallIcon

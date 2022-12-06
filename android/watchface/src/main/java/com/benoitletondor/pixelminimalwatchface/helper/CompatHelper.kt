@@ -36,6 +36,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.benoitletondor.pixelminimalwatchface.Device
 import com.benoitletondor.pixelminimalwatchface.PixelMinimalWatchFace
 import com.benoitletondor.pixelminimalwatchface.R
+import com.benoitletondor.pixelminimalwatchface.common.helper.dpToPx
 import com.benoitletondor.pixelminimalwatchface.model.Storage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure

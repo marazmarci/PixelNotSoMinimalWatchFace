@@ -24,7 +24,7 @@ import androidx.core.content.ContextCompat
 import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
 import com.benoitletondor.pixelminimalwatchface.PhoneNotifications
 import com.benoitletondor.pixelminimalwatchface.R
-import com.benoitletondor.pixelminimalwatchface.helper.dpToPx
+import com.benoitletondor.pixelminimalwatchface.common.helper.dpToPx
 import kotlin.math.min
 
 interface NotificationsDrawer {

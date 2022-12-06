@@ -48,6 +48,7 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.view.debugphonebatterys
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.donation.Donation
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.subviews.*
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.NotificationsSyncView
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.filter.NotificationsSyncFilterView
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.onboarding.OnboardingView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +60,7 @@ private const val NAV_DONATION_ROUTE = "donation"
 private const val NAV_ONBOARDING_ROUTE = "onboarding"
 private const val NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE = "phoneBatterySyncDebug"
 private const val NAV_NOTIFICATIONS_SYNC_ROUTE = "notificationsSync"
+const val NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE = "notificationsSyncFilterRoute"
 private const val DEEPLINK_SCHEME = "pixelminimalwatchface"
 
 @AndroidEntryPoint
@@ -102,6 +104,11 @@ private fun MainView() {
                 deepLinks = listOf(navDeepLink { uriPattern = "$DEEPLINK_SCHEME://notifications" }),
             ) {
                 NotificationsSyncView(navController, hiltViewModel())
+            }
+            composable(
+                route = NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE,
+            ) {
+                NotificationsSyncFilterView(navController, hiltViewModel())
             }
         }
     }

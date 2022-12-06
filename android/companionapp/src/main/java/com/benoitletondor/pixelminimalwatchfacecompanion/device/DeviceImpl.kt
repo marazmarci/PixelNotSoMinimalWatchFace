@@ -20,6 +20,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
@@ -28,6 +29,8 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.ForegroundService
 import com.benoitletondor.pixelminimalwatchfacecompanion.NotificationsListener
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -90,6 +93,28 @@ class DeviceImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "Failed to check notification listener permission", e)
             false
+        }
+    }
+
+    override suspend fun listAllApps(): List<Device.AppInfo> {
+        return withContext(Dispatchers.IO) {
+            val appInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.packageManager.getInstalledApplications(PackageManager.ApplicationInfoFlags.of(0))
+            } else {
+                @Suppress("DEPRECATION")
+                context.packageManager.getInstalledApplications(0)
+            }
+
+            return@withContext appInfos
+                .filter { it.enabled }
+                .map {
+                    Device.AppInfo(
+                        packageName = it.packageName,
+                        appName = context.packageManager.getApplicationLabel(it).toString(),
+                        icon = context.packageManager.getApplicationIcon(it),
+                    )
+                }
+                .sortedBy { it.appName }
         }
     }
 

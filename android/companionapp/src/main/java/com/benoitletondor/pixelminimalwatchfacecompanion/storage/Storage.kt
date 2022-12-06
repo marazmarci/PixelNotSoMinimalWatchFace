@@ -30,4 +30,7 @@ interface Storage {
     fun isNotificationsSyncActivatedFlow(): Flow<Boolean>
     fun isForegroundServiceEnabled(): Boolean
     fun setForegroundServiceEnabled(enabled: Boolean)
+    fun watchNotificationSyncDisabledPackages(): Flow<Set<String>>
+    fun setNotificationsSyncAppDisabled(packageName: String)
+    fun removeNotificationsSyncAppDisabled(packageName: String)
 }
