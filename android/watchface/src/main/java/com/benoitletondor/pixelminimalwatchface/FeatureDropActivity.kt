@@ -36,6 +36,7 @@ import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
 import com.benoitletondor.pixelminimalwatchface.compose.component.ChipButton
 import com.benoitletondor.pixelminimalwatchface.compose.component.RotatoryAwareLazyColumn
 import com.benoitletondor.pixelminimalwatchface.compose.productSansFontFamily
+import com.benoitletondor.pixelminimalwatchface.helper.isScreenRound
 import com.benoitletondor.pixelminimalwatchface.settings.SettingsActivity
 
 class FeatureDropActivity : ComponentActivity() {
@@ -51,17 +52,19 @@ class FeatureDropActivity : ComponentActivity() {
         WearTheme {
             val context = LocalContext.current
             val isActive = remember { PixelMinimalWatchFace.isActive(context) }
+            val isScreenRound = remember { context.isScreenRound() }
 
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
             ) {
-                Items(isActive)
+                Items(isActive, isScreenRound)
             }
         }
     }
 
     private fun LazyListScope.Items(
         isActive: Boolean,
+        isScreenRound: Boolean,
     ) {
         item(key = "Title") {
             Text(
@@ -75,7 +78,7 @@ class FeatureDropActivity : ComponentActivity() {
 
         item(key = "Subtitle") {
             Text(
-                text = "Autumn feature drop",
+                text = "Winter feature drop",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillParentMaxWidth(),
                 fontSize = 16.sp,
@@ -93,34 +96,24 @@ class FeatureDropActivity : ComponentActivity() {
             )
         }
 
-        item(key = "Item1") {
-            Text(
-                text = "- Lots of new colors have been added to match the new Pixel Watch ones. Enjoy!",
-            )
+        if (isScreenRound) {
+            item(key = "Item1") {
+                Text(
+                    text = "- Seconds ring: New option of using a smooth animation",
+                )
+            }
         }
 
-        if (Device.isWearOS3) {
-            item(key = "Item2") {
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = "- You can now enable colors in ambient mode",
-                )
-            }
-
-            item(key = "Item2_2") {
-                Text(
-                    text = "Use with caution: it can increase battery usage and might cause image retention issues.",
-                    fontSize = 13.sp,
-                    modifier = Modifier.padding(
-                        bottom = 6.dp
-                    ),
-                )
-            }
+        item(key = "Item2") {
+            Text(
+                text = "- Customize the widgets secondary color",
+            )
         }
 
         item(key = "Item3") {
             Text(
-                text = "- (Premium) Phone notification icons: Some background notifications should now be ignored correctly.",
+                modifier = Modifier.padding(top = 4.dp),
+                text = "- Filter apps from phone notifications sync. On the phone companion app, tap the \"Troubleshoot\" button and \"Setup notification icons sync\"",
             )
         }
 
@@ -177,7 +170,15 @@ class FeatureDropActivity : ComponentActivity() {
     @Composable
     private fun ActivePreview() {
         LazyColumn {
-            Items(isActive = true)
+            Items(isActive = true, isScreenRound = false)
+        }
+    }
+
+    @Preview(widthDp = 200, heightDp = 200)
+    @Composable
+    private fun ActiveRoundPreview() {
+        LazyColumn {
+            Items(isActive = true, isScreenRound = true)
         }
     }
 
@@ -185,7 +186,15 @@ class FeatureDropActivity : ComponentActivity() {
     @Composable
     private fun InactivePreview() {
         LazyColumn {
-            Items(isActive = false)
+            Items(isActive = false, isScreenRound = false)
+        }
+    }
+
+    @Preview(widthDp = 200, heightDp = 200)
+    @Composable
+    private fun InactiveRoundPreview() {
+        LazyColumn {
+            Items(isActive = false, isScreenRound = true)
         }
     }
 }
