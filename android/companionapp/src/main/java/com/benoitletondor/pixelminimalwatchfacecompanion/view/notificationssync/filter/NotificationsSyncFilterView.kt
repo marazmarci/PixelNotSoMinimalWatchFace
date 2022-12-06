@@ -1,5 +1,6 @@
 package com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.filter
 
+import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -21,13 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
 import com.benoitletondor.pixelminimalwatchface.common.helper.dpToPx
 import com.benoitletondor.pixelminimalwatchfacecompanion.device.Device
+import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarScaffold
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.ErrorLayout
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.LoadingLayout
@@ -104,10 +108,10 @@ private fun AppRow(
             .padding(start = 20.dp, top = 6.dp, bottom = 6.dp, end = 10.dp)
     ) {
         val context = LocalContext.current
-        val bitmap = remember(key1 = app.appInfo.packageName) { app.appInfo.icon.toBitmap(context.dpToPx(40), context.dpToPx(40)).asImageBitmap() }
+        val iconSize = remember { context.dpToPx(40) }
 
         Image(
-            bitmap = bitmap,
+            bitmap = app.appInfo.icon.toBitmap(iconSize, iconSize).asImageBitmap(),
             contentDescription = "App icon",
             modifier = Modifier
                 .width(40.dp)
@@ -141,4 +145,67 @@ private fun AppRow(
 @Composable
 private fun Loading() {
     LoadingLayout()
+}
+
+@Composable
+@Preview(showSystemUi = true, name = "Sync deactivated")
+private fun ErrorPreview() {
+    AppMaterialTheme {
+        NotificationsSyncFilterAppsLayout(
+            state = NotificationsSyncFilterViewModel.State.Error(Exception("Test")),
+            onRetryButtonPressed = {},
+            onAppRowTapped = { _, _ -> },
+        )
+    }
+}
+
+@Composable
+@Preview(showSystemUi = true, name = "Loading")
+private fun LoadingPreview() {
+    AppMaterialTheme {
+        NotificationsSyncFilterAppsLayout(
+            state = NotificationsSyncFilterViewModel.State.Loading,
+            onRetryButtonPressed = {},
+            onAppRowTapped = { _, _ -> },
+        )
+    }
+}
+
+@Composable
+@Preview(showSystemUi = true, name = "Loaded")
+private fun LoadedPreview() {
+    AppMaterialTheme {
+        NotificationsSyncFilterAppsLayout(
+            state = NotificationsSyncFilterViewModel.State.Loaded(
+                apps = listOf(
+                    NotificationsSyncFilterViewModel.App(
+                        disabled = false,
+                        appInfo = Device.AppInfo(
+                            packageName = "com.test.1",
+                            appName = "Test app 1",
+                            icon = ColorDrawable(Color.Blue.toArgb()),
+                        )
+                    ),
+                    NotificationsSyncFilterViewModel.App(
+                        disabled = false,
+                        appInfo = Device.AppInfo(
+                            packageName = "com.test.2",
+                            appName = "Test app 2 with super long title that should overflow to see how it looks",
+                            icon = ColorDrawable(Color.Red.toArgb()),
+                        )
+                    ),
+                    NotificationsSyncFilterViewModel.App(
+                        disabled = true,
+                        appInfo = Device.AppInfo(
+                            packageName = "com.test.3",
+                            appName = "Test app 3",
+                            icon = ColorDrawable(Color.Green.toArgb()),
+                        )
+                    ),
+                ),
+            ),
+            onRetryButtonPressed = {},
+            onAppRowTapped = { _, _ -> },
+        )
+    }
 }
