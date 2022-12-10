@@ -31,9 +31,9 @@ android {
 
     defaultConfig {
         applicationId "com.benoitletondor.pixelminimalwatchface"
-        minSdk 25
-        targetSdk 32
-        versionCode 10156
+        minSdkVersion 25
+        targetSdkVersion 32
+        versionCode 10158
         versionName "2.3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
