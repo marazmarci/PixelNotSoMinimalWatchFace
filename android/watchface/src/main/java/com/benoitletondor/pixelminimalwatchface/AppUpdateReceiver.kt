@@ -46,7 +46,7 @@ class AppUpdateReceiver : BroadcastReceiver() {
 
     @Suppress("SameParameterValue", "UNUSED_PARAMETER")
     private fun onAppUpgrade(context: Context, oldVersion: Int, newVersion: Int) {
-        if( oldVersion < 156 ) {
+        if( oldVersion < 158 ) {
             val storage = Injection.storage(context)
 
             if( !storage.hasFeatureDropWinter2022NotificationBeenShown() ) {
