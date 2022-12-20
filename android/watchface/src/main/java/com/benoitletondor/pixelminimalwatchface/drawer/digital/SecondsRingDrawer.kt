@@ -24,6 +24,7 @@ interface SecondsRingDrawer {
         canvas: Canvas,
         calendar: Calendar,
         paint: Paint,
+        useSweepingMotion: Boolean
     )
 }
 
@@ -35,8 +36,23 @@ class SecondRingDrawerImpl(
         canvas: Canvas,
         calendar: Calendar,
         paint: Paint,
+        useSweepingMotion: Boolean
     ) {
-        val endAngle = (calendar.get(Calendar.SECOND) * 6).toFloat()
+        val endAngle = calculateEndAngle(useSweepingMotion, calendar)
         canvas.drawArc(0F, 0F, screenWidth.toFloat(), screenHeight.toFloat(), 270F, endAngle, false, paint)
+    }
+
+    private fun calculateEndAngle(useSweepingMotion: Boolean, calendar: Calendar) = if (useSweepingMotion) {
+        calculateSweepingEndRotation(calendar)
+    } else {
+        calculateTickingEndRotation(calendar)
+    }
+
+    private fun calculateTickingEndRotation(calendar: Calendar) = (calendar.get(Calendar.SECOND) * 6).toFloat()
+
+    private fun calculateSweepingEndRotation(calendar: Calendar): Float {
+        val epochMillisOfDay = calendar.timeInMillis
+        val millisPerSecondRingRotation = 1000 * 60
+        return epochMillisOfDay.rem(millisPerSecondRingRotation) * 360.0f / millisPerSecondRingRotation
     }
 }

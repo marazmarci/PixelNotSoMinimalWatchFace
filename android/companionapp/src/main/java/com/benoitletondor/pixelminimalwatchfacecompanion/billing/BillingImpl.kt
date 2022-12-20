@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.IOException
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
@@ -47,7 +46,7 @@ const val SKU_DONATION_TIER_5 = "donation_tier_5"
 class BillingImpl @Inject constructor(
     @ApplicationContext context: Context,
     private val storage: Storage
-) : Billing, PurchasesUpdatedListener, BillingClientStateListener, PurchaseHistoryResponseListener, AcknowledgePurchaseResponseListener {
+) : Billing, PurchasesUpdatedListener, BillingClientStateListener, PurchasesResponseListener, AcknowledgePurchaseResponseListener {
 
     private val appContext = context.applicationContext
     private val billingClient = BillingClient.newBuilder(appContext)
@@ -121,7 +120,10 @@ class BillingImpl @Inject constructor(
 
         if ( iabStatus == PremiumCheckStatus.NotPremium ) {
             setIabStatusAndNotify(PremiumCheckStatus.Checking)
-            billingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, this)
+            billingClient.queryPurchasesAsync(
+                QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(),
+                this
+            )
         } else if ( iabStatus is PremiumCheckStatus.Error) {
             startBillingClient()
         }
@@ -141,13 +143,17 @@ class BillingImpl @Inject constructor(
             }
         }
 
-        val skuList = ArrayList<String>(1)
-        skuList.add(SKU_PREMIUM)
+        val skuList = listOf(
+            QueryProductDetailsParams.Product
+                .newBuilder()
+                .setProductId(SKU_PREMIUM)
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        )
 
-        val (billingResult, skuDetailsList) = billingClient.querySkuDetails(
-            SkuDetailsParams.newBuilder()
-                .setSkusList(skuList)
-                .setType(BillingClient.SkuType.INAPP)
+        val (billingResult, skuDetailsList) = billingClient.queryProductDetails(
+            QueryProductDetailsParams.newBuilder()
+                .setProductList(skuList)
                 .build()
         )
 
@@ -167,14 +173,22 @@ class BillingImpl @Inject constructor(
         return suspendCoroutine { continuation ->
             premiumFlowContinuation = continuation
 
-            billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
-                .setSkuDetails(skuDetailsList[0])
+            val productDetailsParamsList =
+                listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(skuDetailsList[0])
+                        .build()
+                )
+
+            val billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
                 .build()
-            )
+
+            billingClient.launchBillingFlow(activity, billingFlowParams)
         }
     }
 
-    override suspend fun getDonationsSKUs(): List<SkuDetails> {
+    override suspend fun getDonationsProductDetails(): List<ProductDetails> {
         if( iabStatus is PremiumCheckStatus.Initializing || iabStatus is PremiumCheckStatus.Error ) {
             throw IllegalStateException("IAB is not setup")
         }
@@ -186,10 +200,20 @@ class BillingImpl @Inject constructor(
             SKU_DONATION_TIER_4,
             SKU_DONATION_TIER_5,
         )
-        val params = SkuDetailsParams.newBuilder()
-            .setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
 
-        val (billingResult, skuDetailsList) = billingClient.querySkuDetails(params.build())
+        val productList = skuList.map { productId ->
+            QueryProductDetailsParams.Product
+                .newBuilder()
+                .setProductId(productId)
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        }
+
+        val (billingResult, skuDetailsList) = billingClient.queryProductDetails(
+            QueryProductDetailsParams.newBuilder()
+                .setProductList(productList)
+                .build()
+        )
 
         if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
             throw IllegalStateException("Unable to connect to reach PlayStore (response code: " + billingResult.responseCode + "). Please restart the app and try again")
@@ -202,14 +226,22 @@ class BillingImpl @Inject constructor(
         return skuDetailsList
     }
 
-    override suspend fun launchDonationPurchaseFlow(activity: Activity, sku: SkuDetails): Boolean {
+    override suspend fun launchDonationPurchaseFlow(activity: Activity, sku: ProductDetails): Boolean {
         return suspendCancellableCoroutine { continuation ->
             donationFlowContinuation = continuation
 
-            billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
-                .setSkuDetails(sku)
+            val productDetailsParamsList =
+                listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(sku)
+                        .build()
+                )
+
+            val billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
                 .build()
-            )
+
+            billingClient.launchBillingFlow(activity, billingFlowParams)
         }
     }
 
@@ -225,7 +257,10 @@ class BillingImpl @Inject constructor(
 
         setIabStatusAndNotify(PremiumCheckStatus.Checking)
 
-        billingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, this)
+        billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build(),
+            this
+        )
     }
 
     override fun onBillingServiceDisconnected() {
@@ -235,7 +270,7 @@ class BillingImpl @Inject constructor(
         setIabStatusAndNotify(PremiumCheckStatus.Error(IOException("Lost connection with Google Play")))
     }
 
-    override fun onPurchaseHistoryResponse(billingResult: BillingResult, purchaseHistoryRecordList: List<PurchaseHistoryRecord>?) {
+    override fun onQueryPurchasesResponse(billingResult: BillingResult, purchaseHistoryRecordList: MutableList<Purchase>) {
         Log.d("BillingImpl", "iab query inventory finished.")
 
         // Is it a failure?
@@ -246,11 +281,9 @@ class BillingImpl @Inject constructor(
         }
 
         var premium = false
-        if (purchaseHistoryRecordList != null) {
-            for (purchase in purchaseHistoryRecordList) {
-                if (purchase.skus.contains(SKU_PREMIUM)) {
-                    premium = true
-                }
+        for (purchase in purchaseHistoryRecordList) {
+            if (purchase.products.contains(SKU_PREMIUM)) {
+                premium = true
             }
         }
 
@@ -289,7 +322,7 @@ class BillingImpl @Inject constructor(
             Log.d("BillingImpl", "Purchase successful.")
 
             for (purchase in purchases) {
-                if (purchase.skus.contains(SKU_PREMIUM)) {
+                if (purchase.products.contains(SKU_PREMIUM)) {
                     billingClient.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build(), this)
                     return
                 }

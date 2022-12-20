@@ -60,6 +60,7 @@ class WidgetConfigurationActivity : ComponentActivity() {
 
     private val complicationProviderMutableFlow = MutableStateFlow<ComplicationProviderInfo?>(null)
     private lateinit var complicationColorMutableFlow: MutableStateFlow<ComplicationColor>
+    private lateinit var complicationSecondaryColorMutableFlow: MutableStateFlow<ComplicationColor>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +87,16 @@ class WidgetConfigurationActivity : ComponentActivity() {
             ComplicationLocation.ANDROID_12_BOTTOM_LEFT -> storage.getComplicationColors().android12BottomLeftColor
             ComplicationLocation.ANDROID_12_BOTTOM_RIGHT -> storage.getComplicationColors().android12BottomRightColor
         })
+        complicationSecondaryColorMutableFlow = MutableStateFlow(when(complicationLocation) {
+            ComplicationLocation.LEFT -> storage.getComplicationColors().leftSecondaryColor
+            ComplicationLocation.MIDDLE -> storage.getComplicationColors().middleSecondaryColor
+            ComplicationLocation.RIGHT -> storage.getComplicationColors().rightSecondaryColor
+            ComplicationLocation.BOTTOM -> storage.getComplicationColors().bottomSecondaryColor
+            ComplicationLocation.ANDROID_12_TOP_LEFT -> storage.getComplicationColors().android12TopLeftSecondaryColor
+            ComplicationLocation.ANDROID_12_TOP_RIGHT -> storage.getComplicationColors().android12TopRightSecondaryColor
+            ComplicationLocation.ANDROID_12_BOTTOM_LEFT -> storage.getComplicationColors().android12BottomLeftSecondaryColor
+            ComplicationLocation.ANDROID_12_BOTTOM_RIGHT -> storage.getComplicationColors().android12BottomRightSecondaryColor
+        })
         providerInfoRetriever = ProviderInfoRetriever(this, Dispatchers.IO.asExecutor())
         providerInfoRetriever.init()
         initializesColorsAndComplications()
@@ -93,6 +104,7 @@ class WidgetConfigurationActivity : ComponentActivity() {
         setContent {
             val complicationProvider by complicationProviderMutableFlow.collectAsState()
             val complicationColor by complicationColorMutableFlow.collectAsState()
+            val complicationSecondaryColor by complicationSecondaryColorMutableFlow.collectAsState()
 
             WearTheme {
                 RotatoryAwareLazyColumn {
@@ -198,6 +210,51 @@ class WidgetConfigurationActivity : ComponentActivity() {
                                 ),
                             )
                         }
+
+                        item {
+                            Chip(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = {
+                                    Text(
+                                        text = "Secondary color",
+                                        fontWeight = FontWeight.Normal,
+                                    )
+                                },
+                                secondaryLabel = {
+                                    Text(
+                                        text = "Tap to change",
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.LightGray,
+                                    )
+                                },
+                                icon = {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .width(40.dp)
+                                            .height(40.dp)
+                                            .background(Color(complicationSecondaryColor.color))
+                                    )
+                                },
+                                onClick = {
+                                    val defaultColor = when(complicationLocation) {
+                                        ComplicationLocation.LEFT -> ComplicationColorsProvider.getDefaultComplicationColors().leftSecondaryColor
+                                        ComplicationLocation.MIDDLE -> ComplicationColorsProvider.getDefaultComplicationColors().middleSecondaryColor
+                                        ComplicationLocation.RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors().rightSecondaryColor
+                                        ComplicationLocation.BOTTOM -> ComplicationColorsProvider.getDefaultComplicationColors().bottomSecondaryColor
+                                        ComplicationLocation.ANDROID_12_TOP_LEFT -> ComplicationColorsProvider.getDefaultComplicationColors().android12TopLeftSecondaryColor
+                                        ComplicationLocation.ANDROID_12_TOP_RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors().android12TopRightSecondaryColor
+                                        ComplicationLocation.ANDROID_12_BOTTOM_LEFT -> ComplicationColorsProvider.getDefaultComplicationColors().android12BottomLeftSecondaryColor
+                                        ComplicationLocation.ANDROID_12_BOTTOM_RIGHT -> ComplicationColorsProvider.getDefaultComplicationColors().android12BottomRightSecondaryColor
+                                    }
+
+                                    startActivityForResult(ColorSelectionActivity.createIntent(this@WidgetConfigurationActivity, defaultColor), UPDATE_SECONDARY_COLORS_CONFIG_REQUEST_CODE)
+                                },
+                                colors = ChipDefaults.primaryChipColors(
+                                    backgroundColor = MaterialTheme.colors.surface,
+                                ),
+                            )
+                        }
                     }
                 }
             }
@@ -234,6 +291,25 @@ class WidgetConfigurationActivity : ComponentActivity() {
 
             complicationColorMutableFlow.value = selectedColor
             setResult(RESULT_OK)
+        } else if (requestCode == UPDATE_SECONDARY_COLORS_CONFIG_REQUEST_CODE && resultCode == RESULT_OK) {
+            val selectedColor = data?.getParcelableExtra<ComplicationColor>(ColorSelectionActivity.RESULT_SELECTED_COLOR)
+                ?: return
+
+            val storage = Injection.storage(this)
+            val colors = storage.getComplicationColors()
+            storage.setComplicationColors(when(complicationLocation) {
+                ComplicationLocation.LEFT -> colors.copy(leftSecondaryColor = selectedColor)
+                ComplicationLocation.MIDDLE -> colors.copy(middleSecondaryColor = selectedColor)
+                ComplicationLocation.RIGHT -> colors.copy(rightSecondaryColor = selectedColor)
+                ComplicationLocation.BOTTOM -> colors.copy(bottomSecondaryColor = selectedColor)
+                ComplicationLocation.ANDROID_12_TOP_LEFT -> colors.copy(android12TopLeftSecondaryColor = selectedColor)
+                ComplicationLocation.ANDROID_12_TOP_RIGHT -> colors.copy(android12TopRightSecondaryColor = selectedColor)
+                ComplicationLocation.ANDROID_12_BOTTOM_LEFT -> colors.copy(android12BottomLeftSecondaryColor = selectedColor)
+                ComplicationLocation.ANDROID_12_BOTTOM_RIGHT -> colors.copy(android12BottomRightSecondaryColor = selectedColor)
+            })
+
+            complicationSecondaryColorMutableFlow.value = selectedColor
+            setResult(RESULT_OK)
         }
     }
 
@@ -257,6 +333,7 @@ class WidgetConfigurationActivity : ComponentActivity() {
     companion object {
         private const val COMPLICATION_CONFIG_REQUEST_CODE = 1001
         private const val UPDATE_COLORS_CONFIG_REQUEST_CODE = 1002
+        private const val UPDATE_SECONDARY_COLORS_CONFIG_REQUEST_CODE = 1003
         private const val EXTRA_COMPLICATION_LOCATION = "extra:complicationLocation"
 
         fun createIntent(

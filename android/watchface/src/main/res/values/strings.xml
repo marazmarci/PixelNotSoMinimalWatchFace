@@ -38,8 +38,6 @@
     <string name="rating_notification_message">How do you like it so far?</string>
     <string name="rating_notification_cta">Give feedback</string>
     <string name="rating_feedback_send_error">Unable to open feedback email.\nInstall the app on your phone to send your feedback.</string>
-    <string name="rating_feedback_email" translatable="false">pixelwatchface@benoitletondor.com</string>
-    <string name="rating_feedback_send_subject" translatable="false">Pixel Watch Face - Feedback</string>
     <string name="rating_feedback_send_text"></string>
     <string name="feature_drop_notification_title">New feature drop</string>
     <string name="feature_drop_notification_message">New features are available for Pixel Minimal Watch Face!</string>

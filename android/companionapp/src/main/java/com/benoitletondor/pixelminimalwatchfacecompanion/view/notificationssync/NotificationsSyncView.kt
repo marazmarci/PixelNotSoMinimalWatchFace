@@ -44,6 +44,7 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.blueButtonColors
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarScaffold
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.primaryBlue
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE
 
 @Composable
 fun NotificationsSyncView(navController: NavController, viewModel: NotificationsSyncViewModel) {
@@ -70,20 +71,24 @@ fun NotificationsSyncView(navController: NavController, viewModel: Notifications
                 NotificationsSyncViewModel.Event.OpenSupportEmail -> {
                     context.startSupportEmailActivity()
                 }
+                NotificationsSyncViewModel.Event.OpenFilterApps -> {
+                    navController.navigate(NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE)
+                }
             }
         }
     }
-
-    val state by viewModel.stateFlow.collectAsState()
 
     AppTopBarScaffold(
         navController = navController,
         showBackButton = true,
         title = "Notification icons sync",
         content = {
+            val state by viewModel.stateFlow.collectAsState()
+
             NotificationsSyncLayout(
                 onAskPermissionButtonPressed = viewModel::onAskPermissionButtonPressed,
                 onSupportButtonPressed = viewModel::onSupportButtonPressed,
+                onFilterAppsButtonPressed = viewModel::onFilterAppsButtonPressed,
                 state = state,
             )
         }
@@ -94,11 +99,13 @@ fun NotificationsSyncView(navController: NavController, viewModel: Notifications
 private fun NotificationsSyncLayout(
     onAskPermissionButtonPressed: () -> Unit,
     onSupportButtonPressed: () -> Unit,
+    onFilterAppsButtonPressed: () -> Unit,
     state: NotificationsSyncViewModel.State,
 ) {
     when(state) {
         NotificationsSyncViewModel.State.Activated -> ActivatedNotificationsSyncLayout(
             onSupportButtonPressed = onSupportButtonPressed,
+            onFilterAppsButtonPressed = onFilterAppsButtonPressed,
         )
         NotificationsSyncViewModel.State.ActivatedNoPermission -> ActivatedNoPermissionNotificationsSyncLayout(
             onAskPermissionButtonPressed = onAskPermissionButtonPressed,
@@ -113,6 +120,7 @@ private fun NotificationsSyncLayout(
 @Composable
 private fun ActivatedNotificationsSyncLayout(
     onSupportButtonPressed: () -> Unit,
+    onFilterAppsButtonPressed: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -139,6 +147,32 @@ private fun ActivatedNotificationsSyncLayout(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Filter apps",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 18.sp,
+        )
+
+        Text(
+            text = "Exclude some apps from displaying icons on your watch",
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+
+        Button(
+            onClick = onFilterAppsButtonPressed,
+            colors = blueButtonColors(),
+        ) {
+            Text(
+                text = "Filter apps",
+                textAlign = TextAlign.Center,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -341,6 +375,7 @@ private fun DeactivatedPreview() {
         NotificationsSyncLayout(
             onAskPermissionButtonPressed = {},
             onSupportButtonPressed = {},
+            onFilterAppsButtonPressed = {},
             state = NotificationsSyncViewModel.State.Deactivated,
         )
     }
@@ -353,6 +388,7 @@ private fun ActivatedPreview() {
         NotificationsSyncLayout(
             onAskPermissionButtonPressed = {},
             onSupportButtonPressed = {},
+            onFilterAppsButtonPressed = {},
             state = NotificationsSyncViewModel.State.Activated,
         )
     }
@@ -365,6 +401,7 @@ private fun ActivatedNoPermissionPreview() {
         NotificationsSyncLayout(
             onAskPermissionButtonPressed = {},
             onSupportButtonPressed = {},
+            onFilterAppsButtonPressed = {},
             state = NotificationsSyncViewModel.State.ActivatedNoPermission,
         )
     }

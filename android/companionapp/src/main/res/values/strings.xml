@@ -31,9 +31,6 @@
     <string name="iab_purchase_error_title">Oops</string>
     <string name="iab_purchase_error_message">An error occurred, check your connection and try again later.</string>
     <string name="send_feedback_cta">Send feedback or report bug</string>
-    <string name="feedback_email" translatable="false">pixelwatchface@benoitletondor.com</string>
-    <string name="feedback_send_subject" translatable="false">Pixel Watch Face - Feedback</string>
-    <string name="feedback_send_subject_non_play" translatable="false">Pixel Watch Face - Question</string>
     <string name="playstore_opened_on_watch_message">Opening PlayStore on Watch…\n\nCheck your watch to continue.</string>
     <string name="playstore_not_opened_on_watch_title">Unable to open PlayStore</string>
     <string name="playstore_not_opened_on_watch_message">An error occurred opening the PlayStore on your Watch.\n\nInstall the Watch Face on your watch manually.</string>

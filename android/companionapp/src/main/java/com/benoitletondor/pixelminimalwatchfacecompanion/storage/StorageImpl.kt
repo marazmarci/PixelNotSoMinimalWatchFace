@@ -29,6 +29,7 @@ private const val ONBOARDING_FINISHED_KEY = "onboarding_finished"
 private const val BATTERY_SYNC_ACTIVATED = "onboarding_finished"
 private const val FOREGROUND_SERVICE_ENABLED_KEY = "foreground_service_enabled"
 private const val NOTIFICATIONS_SYNC_ENABLED_KEY = "notifications_sync_enabled"
+private const val NOTIFICATIONS_SYNC_FILTERED_APPS_KEY = "notifications_sync_filtered_apps"
 
 class StorageImpl @Inject constructor(@ApplicationContext context: Context) : Storage {
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
@@ -87,4 +88,37 @@ class StorageImpl @Inject constructor(@ApplicationContext context: Context) : St
         }
     }
 
+    override fun watchNotificationSyncDisabledPackages(): Flow<Set<String>> {
+        return getOrCreateNotificationsSyncDisbaledPackageCache()
+    }
+
+    override fun setNotificationsSyncAppDisabled(packageName: String) {
+        val cache = getOrCreateNotificationsSyncDisbaledPackageCache()
+        cache.value = cache.value.plus(packageName)
+
+        sharedPreferences.edit {
+            putStringSet(NOTIFICATIONS_SYNC_FILTERED_APPS_KEY, cache.value)
+        }
+    }
+
+    override fun removeNotificationsSyncAppDisabled(packageName: String) {
+        val cache = getOrCreateNotificationsSyncDisbaledPackageCache()
+        cache.value = cache.value.minus(packageName)
+
+        sharedPreferences.edit {
+            putStringSet(NOTIFICATIONS_SYNC_FILTERED_APPS_KEY, cache.value)
+        }
+    }
+
+    private var notificationSyncDisabledPackagesCache: MutableStateFlow<Set<String>>? = null
+    private fun getOrCreateNotificationsSyncDisbaledPackageCache(): MutableStateFlow<Set<String>> {
+        val notificationSyncDisabledPackagesCache = notificationSyncDisabledPackagesCache
+        if (notificationSyncDisabledPackagesCache != null) {
+            return notificationSyncDisabledPackagesCache
+        }
+
+        val createdCache = MutableStateFlow(sharedPreferences.getStringSet(NOTIFICATIONS_SYNC_FILTERED_APPS_KEY, emptySet()) ?: emptySet())
+        this.notificationSyncDisabledPackagesCache = createdCache
+        return createdCache
+    }
 }

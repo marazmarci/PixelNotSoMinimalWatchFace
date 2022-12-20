@@ -42,8 +42,10 @@ class NotificationsListener : NotificationListenerService() {
     @Inject lateinit var storage: Storage
 
     private var currentSyncActivatedWatchingJob: Job? = null
+    private var currentAppsDisabledWatchingJob: Job? = null
     private var currentSyncJob: Job? = null
     private var latestSentNotificationsData: Sync.NotificationsData? = null
+    private var filteredApps: Set<String> = emptySet()
 
     override fun onListenerConnected() {
         super.onListenerConnected()
@@ -62,6 +64,15 @@ class NotificationsListener : NotificationListenerService() {
                     if (syncActivated) {
                         onChange()
                     }
+                }
+        }
+
+        currentAppsDisabledWatchingJob?.cancel()
+        currentAppsDisabledWatchingJob = scope.launch {
+            storage.watchNotificationSyncDisabledPackages()
+                .collect {
+                    filteredApps = it
+                    onChange()
                 }
         }
     }
@@ -91,6 +102,7 @@ class NotificationsListener : NotificationListenerService() {
         currentSyncJob = null
         currentSyncActivatedWatchingJob = null
         currentInstance = null
+        currentAppsDisabledWatchingJob = null
         super.onDestroy()
     }
 
@@ -109,6 +121,16 @@ class NotificationsListener : NotificationListenerService() {
                 val iconIds = mutableListOf<Int>()
                 val iconIdsToIcons = mutableMapOf<Int, Icon>()
                 activeNotifications.forEach { notification ->
+                    if (notification.isOngoing) {
+                        if (DEBUG_LOGS) Log.d(TAG, "onChange: Ignoring because ongoing $notification")
+                        return@forEach
+                    }
+
+                    if (notification.packageName in filteredApps) {
+                        if (DEBUG_LOGS) Log.d(TAG, "onChange: Ignoring because filtered $notification")
+                        return@forEach
+                    }
+
                     if (notification.groupKey.isNullOrBlank() || notification.groupKey !in groupIds) {
                         iconIds.add(notification.notification.smallIcon.id())
                         iconIdsToIcons[notification.notification.smallIcon.id()] = notification.notification.smallIcon

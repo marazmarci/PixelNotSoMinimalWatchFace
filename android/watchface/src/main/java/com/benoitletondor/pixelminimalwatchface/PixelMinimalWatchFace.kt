@@ -792,7 +792,7 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         @Suppress("SameParameterValue")
         private fun getNextComplicationUpdateDelay(): Long? {
             if( storage.showSecondsRing() ) {
-                return 1000
+                return if (storage.useSweepingSecondsRingMotion()) 50 else 1000
             }
 
             var minValue = Long.MAX_VALUE
