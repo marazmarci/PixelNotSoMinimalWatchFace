@@ -99,7 +99,7 @@ class FeatureDropActivity : ComponentActivity() {
         if (isScreenRound) {
             item(key = "Item1") {
                 Text(
-                    text = "- Seconds ring: New option of using a smooth animation",
+                    text = "- Seconds ring: New option to use smooth animation",
                 )
             }
         }
