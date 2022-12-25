@@ -380,6 +380,54 @@ class StorageImpl(
                     DEFAULT_COMPLICATION_COLOR
                 } else { complicationColors.android12BottomRightColor.color }
             )
+            .putInt(
+                KEY_LEFT_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.leftSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.leftSecondaryColor.color }
+            )
+            .putInt(
+                KEY_MIDDLE_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.middleSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.middleSecondaryColor.color }
+            )
+            .putInt(
+                KEY_RIGHT_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.rightSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.rightSecondaryColor.color }
+            )
+            .putInt(
+                KEY_BOTTOM_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.bottomSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.bottomSecondaryColor.color }
+            )
+            .putInt(
+                KEY_ANDROID_12_TOP_LEFT_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.android12TopLeftSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.android12TopLeftSecondaryColor.color }
+            )
+            .putInt(
+                KEY_ANDROID_12_BOTTOM_LEFT_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.android12BottomLeftSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.android12BottomLeftSecondaryColor.color }
+            )
+            .putInt(
+                KEY_ANDROID_12_TOP_RIGHT_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.android12TopRightSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.android12TopRightSecondaryColor.color }
+            )
+            .putInt(
+                KEY_ANDROID_12_BOTTOM_RIGHT_SECONDARY_COMPLICATION_COLOR,
+                if( complicationColors.android12BottomRightSecondaryColor.isDefault ) {
+                    ComplicationColorsProvider.defaultGrey
+                } else { complicationColors.android12BottomRightSecondaryColor.color }
+            )
             .apply()
     }
 
