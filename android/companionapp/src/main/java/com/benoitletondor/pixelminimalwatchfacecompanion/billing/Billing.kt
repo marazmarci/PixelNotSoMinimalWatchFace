@@ -24,16 +24,16 @@ interface Billing {
 
     fun isUserPremium(): Boolean
     fun updatePremiumStatusIfNeeded()
-    suspend fun launchPremiumPurchaseFlow(activity: Activity): PremiumPurchaseFlowResult
+    suspend fun launchPremiumPurchaseFlow(activity: Activity): PurchaseFlowResult
 
     suspend fun getDonationsProductDetails(): List<ProductDetails>
     suspend fun launchDonationPurchaseFlow(activity: Activity, sku: ProductDetails): Boolean
 }
 
-sealed class PremiumPurchaseFlowResult {
-    object Cancelled : PremiumPurchaseFlowResult()
-    object Success : PremiumPurchaseFlowResult()
-    class Error(val reason: String): PremiumPurchaseFlowResult()
+sealed class PurchaseFlowResult {
+    object Cancelled : PurchaseFlowResult()
+    object Success : PurchaseFlowResult()
+    class Error(val reason: String): PurchaseFlowResult()
 }
 
 sealed class PremiumCheckStatus {

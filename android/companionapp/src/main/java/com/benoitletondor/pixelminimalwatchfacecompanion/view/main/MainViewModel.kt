@@ -21,9 +21,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benoitletondor.pixelminimalwatchfacecompanion.billing.Billing
 import com.benoitletondor.pixelminimalwatchfacecompanion.billing.PremiumCheckStatus
-import com.benoitletondor.pixelminimalwatchfacecompanion.billing.PremiumPurchaseFlowResult
+import com.benoitletondor.pixelminimalwatchfacecompanion.billing.PurchaseFlowResult
 import com.benoitletondor.pixelminimalwatchfacecompanion.config.Config
-import com.benoitletondor.pixelminimalwatchfacecompanion.config.getVouchers
 import com.benoitletondor.pixelminimalwatchfacecompanion.config.getWarning
 import com.benoitletondor.pixelminimalwatchfacecompanion.helper.MutableLiveFlow
 import com.benoitletondor.pixelminimalwatchfacecompanion.helper.combine
@@ -41,7 +40,7 @@ class MainViewModel @Inject constructor(
     private val billing: Billing,
     private val sync: Sync,
     private val config: Config,
-    private val storage: Storage
+    storage: Storage
 ) : ViewModel(), CapabilityClient.OnCapabilityChangedListener {
     private val navigationEventMutableFlow = MutableLiveFlow<NavigationDestination>()
     val navigationEventFlow: Flow<NavigationDestination> = navigationEventMutableFlow
@@ -152,7 +151,7 @@ class MainViewModel @Inject constructor(
 
                 // Success result will be handled automatically as notification to userPremiumEventObserver
 
-                if( result is PremiumPurchaseFlowResult.Error ){
+                if( result is PurchaseFlowResult.Error ){
                     errorEventMutableFlow.emit(ErrorType.UnableToPay(Exception(result.reason)))
                 }
             } catch (t: Throwable) {
@@ -168,14 +167,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun onVoucherInput(voucher: String) {
-        val vouchers = config.getVouchers()
-        if( vouchers.contains(voucher) ) {
-            storage.setUserPremium(true)
-            syncState(true)
-
-            return
-        }
-
         viewModelScope.launch {
             navigationEventMutableFlow.emit(NavigationDestination.VoucherRedeem(voucher))
         }
@@ -188,8 +179,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun onWatchFaceInstalledButtonPressed() {
-        syncState(billing.isUserPremium())
-
         viewModelScope.launch {
             userForcedInstallStatusFlow.emit(UserForcedInstallStatus.INSTALLED)
         }

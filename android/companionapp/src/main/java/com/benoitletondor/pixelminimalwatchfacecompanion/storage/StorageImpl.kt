@@ -24,7 +24,6 @@ import javax.inject.Inject
 
 private const val SHARED_PREFERENCES_FILE_NAME = "sharedPref"
 
-private const val PREMIUM_KEY = "premium"
 private const val ONBOARDING_FINISHED_KEY = "onboarding_finished"
 private const val BATTERY_SYNC_ACTIVATED = "onboarding_finished"
 private const val FOREGROUND_SERVICE_ENABLED_KEY = "foreground_service_enabled"
@@ -35,15 +34,6 @@ class StorageImpl @Inject constructor(@ApplicationContext context: Context) : St
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
     private val batterySyncActivatedMutableFlow = MutableStateFlow(isBatterySyncActivated())
     private val notificationsSyncActivatedMutableFlow = MutableStateFlow(isNotificationsSyncActivated())
-
-    override fun isUserPremium(): Boolean
-        = sharedPreferences.getBoolean(PREMIUM_KEY, false)
-
-    override fun setUserPremium(premium: Boolean) {
-        sharedPreferences.edit {
-            putBoolean(PREMIUM_KEY, premium)
-        }
-    }
 
     override fun setOnboardingFinished(finished: Boolean) {
         sharedPreferences.edit {
