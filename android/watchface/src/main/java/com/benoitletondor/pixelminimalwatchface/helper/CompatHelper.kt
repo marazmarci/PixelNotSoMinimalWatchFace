@@ -170,12 +170,12 @@ private fun ComplicationProviderInfo.isSamsungHealthBadComplicationData(context:
         return false
     }
 
-    return when {
-        sHealthVersion == S_HEALTH_6_20_0_016  -> isSamsungDailyActivityBuggyProvider() ||
-            isSamsungStepsProvider() ||
-            isSamsungSleepProvider() ||
-            isSamsungWaterSleepProvider()
-        sHealthVersion >= S_HEALTH_6_21_0_051 -> isSamsungDailyActivityBuggyProvider()
+    return when (sHealthVersion) {
+        S_HEALTH_6_20_0_016 -> isSamsungDailyActivityBuggyProvider() ||
+                isSamsungStepsProvider() ||
+                isSamsungSleepProvider() ||
+                isSamsungWaterSleepProvider()
+        in S_HEALTH_6_21_0_051 until S_HEALTH_6_22_6_001 -> isSamsungDailyActivityBuggyProvider()
         else -> false
     }
 }
@@ -308,6 +308,7 @@ private const val S_HEALTH_PACKAGE_NAME = "com.samsung.android.wear.shealth"
 private const val S_CALENDAR_PACKAGE_NAME = "com.samsung.android.calendar"
 private const val S_HEALTH_6_20_0_016 = 6200016L
 private const val S_HEALTH_6_21_0_051 = 6210051L
+private const val S_HEALTH_6_22_6_001 = 6226001L
 
 private val oneUIWatchHomeAppNames = setOf(
     "One UI Watch Home",
