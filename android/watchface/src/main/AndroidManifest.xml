@@ -52,8 +52,6 @@
         android:theme="@android:style/Theme.DeviceDefault"
         tools:ignore="DataExtractionRules,GoogleAppIndexingWarning">
 
-        <activity android:name=".settings.ColorSelectionActivity" />
-
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/complication_config"
@@ -65,8 +63,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".settings.WidgetConfigurationActivity" />
 
         <activity
             android:name=".settings.phonebattery.PhoneBatteryConfigurationActivity"
