@@ -85,6 +85,16 @@ private fun Loaded(
     onAppRowTapped: (Device.AppInfo, Boolean) -> Unit,
 ) {
     LazyColumn {
+        item("explanation") {
+            Text(
+                text = "All checked apps' notifications will be synced, unchecked will be ignored.",
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 16.dp, top = 6.dp, start = 20.dp, end = 20.dp),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 16.sp,
+            )
+        }
+
         for(app in apps) {
             item(key = app.appInfo.packageName) {
                 AppRow(app, onAppRowTapped)
