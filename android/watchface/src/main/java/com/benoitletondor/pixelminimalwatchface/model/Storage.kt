@@ -18,6 +18,7 @@ package com.benoitletondor.pixelminimalwatchface.model
 import android.content.Context
 import android.graphics.ColorFilter
 import androidx.annotation.ColorInt
+import androidx.compose.runtime.Stable
 import com.benoitletondor.pixelminimalwatchface.R
 import com.benoitletondor.pixelminimalwatchface.helper.DEFAULT_TIME_SIZE
 import kotlinx.coroutines.flow.Flow
@@ -79,6 +80,7 @@ private const val KEY_SHOW_NOTIFICATIONS_AMBIENT = "showNotificationsAmbient"
 private const val KEY_SHOW_WEAR_OS_LOGO_AMBIENT = "showWearOSLogoAmbient"
 private const val KEY_BETA_NOTIFICATIONS_DISCLAIMER_SHOWN = "betaNotificationsDisclaimerBeenShown"
 
+@Stable
 interface Storage {
     fun getComplicationColors(): ComplicationColors
     fun setComplicationColors(complicationColors: ComplicationColors)
@@ -174,6 +176,7 @@ interface Storage {
     fun setBetaNotificationsDisclaimerShown()
 }
 
+@Stable
 class StorageImpl(
     context: Context,
 ) : Storage {
