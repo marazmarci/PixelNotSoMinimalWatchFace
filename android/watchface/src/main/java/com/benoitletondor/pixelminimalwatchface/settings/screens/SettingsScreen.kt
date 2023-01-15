@@ -276,6 +276,7 @@ private fun LazyListScope.WidgetsOrBecomePremiumSection(
                     navController = navController,
                     regularComplicationsState = regularComplicationsState,
                     showBattery = showPhoneBattery || showWatchBattery,
+                    showNotifications = showNotifications,
                 )
             }
         }
@@ -918,6 +919,7 @@ private fun RegularComplications(
     navController: NavHostController,
     regularComplicationsState: SnapshotStateMap<ComplicationLocation, ComplicationProviderInfo?>,
     showBattery: Boolean,
+    showNotifications: Boolean,
 ) {
     val complicationColors by storage.watchComplicationColors().collectAsState(storage.getComplicationColors())
     val showWearOSLogo by storage.watchShowWearOSLogo().collectAsState(storage.showWearOSLogo())
@@ -967,6 +969,11 @@ private fun RegularComplications(
                 Image(
                     painter = painterResource(id = R.drawable.ic_baseline_battery_charging_full),
                     contentDescription = "Battery indicator",
+                )
+            } else if (showNotifications) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_baseline_circle_notifications_24),
+                    contentDescription = "Phone notification icons",
                 )
             } else {
                 SettingComplicationSlot(
