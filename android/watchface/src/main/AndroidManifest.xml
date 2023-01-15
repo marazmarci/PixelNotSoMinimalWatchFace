@@ -16,8 +16,7 @@
 -->
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.benoitletondor.pixelminimalwatchface">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Required to act as a custom watch face. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
