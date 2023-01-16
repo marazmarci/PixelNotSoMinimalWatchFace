@@ -297,6 +297,8 @@ private fun LazyListScope.WidgetsOrBecomePremiumSection(
         item(key = "PremiumSection") { SettingSectionItem(label = "Premium features") }
 
         item(key = "PremiumCompanion") {
+            val activity = LocalContext.current as ComponentActivity
+
             Column {
                 Text(
                     text = "To setup widgets, display weather, battery indicators and notification icons you have to become a premium user.",
@@ -312,9 +314,7 @@ private fun LazyListScope.WidgetsOrBecomePremiumSection(
 
                 SettingChip(
                     label ="Become premium",
-                    onClick = {
-
-                    },
+                    onClick = { openAppOnPhone(activity) },
                     iconDrawable = R.drawable.ic_baseline_stars_24,
                     modifier = Modifier.padding(top = 6.dp),
                 )
