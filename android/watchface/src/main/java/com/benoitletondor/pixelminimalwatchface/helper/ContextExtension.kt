@@ -40,16 +40,4 @@ fun Context.isPermissionGranted(permission: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }
 
-fun Context.openActivity(packageName: String, activityName: String) {
-    try {
-        startActivity(Intent().apply {
-            component = ComponentName(
-                packageName,
-                activityName
-            )
-            flags = FLAG_ACTIVITY_NEW_TASK
-        })
-    } catch (t: Throwable) {
-        Log.e("Pixel Minimal Watch Face", "Can't open activity: $activityName", t)
-    }
-}
+fun Context.isComplicationsPermissionGranted() = isPermissionGranted("com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA")

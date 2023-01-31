@@ -18,6 +18,7 @@ package com.benoitletondor.pixelminimalwatchfacecompanion.sync
 import android.graphics.drawable.Icon
 import android.service.notification.StatusBarNotification
 import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.Node
 
 interface Sync {
     suspend fun sendPremiumStatus(isUserPremium: Boolean)
@@ -25,6 +26,7 @@ interface Sync {
     suspend fun openPlayStoreOnWatch(): Boolean
     fun subscribeToCapabilityChanges(listener: CapabilityClient.OnCapabilityChangedListener)
     fun unsubscribeToCapabilityChanges(listener: CapabilityClient.OnCapabilityChangedListener)
+    suspend fun getConnectedNodesWithWatchFaceCapability(): Set<Node>
 
     suspend fun sendBatterySyncStatus(syncActivated: Boolean)
     suspend fun sendBatteryStatus(batteryPercentage: Int)

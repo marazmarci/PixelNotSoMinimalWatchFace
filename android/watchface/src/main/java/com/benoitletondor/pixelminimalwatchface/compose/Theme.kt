@@ -53,8 +53,3 @@ private val wearColorPalette: Colors = Colors(
     onSecondary = Color.White,
     onError = Color.White
 )
-
-val productSansFontFamily = FontFamily(
-    Font(R.font.product_sans_regular, FontWeight.Normal),
-    Font(R.font.product_sans_thin, FontWeight.Thin),
-)

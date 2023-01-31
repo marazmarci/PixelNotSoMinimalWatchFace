@@ -32,10 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
+import com.benoitletondor.pixelminimalwatchface.common.compose.productSansFontFamily
 import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
 import com.benoitletondor.pixelminimalwatchface.compose.component.ChipButton
 import com.benoitletondor.pixelminimalwatchface.compose.component.RotatoryAwareLazyColumn
-import com.benoitletondor.pixelminimalwatchface.compose.productSansFontFamily
 import com.benoitletondor.pixelminimalwatchface.helper.isScreenRound
 import com.benoitletondor.pixelminimalwatchface.settings.SettingsActivity
 

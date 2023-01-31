@@ -129,6 +129,10 @@ class SyncImpl @Inject constructor(
         capabilityClient.removeListener(listener)
     }
 
+    override suspend fun getConnectedNodesWithWatchFaceCapability(): Set<Node> {
+        return getConnectedWatchNodes()
+    }
+
     override suspend fun sendBatterySyncStatus(syncActivated: Boolean) {
         val watchNodes = getConnectedWatchNodes()
 

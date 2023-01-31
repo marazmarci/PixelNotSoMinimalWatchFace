@@ -79,6 +79,10 @@
 
         <activity android:name="android.support.wearable.complications.ComplicationHelperActivity"/>
 
+        <activity android:name=".settings.ComplicationsPermissionRequestActivity" />
+
+        <activity android:name=".settings.ComplicationEditActivity" />
+
         <activity
             android:name=".helper.FullBrightnessActivity"
             android:theme="@style/TransparentTheme"/>
@@ -106,6 +110,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
                 android:value="com.benoitletondor.pixelminimalwatchface.CONFIG_COMPLICATION_SIMPLE"/>
+
+            <meta-data
+                android:name="com.google.android.wearable.watchface.companionConfigurationAction"
+                android:value="com.benoitletondor.pixelminimalwatchface.PHONE_CONFIG" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

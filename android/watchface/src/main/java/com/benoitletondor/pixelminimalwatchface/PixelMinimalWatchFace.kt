@@ -37,21 +37,39 @@ import android.view.WindowInsets
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.benoitletondor.pixelminimalwatchface.common.helper.KEY_SHOW_COLORS_AMBIENT
+import com.benoitletondor.pixelminimalwatchface.common.helper.openActivity
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColors
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationLocation
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.InitialState
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.Parameter
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_EDIT_COMPLICATION_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_GET_INITIAL_STATE_ACK_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_GET_INITIAL_STATE_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_GET_VERSION_ACK_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_GET_VERSION_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_REQUEST_COMPLICATIONS_PERMISSION_ACK_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_REQUEST_COMPLICATIONS_PERMISSION_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_SEND_COMPLICATION_COLORS_ACK_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_SEND_COMPLICATION_COLORS_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_SEND_PARAMETER_ACK_PATH
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.SYNC_KEY_SEND_PARAMETER_PATH
 import com.benoitletondor.pixelminimalwatchface.drawer.WatchFaceDrawer
 import com.benoitletondor.pixelminimalwatchface.drawer.digital.android12.Android12DigitalWatchFaceDrawer
 import com.benoitletondor.pixelminimalwatchface.drawer.digital.regular.RegularDigitalWatchFaceDrawer
 import com.benoitletondor.pixelminimalwatchface.helper.*
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColors
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchface.model.DEFAULT_APP_VERSION
 import com.benoitletondor.pixelminimalwatchface.model.Storage
 import com.benoitletondor.pixelminimalwatchface.rating.FeedbackActivity
+import com.benoitletondor.pixelminimalwatchface.settings.ComplicationEditActivity
+import com.benoitletondor.pixelminimalwatchface.settings.ComplicationsPermissionRequestActivity
 import com.benoitletondor.pixelminimalwatchface.settings.notificationssync.NotificationsSyncConfigurationActivity
 import com.benoitletondor.pixelminimalwatchface.settings.phonebattery.*
 import com.google.android.gms.wearable.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
+import java.nio.ByteBuffer
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.Executors
@@ -897,28 +915,50 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         }
 
         override fun onMessageReceived(messageEvent: MessageEvent) {
-            if (messageEvent.path == DATA_KEY_BATTERY_STATUS_PERCENT) {
-                try {
-                    val phoneBatteryPercentage: Int = messageEvent.data[0].toInt()
-                    if (phoneBatteryPercentage in 0..100) {
-                        val previousPhoneBatteryStatus = phoneBatteryStatus as? PhoneBatteryStatus.DataReceived
-                        phoneBatteryStatus = PhoneBatteryStatus.DataReceived(phoneBatteryPercentage, System.currentTimeMillis())
+            if (DEBUG_LOGS) Log.d(TAG, "onMessageReceived: ${messageEvent.path}")
 
-                        if (storage.showPhoneBattery() &&
-                            (phoneBatteryPercentage != previousPhoneBatteryStatus?.batteryPercentage || previousPhoneBatteryStatus.isStale(System.currentTimeMillis()))) {
-                            invalidate()
+            when (messageEvent.path) {
+                DATA_KEY_BATTERY_STATUS_PERCENT -> {
+                    try {
+                        val phoneBatteryPercentage: Int = messageEvent.data[0].toInt()
+                        if (phoneBatteryPercentage in 0..100) {
+                            val previousPhoneBatteryStatus =
+                                phoneBatteryStatus as? PhoneBatteryStatus.DataReceived
+                            phoneBatteryStatus = PhoneBatteryStatus.DataReceived(
+                                phoneBatteryPercentage,
+                                System.currentTimeMillis()
+                            )
+
+                            if (storage.showPhoneBattery() &&
+                                (phoneBatteryPercentage != previousPhoneBatteryStatus?.batteryPercentage || previousPhoneBatteryStatus.isStale(
+                                    System.currentTimeMillis()
+                                ))
+                            ) {
+                                invalidate()
+                            }
                         }
+                    } catch (t: Throwable) {
+                        Log.e(
+                            "PixelWatchFace",
+                            "Error while parsing phone battery percentage from phone",
+                            t
+                        )
                     }
-                } catch (t: Throwable) {
-                    Log.e("PixelWatchFace", "Error while parsing phone battery percentage from phone", t)
                 }
-            } else if (messageEvent.path == DATA_KEY_PREMIUM) {
-                try {
-                    handleIsPremiumCallback(messageEvent.data[0].toInt() == 1)
-                } catch (t: Throwable) {
-                    Log.e("PixelWatchFace", "Error while parsing premium status from phone", t)
-                    Toast.makeText(service, R.string.premium_error, Toast.LENGTH_LONG).show()
+                DATA_KEY_PREMIUM -> {
+                    try {
+                        handleIsPremiumCallback(messageEvent.data[0].toInt() == 1)
+                    } catch (t: Throwable) {
+                        Log.e("PixelWatchFace", "Error while parsing premium status from phone", t)
+                        Toast.makeText(service, R.string.premium_error, Toast.LENGTH_LONG).show()
+                    }
                 }
+                SYNC_KEY_SEND_PARAMETER_PATH -> handleSyncParameter(messageEvent)
+                SYNC_KEY_SEND_COMPLICATION_COLORS_PATH -> handleSyncComplicationColors(messageEvent)
+                SYNC_KEY_GET_VERSION_PATH -> handleGetVersion(messageEvent)
+                SYNC_KEY_GET_INITIAL_STATE_PATH -> handleGetInitialState(messageEvent)
+                SYNC_KEY_REQUEST_COMPLICATIONS_PERMISSION_PATH -> handleRequestComplicationsPermission(messageEvent)
+                SYNC_KEY_EDIT_COMPLICATION_PATH -> handleEditComplicationRequest(messageEvent)
             }
         }
 
@@ -931,6 +971,148 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
             }
 
             invalidate()
+        }
+
+        private fun handleGetInitialState(messageEvent: MessageEvent) {
+            if (!storage.isUserPremium()) {
+                storage.setUserPremium(true)
+                invalidate()
+            }
+
+            launch(Dispatchers.IO) {
+                try {
+                    val initialState = InitialState(
+                        isWatchScreenRound = this@PixelMinimalWatchFace.isScreenRound(),
+                        isWatchWearOS3 = Device.isWearOS3,
+                        watchSupportsWeather = this@PixelMinimalWatchFace.getWeatherProviderInfo() != null,
+                        hasComplicationsPermission = this@PixelMinimalWatchFace.isComplicationsPermissionGranted(),
+                        complicationColors = storage.getComplicationColors(),
+                        settings = storage.extractAllSettings(),
+                    )
+
+                    Wearable.getMessageClient(this@PixelMinimalWatchFace).sendMessage(
+                        messageEvent.sourceNodeId,
+                        SYNC_KEY_GET_INITIAL_STATE_ACK_PATH,
+                        initialState.toJson().toByteArray(),
+                    ).await()
+                } catch (e: Exception) {
+                    if (e is CancellationException) { throw e }
+                    Log.e(TAG, "handleGetInitialState: unable to send initial state", e)
+                }
+            }
+        }
+
+        private fun handleSyncParameter(messageEvent: MessageEvent) {
+            try {
+                val parameter = Parameter.fromJson(messageEvent.data.toString(Charsets.UTF_8))
+                storage.setAnonymousParameter(parameter.key, parameter.value)
+                if (parameter.key == KEY_SHOW_COLORS_AMBIENT) {
+                    showComplicationColorsInAmbient = parameter.value as Boolean
+                    setComplicationsActiveAndAmbientColors(complicationsColors, showComplicationColorsInAmbient)
+                }
+
+                invalidate()
+
+                launch(Dispatchers.IO) {
+                    try {
+                        Wearable.getMessageClient(this@PixelMinimalWatchFace).sendMessage(
+                            messageEvent.sourceNodeId,
+                            SYNC_KEY_SEND_PARAMETER_ACK_PATH,
+                            messageEvent.data,
+                        ).await()
+                    } catch (e: Exception) {
+                        if (e is CancellationException) { throw e }
+
+                        Log.e(TAG, "trySendParameterSyncAck: Error while sending parameter sync ack", e)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "handleSyncParameter: unable to parse parameter", e)
+            }
+        }
+
+        private fun handleSyncComplicationColors(messageEvent: MessageEvent) {
+            launch(Dispatchers.IO) {
+                try {
+                    val complicationColors = ComplicationColors.fromJson(messageEvent.data.toString(Charsets.UTF_8))
+                    storage.setComplicationColors(complicationColors)
+
+                    withContext(Dispatchers.Main) {
+                        complicationsColors = complicationColors
+                        watchFaceDrawer.onComplicationColorsUpdate(complicationsColors, complicationDataSparseArray, storage.showColorsInAmbientMode())
+                        invalidate()
+                    }
+
+                    Wearable.getMessageClient(this@PixelMinimalWatchFace).sendMessage(
+                        messageEvent.sourceNodeId,
+                        SYNC_KEY_SEND_COMPLICATION_COLORS_ACK_PATH,
+                        messageEvent.data,
+                    ).await()
+                } catch (e: Exception) {
+                    if (e is CancellationException) { throw e }
+
+                    Log.e(TAG, "handleSyncComplicationColors: Error while sending complication colors sync ack", e)
+                }
+            }
+        }
+
+        private fun handleGetVersion(messageEvent: MessageEvent) {
+            launch(Dispatchers.IO) {
+                try {
+                    Wearable.getMessageClient(this@PixelMinimalWatchFace).sendMessage(
+                        messageEvent.sourceNodeId,
+                        SYNC_KEY_GET_VERSION_ACK_PATH,
+                        ByteBuffer.allocate(Int.SIZE_BYTES).putInt(BuildConfig.VERSION_CODE).array(),
+                    ).await()
+                } catch (e: Exception) {
+                    if (e is CancellationException) { throw e }
+                    Log.e(TAG, "handleGetVersion: Error while sending version ack", e)
+                }
+            }
+        }
+
+        private fun handleRequestComplicationsPermission(messageEvent: MessageEvent) {
+            launch(Dispatchers.IO) {
+                try {
+                    if (isComplicationsPermissionGranted()) {
+                        Wearable.getMessageClient(this@PixelMinimalWatchFace).sendMessage(
+                            messageEvent.sourceNodeId,
+                            SYNC_KEY_REQUEST_COMPLICATIONS_PERMISSION_ACK_PATH,
+                            ByteBuffer.allocate(Int.SIZE_BYTES).putInt(1).array(),
+                        ).await()
+                    } else {
+                        startActivity(Intent(this@PixelMinimalWatchFace, ComplicationsPermissionRequestActivity::class.java).apply {
+                            flags = FLAG_ACTIVITY_NEW_TASK
+                        })
+
+                        val result = withTimeoutOrNull(15000) {
+                            ComplicationsPermissionRequestActivity.permissionRequestResultFlow.first()
+                        }
+
+                        Wearable.getMessageClient(this@PixelMinimalWatchFace).sendMessage(
+                            messageEvent.sourceNodeId,
+                            SYNC_KEY_REQUEST_COMPLICATIONS_PERMISSION_ACK_PATH,
+                            ByteBuffer.allocate(Int.SIZE_BYTES).putInt(if (result == true) { 1 } else { 0 }).array(),
+                        ).await()
+                    }
+                } catch (e: Exception) {
+                    if (e is CancellationException) { throw e }
+                    Log.e(TAG, "handleRequestComplicationsPermission: Error while sending version ack", e)
+                }
+            }
+        }
+
+        private fun handleEditComplicationRequest(messageEvent: MessageEvent) {
+            try {
+                val complicationLocation = ComplicationLocation.values()[ByteBuffer.wrap(messageEvent.data).int]
+
+                startActivity(ComplicationEditActivity.createIntent(this@PixelMinimalWatchFace, complicationLocation).apply {
+                    flags = FLAG_ACTIVITY_NEW_TASK
+                })
+            } catch (e: Exception) {
+                if (e is CancellationException) { throw e }
+                Log.e(TAG, "handleEditComplicationRequest: Error starting complication edit screen", e)
+            }
         }
 
         override fun unscheduleDrawable(who: Drawable, what: Runnable) {

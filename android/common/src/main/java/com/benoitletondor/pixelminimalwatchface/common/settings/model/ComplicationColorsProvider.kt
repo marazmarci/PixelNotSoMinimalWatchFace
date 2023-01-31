@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchface.model
+package com.benoitletondor.pixelminimalwatchface.common.settings.model
 
 import android.graphics.Color
 import androidx.annotation.ColorInt

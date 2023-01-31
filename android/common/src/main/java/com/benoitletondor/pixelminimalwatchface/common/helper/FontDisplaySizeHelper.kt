@@ -13,10 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchface.helper
+package com.benoitletondor.pixelminimalwatchface.common.helper
 
 import android.content.Context
-import com.benoitletondor.pixelminimalwatchface.R
+import com.benoitletondor.pixelminimalwatchface.common.R
 
 const val DEFAULT_TIME_SIZE = 50
 

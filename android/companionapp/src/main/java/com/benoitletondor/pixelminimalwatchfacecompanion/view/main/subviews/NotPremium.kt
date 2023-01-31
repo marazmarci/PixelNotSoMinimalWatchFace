@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,7 +43,7 @@ import androidx.viewpager.widget.ViewPager
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.blueButtonColors
-import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.MainViewModel
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.MainViewModel
 import me.relex.circleindicator.CircleIndicator
 
 @Composable
@@ -88,7 +87,7 @@ private fun NotPremiumLayout(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = stringResource(R.string.setup_watch_face_instructions),
+            text = "To access the settings, everything happens on your watch: on the watch face, long press on the time. After 1s, you'll see a button appear at the bottom, tap on it to customize.",
             color = MaterialTheme.colorScheme.onBackground,
         )
 

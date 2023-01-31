@@ -25,6 +25,10 @@ abstract class StorageCachedValue<T>(
         return@run newValue
     }
 
+    fun refresh() {
+        cachedValue.value = getter()
+    }
+
     fun set(value: T) {
         cachedValue.value = value
         setter(value)
@@ -40,24 +44,35 @@ abstract class StorageCachedValue<T>(
 }
 
 class StorageCachedIntValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val key: String,
     private val defaultValue: Int,
 ) : StorageCachedValue<Int>(
     getter = { sharedPreferences.getInt(key, defaultValue) },
     setter = { sharedPreferences.edit { putInt(key, it) } },
-)
+) {
+    init {
+        storageUpdater.register(key, this)
+    }
+}
 
 class StorageCachedBoolValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val key: String,
     private val defaultValue: Boolean,
 ) : StorageCachedValue<Boolean>(
     getter = { sharedPreferences.getBoolean(key, defaultValue) },
     setter = { sharedPreferences.edit { putBoolean(key, it) } },
-)
+) {
+    init {
+        storageUpdater.register(key, this)
+    }
+}
 
 class StorageCachedColorValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val appContext: Context,
     private val key: String,
@@ -73,9 +88,14 @@ class StorageCachedColorValue(
     fun set(@ColorInt color: Int) {
         set(CachedColorValues(color, PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)))
     }
+
+    init {
+        storageUpdater.register(key, this)
+    }
 }
 
 class StorageCachedResolvedColorValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val key: String,
     @ColorInt private val colorInt: Int,
@@ -89,6 +109,10 @@ class StorageCachedResolvedColorValue(
 ) {
     fun set(@ColorInt color: Int) {
         set(CachedColorValues(color, PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)))
+    }
+
+    init {
+        storageUpdater.register(key, this)
     }
 }
 

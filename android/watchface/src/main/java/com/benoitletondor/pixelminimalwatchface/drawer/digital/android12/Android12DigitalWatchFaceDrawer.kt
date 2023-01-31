@@ -30,13 +30,12 @@ import androidx.core.content.res.ResourcesCompat
 import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
 import com.benoitletondor.pixelminimalwatchface.*
 import com.benoitletondor.pixelminimalwatchface.common.helper.dpToPx
+import com.benoitletondor.pixelminimalwatchface.common.helper.fontDisplaySizeToScaleFactor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColors
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorsProvider
 import com.benoitletondor.pixelminimalwatchface.drawer.WatchFaceDrawer
 import com.benoitletondor.pixelminimalwatchface.helper.*
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColors
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColorsProvider
 import com.benoitletondor.pixelminimalwatchface.model.Storage
-import com.benoitletondor.pixelminimalwatchface.model.getPrimaryColorForComplicationId
-import com.benoitletondor.pixelminimalwatchface.model.getSecondaryColorForComplicationId
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min

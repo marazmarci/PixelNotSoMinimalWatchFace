@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_LOW
 import com.benoitletondor.pixelminimalwatchfacecompanion.device.Device
 import com.benoitletondor.pixelminimalwatchfacecompanion.storage.Storage
-import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.MainActivity
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.Exception

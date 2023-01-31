@@ -22,7 +22,7 @@ import android.util.SparseArray
 import android.view.WindowInsets
 import com.benoitletondor.pixelminimalwatchface.PhoneBatteryStatus
 import com.benoitletondor.pixelminimalwatchface.PhoneNotifications
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColors
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColors
 import java.util.*
 
 interface WatchFaceDrawer {

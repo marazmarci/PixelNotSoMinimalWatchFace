@@ -22,12 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.wear.compose.material.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun SettingToggleChip(
     modifier: Modifier = Modifier,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: suspend (Boolean) -> Unit,
     label: String,
     secondaryLabel: String? = null,
     @DrawableRes iconDrawable: Int?,
@@ -61,7 +63,7 @@ fun SettingToggleChip(
                 modifier = Modifier.size(ChipDefaults.SmallIconSize)
             ) }
         },
-        onCheckedChange = onCheckedChange,
+        onCheckedChange = { runBlocking { onCheckedChange(it) } },
         modifier = modifier
             .fillMaxWidth(),
     )

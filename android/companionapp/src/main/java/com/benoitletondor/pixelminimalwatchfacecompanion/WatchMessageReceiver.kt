@@ -48,7 +48,6 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
             QUERY_NOTIFICATIONS_SYNC_STATUS_PATH -> sendNotificationsSyncStatus(messageEvent.data)
             QUERY_NOTIFICATIONS_ACTIVATED_SYNC_PATH -> activateNotificationsSync()
             QUERY_NOTIFICATIONS_DEACTIVATED_SYNC_PATH -> deactivateNotificationsSync()
-            else -> Log.e(TAG, "Received message with unknown path: ${messageEvent.path}")
         }
     }
 
@@ -63,6 +62,10 @@ class WatchMessageReceiver : WearableListenerService(), CoroutineScope by Corout
         if (watchNode != null) {
             if (storage.isBatterySyncActivated()) {
                 activateBatterySync()
+            }
+
+            if (storage.isNotificationsSyncActivated()) {
+                activateNotificationsSync()
             }
         }
     }

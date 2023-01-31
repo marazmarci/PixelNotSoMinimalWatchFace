@@ -37,15 +37,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.*
-import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.MainViewModel
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.MainViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -63,6 +61,7 @@ fun Premium(
         maybeWarning = step.maybeWarning,
         debugPhoneBatteryIndicatorButtonPressed = viewModel::onDebugPhoneBatteryIndicatorButtonPressed,
         setupNotificationsSyncButtonPressed = viewModel::onSetupNotificationsSyncButtonPressed,
+        settingsButtonPressed = viewModel::onSettingsButtonPressed,
     )
 }
 
@@ -78,6 +77,7 @@ private fun PremiumLayout(
     maybeWarning: String?,
     debugPhoneBatteryIndicatorButtonPressed: () -> Unit,
     setupNotificationsSyncButtonPressed: () -> Unit,
+    settingsButtonPressed: () -> Unit,
 ) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -104,6 +104,7 @@ private fun PremiumLayout(
         PremiumLayoutContent(
             bottomSheetScaffoldState,
             donateButtonPressed = donateButtonPressed,
+            settingsButtonPressed = settingsButtonPressed,
             maybeWarning = maybeWarning,
         )
     }
@@ -114,6 +115,7 @@ private fun PremiumLayout(
 private fun PremiumLayoutContent(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     donateButtonPressed: () -> Unit,
+    settingsButtonPressed: () -> Unit,
     maybeWarning: String?,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -194,7 +196,23 @@ private fun PremiumLayoutContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(R.string.setup_watch_face_instructions),
+            text = "Customize the watch face look and feel",
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Button(
+            onClick = settingsButtonPressed,
+            colors = blueButtonColors(),
+        ) {
+            Text(text = "Settings")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "All the settings are also available on your watch: on the watch face, long press on the time. After 1s, you'll see a button appear at the bottom, tap on it to customize.",
             color = MaterialTheme.colorScheme.onBackground,
         )
 
@@ -502,6 +520,7 @@ private fun Preview() {
             maybeWarning = null,
             debugPhoneBatteryIndicatorButtonPressed = {},
             setupNotificationsSyncButtonPressed = {},
+            settingsButtonPressed = {},
         )
     }
 }
@@ -520,6 +539,7 @@ private fun PreviewWarning() {
             maybeWarning = "This is a warning",
             debugPhoneBatteryIndicatorButtonPressed = {},
             setupNotificationsSyncButtonPressed = {},
+            settingsButtonPressed = {},
         )
     }
 }
