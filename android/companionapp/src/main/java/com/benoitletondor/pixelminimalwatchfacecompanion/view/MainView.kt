@@ -60,6 +60,7 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.onboarding.OnboardingView
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.NavigateToInstallWatchFaceScreenResult
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.SettingsView
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.ColorSelectorScreen
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.NodeSettingsScreen
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.NodeSettingsViewModel
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.PhoneBatterySyncScreen
@@ -78,6 +79,7 @@ const val NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE = "phoneBatterySyncDebug"
 const val NAV_NOTIFICATIONS_SYNC_ROUTE = "notificationsSync"
 const val NAV_PHONE_BATTERY_SYNC_SETTINGS_ROUTE = "phoneBatterySyncSettings"
 const val NAV_PHONE_NOTIFICATIONS_SYNC_SETTINGS_ROUTE = "phoneNotificationsSyncSettings"
+const val NAV_COLOR_SELECTOR_SCREEN_ROUTE = "colorSelectorScreen"
 const val NAV_SETTINGS_ROUTE = "settings"
 const val NAV_SETTINGS_NODE_ROUTE_ARG = "node"
 const val NAV_SETTINGS_NODE_ROUTE = "settings/node/{$NAV_SETTINGS_NODE_ROUTE_ARG}"
@@ -91,6 +93,11 @@ class MainActivity : AppCompatActivity() {
         setContent {
             MainView()
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        this.intent = intent
     }
 }
 
@@ -156,7 +163,7 @@ private fun MainView() {
                 val complicationColor: Int = it.arguments?.getInt(ROUTE_COLOR_DEFAULT_ARG)
                     ?: throw IllegalStateException("Unable to find $ROUTE_COLOR_DEFAULT_ARG arg")
 
-                PhoneComplicationColorScreen().PhoneScreen(
+                PhoneComplicationColorScreen(hiltViewModel()).PhoneScreen(
                     composeComponents = PhoneSettingsComposeComponents(),
                     platform = NodeSettingsViewModel.currentSettingsPlatform ?: throw IllegalStateException("Null currentSettingsPlatform"),
                     navController = navController,
@@ -191,6 +198,7 @@ private fun MainView() {
                     navController = navController,
                     phonePlatform = phonePlatform,
                     composeComponents = PhoneSettingsComposeComponents(),
+                    viewModel = hiltViewModel(),
                 )
             }
 
@@ -204,6 +212,15 @@ private fun MainView() {
                     navController = navController,
                     phonePlatform = phonePlatform,
                     composeComponents = PhoneSettingsComposeComponents(),
+                )
+            }
+
+            composable(
+                NAV_COLOR_SELECTOR_SCREEN_ROUTE
+            ) {
+                ColorSelectorScreen(
+                    navController = navController,
+                    viewModel = hiltViewModel(),
                 )
             }
         }

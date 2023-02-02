@@ -29,6 +29,7 @@ private const val BATTERY_SYNC_ACTIVATED = "onboarding_finished"
 private const val FOREGROUND_SERVICE_ENABLED_KEY = "foreground_service_enabled"
 private const val NOTIFICATIONS_SYNC_ENABLED_KEY = "notifications_sync_enabled"
 private const val NOTIFICATIONS_SYNC_FILTERED_APPS_KEY = "notifications_sync_filtered_apps"
+private const val RECENT_COLORS_KEY_PREFIX = "recent_colors_"
 
 class StorageImpl @Inject constructor(@ApplicationContext context: Context) : Storage {
     private val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
@@ -100,6 +101,25 @@ class StorageImpl @Inject constructor(@ApplicationContext context: Context) : St
         }
     }
 
+    override fun getRecentCustomColors(): List<Int>
+        = (0..5)
+            .mapNotNull {
+                val color =  sharedPreferences.getInt(recentColorKey(it), 0)
+                if (color != 0) {
+                    return@mapNotNull color
+                }
+
+                return@mapNotNull null
+            }
+
+    override fun setRecentCustomColors(colors: List<Int>) {
+        sharedPreferences.edit {
+            colors.forEachIndexed { index, colorInt ->
+                putInt(recentColorKey(index), colorInt)
+            }
+        }
+    }
+
     private var notificationSyncDisabledPackagesCache: MutableStateFlow<Set<String>>? = null
     private fun getOrCreateNotificationsSyncDisbaledPackageCache(): MutableStateFlow<Set<String>> {
         val notificationSyncDisabledPackagesCache = notificationSyncDisabledPackagesCache
@@ -111,4 +131,6 @@ class StorageImpl @Inject constructor(@ApplicationContext context: Context) : St
         this.notificationSyncDisabledPackagesCache = createdCache
         return createdCache
     }
+
+    private fun recentColorKey(index: Int) = RECENT_COLORS_KEY_PREFIX + index
 }

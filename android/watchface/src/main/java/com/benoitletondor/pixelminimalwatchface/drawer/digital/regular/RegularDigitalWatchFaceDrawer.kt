@@ -85,6 +85,8 @@ class RegularDigitalWatchFaceDrawer(
     private var currentTimeSize = storage.getTimeSize()
     private var currentDateAndBatterySize = storage.getDateAndBatterySize()
     private var currentWidgetsSize = storage.getWidgetsSize()
+    private var currentShowWatchBattery = storage.showWatchBattery()
+    private var currentShowPhoneBattery = storage.showPhoneBattery()
     private val spaceBeforeWeather = context.dpToPx(5)
     private val topAndBottomMargins = context.getTopAndBottomMargins().toInt()
     private val weatherAndBatteryIconColorFilterDimmed: ColorFilter = PorterDuffColorFilter(dateAndBatteryColorDimmed, PorterDuff.Mode.SRC_IN)
@@ -257,7 +259,9 @@ class RegularDigitalWatchFaceDrawer(
         } else if( currentDrawingState is RegularDrawerDrawingState.CacheAvailable &&
             (currentTimeSize != storage.getTimeSize() ||
             currentDateAndBatterySize != storage.getDateAndBatterySize() ||
-            currentWidgetsSize != storage.getWidgetsSize()) ) {
+            currentWidgetsSize != storage.getWidgetsSize() ||
+            currentShowWatchBattery != storage.showWatchBattery() ||
+            currentShowPhoneBattery != storage.showPhoneBattery() )) {
             drawingState = currentDrawingState.buildCache()
         }
 
@@ -305,6 +309,8 @@ class RegularDigitalWatchFaceDrawer(
 
         currentTimeSize = timeSize
         currentDateAndBatterySize = dateAndBatterySize
+        currentShowPhoneBattery = storage.showPhoneBattery()
+        currentShowWatchBattery = storage.showWatchBattery()
 
         val batteryBottomY = screenHeight - chinSize - topAndBottomMargins
 
@@ -400,7 +406,11 @@ class RegularDigitalWatchFaceDrawer(
                 if (isRound) { (screenWidth / 7f).toInt() } else { context.dpToPx(15) },
                 bottomTop.toInt(),
                 if (isRound) { screenWidth - (screenWidth / 7f).toInt() } else { screenWidth - context.dpToPx(15) },
-                bottomTop.toInt() + availableBottomSpace.toInt() - batteryIconSize - context.dpToPx(2),
+                if (storage.showWatchBattery() || storage.showPhoneBattery() ) {
+                    bottomTop.toInt() + availableBottomSpace.toInt() - batteryIconSize - context.dpToPx(2)
+                } else {
+                    bottomTop.toInt() + availableBottomSpace.toInt()
+                },
             ),
         )
     }

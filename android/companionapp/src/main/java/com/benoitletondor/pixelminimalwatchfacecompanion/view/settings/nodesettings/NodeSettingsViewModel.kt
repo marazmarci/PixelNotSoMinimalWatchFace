@@ -120,6 +120,12 @@ class NodeSettingsViewModel @Inject constructor(
         }
     }
 
+    fun onHowToUpgradeAppOnWatchButtonPressed() {
+        viewModelScope.launch {
+            eventMutableFlow.emit(Event.ShowUpgradeOnWatchInstructions)
+        }
+    }
+
     sealed class State {
         object InitializingSession : State()
         class IncompatibleVersion(val watchNodeVersion: Int, val appVersion: Int) : State()
@@ -130,6 +136,7 @@ class NodeSettingsViewModel @Inject constructor(
     sealed class Event {
         object OpenPlayStore : Event()
         object ShowActivationInstructions: Event()
+        object ShowUpgradeOnWatchInstructions : Event()
     }
 
     companion object {

@@ -33,8 +33,15 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.benoitletondor.pixelminimalwatchface.common.settings.ComplicationColorScreen
 import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorCategory
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class WatchComplicationColorScreen : ComplicationColorScreen {
+
+    override fun getPlatformCategories(): StateFlow<List<ComplicationColorCategory>> = MutableStateFlow(emptyList())
+
+    override fun onPlatformColorClicked(color: ComplicationColor) { /* No-op */ }
 
     @Composable
     override fun ColorChip(color: ComplicationColor, onClick: () -> Unit) {

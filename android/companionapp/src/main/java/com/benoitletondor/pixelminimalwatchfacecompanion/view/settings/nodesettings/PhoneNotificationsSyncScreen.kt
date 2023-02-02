@@ -63,6 +63,7 @@ fun PhoneNotificationsSyncScreen(
                 composeComponents = composeComponents,
                 hasNotificationsListenerPermission = viewModel.hasNotificationsListenerPermission,
                 onSetupButtonPressed = {
+                    viewModel.setNotificationsSyncActivated()
                     navController.navigate(NAV_NOTIFICATIONS_SYNC_ROUTE)
                 }
             )

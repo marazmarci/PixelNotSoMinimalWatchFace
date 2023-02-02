@@ -31,4 +31,6 @@ interface Storage {
     fun watchNotificationSyncDisabledPackages(): Flow<Set<String>>
     fun setNotificationsSyncAppDisabled(packageName: String)
     fun removeNotificationsSyncAppDisabled(packageName: String)
+    fun getRecentCustomColors(): List<Int>
+    fun setRecentCustomColors(colors: List<Int>)
 }

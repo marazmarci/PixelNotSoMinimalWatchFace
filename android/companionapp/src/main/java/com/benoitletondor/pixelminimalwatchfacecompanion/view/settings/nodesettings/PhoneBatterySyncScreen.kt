@@ -40,6 +40,7 @@ fun PhoneBatterySyncScreen(
     navController: NavController,
     phonePlatform: PhonePlatform,
     composeComponents: PhoneSettingsComposeComponents,
+    viewModel: PhoneBatterySyncScreenViewModel,
 ) {
     AppTopBarScaffold(
         navController = navController,
@@ -50,6 +51,7 @@ fun PhoneBatterySyncScreen(
                 phonePlatform = phonePlatform,
                 composeComponents = composeComponents,
                 onDebugButtonPressed = {
+                    viewModel.setBatterySyncActivated()
                     navController.navigate(NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE)
                 }
             )

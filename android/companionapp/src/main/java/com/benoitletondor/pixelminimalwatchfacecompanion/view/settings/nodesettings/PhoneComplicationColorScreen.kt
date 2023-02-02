@@ -15,6 +15,7 @@
  */
 package com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -27,21 +28,37 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.benoitletondor.pixelminimalwatchface.common.settings.ComplicationColorScreen
 import com.benoitletondor.pixelminimalwatchface.common.settings.SettingsComposeComponents
 import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorCategory
 import com.benoitletondor.pixelminimalwatchface.common.settings.model.Platform
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarScaffold
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.settings.Chip
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.NAV_COLOR_SELECTOR_SCREEN_ROUTE
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class PhoneComplicationColorScreen : ComplicationColorScreen {
+class PhoneComplicationColorScreen(
+    private val viewModel: PhoneComplicationColorScreenViewModel,
+) : ComplicationColorScreen {
+
+    override fun getPlatformCategories(): StateFlow<List<ComplicationColorCategory>>
+        = viewModel.colorCategoriesStateFlow
+
+    override fun onPlatformColorClicked(color: ComplicationColor) {
+        viewModel.onColorClicked(color)
+    }
 
     @Composable
     fun PhoneScreen(
@@ -50,6 +67,50 @@ class PhoneComplicationColorScreen : ComplicationColorScreen {
         navController: NavController,
         defaultColor: ComplicationColor,
     ) {
+        val activity = LocalContext.current as ComponentActivity
+
+        LaunchedEffect("eventListener") {
+            launch {
+                viewModel.eventFlow.collect { event ->
+                    when(event) {
+                        is PhoneComplicationColorScreenViewModel.Event.SelectColorEvent -> {
+                            navController.selectColorAndNavigateBack(event.color)
+                        }
+                        is PhoneComplicationColorScreenViewModel.Event.ShowMaterialUColorAlert -> {
+                            MaterialAlertDialogBuilder(activity)
+                                .setTitle("Material You color")
+                                .setMessage("You'll apply the current Material You color.\n\nPlease note that if you change it in your system settings later this color will not be updated automatically, you'll need to select it again.")
+                                .setPositiveButton("Ok") { _, _ -> viewModel.onMaterialUAlertDismissed(event.color) }
+                                .setNegativeButton("Cancel") { _, _ -> }
+                                .show()
+                        }
+                        PhoneComplicationColorScreenViewModel.Event.StartColorPicker -> {
+                            navController.navigate(NAV_COLOR_SELECTOR_SCREEN_ROUTE)
+                        }
+                    }
+                }
+            }
+        }
+
+        LaunchedEffect("colorSelectorResult") {
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.getStateFlow(CustomSelectedColorResult, 0)
+                ?.collect { colorIntOr0 ->
+                    if (colorIntOr0 != 0){
+                        navController.currentBackStackEntry?.savedStateHandle?.remove<Int>(
+                            CustomSelectedColorResult
+                        )
+
+                        navController.selectColorAndNavigateBack(ComplicationColor(
+                            color = colorIntOr0,
+                            label = "Custom",
+                            isDefault = false,
+                        ))
+                    }
+                }
+        }
+
         AppTopBarScaffold(
             navController = navController,
             showBackButton = true,

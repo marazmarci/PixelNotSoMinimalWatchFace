@@ -874,17 +874,15 @@ interface SettingsScreen {
             }
         }
 
-        if (platform.isWearOS3) {
-            item(key = "showColorsInAmbient") {
-                composeComponents.SettingToggleChip(
-                    label = "Colors in ambient mode",
-                    secondaryLabel = "Caution: can increase battery usage",
-                    checked = showComplicationsColorInAmbient,
-                    onCheckedChange = platform::setShowColorsInAmbientMode,
-                    iconDrawable = R.drawable.ic_palette_24,
-                    modifier = Modifier.heightIn(min = 90.dp),
-                )
-            }
+        item(key = "showColorsInAmbient") {
+            composeComponents.SettingToggleChip(
+                label = "Colors in ambient mode",
+                secondaryLabel = "Caution: can increase battery usage",
+                checked = showComplicationsColorInAmbient,
+                onCheckedChange = platform::setShowColorsInAmbientMode,
+                iconDrawable = R.drawable.ic_palette_24,
+                modifier = Modifier.heightIn(min = 90.dp),
+            )
         }
     }
 

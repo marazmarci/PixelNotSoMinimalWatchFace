@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
@@ -77,6 +79,16 @@ fun NodeSettingsScreen(
                             .setPositiveButton("Ok") { _, _ -> }
                             .show()
                     }
+                    NodeSettingsViewModel.Event.ShowUpgradeOnWatchInstructions -> {
+                        MaterialAlertDialogBuilder(activity)
+                            .setTitle("Upgrade Pixel Minimal Watch Face on your watch")
+                            .setMessage("Everything happens on your watch:\n\n" +
+                                    "- Open the PlayStore\n" +
+                                    "- Scroll all the way down to the \"Manage apps\" section \n" +
+                                    "- Upgrade all your apps from there, including Pixel Minimal Watch Face")
+                            .setPositiveButton("Ok") { _, _ -> }
+                            .show()
+                    }
                 }
             }
         }
@@ -102,6 +114,7 @@ fun NodeSettingsScreen(
                 onRetryButtonPressed = viewModel::onRetryButtonPressed,
                 onOpenPlayStoreOnPhonePressed = viewModel::onOpenPlayStoreOnPhonePressed,
                 onHowToActivateButtonPressed = viewModel::onHowToActivateButtonPressed,
+                onHowToUpgradeAppOnWatchButtonPressed = viewModel::onHowToUpgradeAppOnWatchButtonPressed,
             )
         }
     )
@@ -114,12 +127,14 @@ private fun Content(
     onRetryButtonPressed: () -> Unit,
     onOpenPlayStoreOnPhonePressed: () -> Unit,
     onHowToActivateButtonPressed: () -> Unit,
+    onHowToUpgradeAppOnWatchButtonPressed: () -> Unit,
 ) {
     when(state) {
         is NodeSettingsViewModel.State.Error -> ErrorView(
             error = state.e,
             onRetryButtonPressed = onRetryButtonPressed,
             onHowToActivateButtonPressed = onHowToActivateButtonPressed,
+            onHowToUpgradeAppOnWatchButtonPressed = onHowToUpgradeAppOnWatchButtonPressed,
         )
         is NodeSettingsViewModel.State.IncompatibleVersion -> IncompatibleVersionView(
             watchNodeVersion = state.watchNodeVersion,
@@ -139,12 +154,14 @@ private fun ErrorView(
     error: Exception,
     onRetryButtonPressed: () -> Unit,
     onHowToActivateButtonPressed: () -> Unit,
+    onHowToUpgradeAppOnWatchButtonPressed: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .padding(horizontal = 26.dp)
             .fillMaxHeight(fraction = 0.9f)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -154,6 +171,7 @@ private fun ErrorView(
             fontSize = 22.sp,
         )
         Spacer(modifier = Modifier.height(20.dp))
+
         Text(
             text = "An error occurred while connecting to the watch face on your watch.",
             color = MaterialTheme.colorScheme.onBackground,
@@ -188,6 +206,22 @@ private fun ErrorView(
             colors = blueButtonColors(),
         ) {
             Text("How to activate the watch face")
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "- Pixel Minimal Watch Face app is up to date on your watch",
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = onHowToUpgradeAppOnWatchButtonPressed,
+            colors = blueButtonColors(),
+        ) {
+            Text("How to upgrade the app on the watch")
         }
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -341,6 +375,7 @@ private fun ErrorViewPreview() {
             error = Exception("Test message"),
             onRetryButtonPressed = {},
             onHowToActivateButtonPressed = {},
+            onHowToUpgradeAppOnWatchButtonPressed = {},
         )
     }
 }

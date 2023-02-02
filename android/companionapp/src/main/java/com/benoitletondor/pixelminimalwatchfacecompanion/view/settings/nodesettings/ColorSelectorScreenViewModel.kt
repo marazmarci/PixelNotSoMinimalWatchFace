@@ -15,20 +15,36 @@
  */
 package com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings
 
+import androidx.annotation.ColorInt
 import androidx.lifecycle.ViewModel
-import com.benoitletondor.pixelminimalwatchfacecompanion.device.Device
+import androidx.lifecycle.viewModelScope
+import com.benoitletondor.pixelminimalwatchfacecompanion.helper.MutableLiveFlow
 import com.benoitletondor.pixelminimalwatchfacecompanion.storage.Storage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PhoneNotificationsSyncScreenViewModel @Inject constructor(
-    private val device: Device,
+class ColorSelectorScreenViewModel @Inject constructor(
     private val storage: Storage,
-): ViewModel() {
-    val hasNotificationsListenerPermission get() = device.hasNotificationsListenerPermission()
+) : ViewModel() {
+    private val eventMutableFlow = MutableLiveFlow<Event>()
+    val eventFlow: Flow<Event> = eventMutableFlow
 
-    fun setNotificationsSyncActivated() {
-        storage.setNotificationsSyncActivated(true)
+    val recentColors = storage.getRecentCustomColors()
+
+    fun onColorSelected(@ColorInt colorInt: Int) {
+        if (colorInt !in recentColors) {
+            storage.setRecentCustomColors(listOf(colorInt) + recentColors.take(4))
+        }
+
+        viewModelScope.launch {
+            eventMutableFlow.emit(Event.SendResultAndGoBack(colorInt))
+        }
+    }
+
+    sealed class Event {
+        class SendResultAndGoBack(@ColorInt val colorInt: Int) : Event()
     }
 }

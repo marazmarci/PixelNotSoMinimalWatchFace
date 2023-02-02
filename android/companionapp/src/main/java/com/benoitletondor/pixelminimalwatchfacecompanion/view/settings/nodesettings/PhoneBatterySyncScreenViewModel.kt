@@ -15,20 +15,24 @@
  */
 package com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.benoitletondor.pixelminimalwatchfacecompanion.BatteryStatusBroadcastReceiver
 import com.benoitletondor.pixelminimalwatchfacecompanion.device.Device
 import com.benoitletondor.pixelminimalwatchfacecompanion.storage.Storage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
-class PhoneNotificationsSyncScreenViewModel @Inject constructor(
-    private val device: Device,
+@SuppressLint("StaticFieldLeak")
+class PhoneBatterySyncScreenViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val storage: Storage,
 ): ViewModel() {
-    val hasNotificationsListenerPermission get() = device.hasNotificationsListenerPermission()
-
-    fun setNotificationsSyncActivated() {
-        storage.setNotificationsSyncActivated(true)
+    fun setBatterySyncActivated() {
+        storage.setBatterySyncActivated(true)
+        BatteryStatusBroadcastReceiver.subscribeToUpdates(context)
     }
 }

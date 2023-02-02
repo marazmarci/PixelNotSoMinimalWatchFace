@@ -81,7 +81,7 @@ private const val KEY_USER_PREMIUM = "user_premium"
 private const val KEY_INSTALL_TIMESTAMP = "installTS"
 private const val KEY_RATING_NOTIFICATION_SENT = "ratingNotificationSent"
 private const val KEY_APP_VERSION = "appVersion"
-private const val KEY_FEATURE_DROP_2022_NOTIFICATION = "featureDrop2022Notification_5"
+private const val KEY_FEATURE_DROP_2023_NOTIFICATION = "featureDrop2023Notification_1"
 private const val KEY_BETA_NOTIFICATIONS_DISCLAIMER_SHOWN = "betaNotificationsDisclaimerBeenShown"
 
 @Stable
@@ -136,8 +136,8 @@ interface Storage {
     fun showWatchBattery(): Boolean
     suspend fun setShowWatchBattery(show: Boolean)
     fun watchShowWatchBattery(): Flow<Boolean>
-    fun hasFeatureDropWinter2022NotificationBeenShown(): Boolean
-    fun setFeatureDropWinter2022NotificationShown()
+    fun hasFeatureDropWinter2023NotificationBeenShown(): Boolean
+    fun setFeatureDropWinter2023NotificationShown()
     fun getUseShortDateFormat(): Boolean
     suspend fun setUseShortDateFormat(useShortDateFormat: Boolean)
     fun watchUseShortDateFormat(): Flow<Boolean>
@@ -772,12 +772,12 @@ class StorageImpl(
 
     override fun setBetaNotificationsDisclaimerShown() = betaNotificationsDisclaimerShownCache.set(true)
 
-    override fun hasFeatureDropWinter2022NotificationBeenShown(): Boolean {
-        return sharedPreferences.getBoolean(KEY_FEATURE_DROP_2022_NOTIFICATION, false)
+    override fun hasFeatureDropWinter2023NotificationBeenShown(): Boolean {
+        return sharedPreferences.getBoolean(KEY_FEATURE_DROP_2023_NOTIFICATION, false)
     }
 
-    override fun setFeatureDropWinter2022NotificationShown() {
-        sharedPreferences.edit().putBoolean(KEY_FEATURE_DROP_2022_NOTIFICATION, true).apply()
+    override fun setFeatureDropWinter2023NotificationShown() {
+        sharedPreferences.edit().putBoolean(KEY_FEATURE_DROP_2023_NOTIFICATION, true).apply()
     }
 
     override fun getUseShortDateFormat(): Boolean = useShortDateFormatCache.get()

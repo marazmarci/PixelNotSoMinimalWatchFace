@@ -18,12 +18,16 @@ package com.benoitletondor.pixelminimalwatchface.common.settings
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorCategory
 import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorsProvider
 import com.benoitletondor.pixelminimalwatchface.common.settings.model.Platform
+import kotlinx.coroutines.flow.StateFlow
 
 const val ComplicationColorScreenResultKey = "ComplicationColorScreenResultKey"
 
@@ -35,6 +39,10 @@ interface ComplicationColorScreen {
         onClick: () -> Unit,
     )
 
+    fun getPlatformCategories(): StateFlow<List<ComplicationColorCategory>>
+
+    fun onPlatformColorClicked(color: ComplicationColor)
+
     @Composable
     fun Screen(
         modifier: Modifier = Modifier,
@@ -44,6 +52,7 @@ interface ComplicationColorScreen {
         defaultColor: ComplicationColor,
     ) {
         val availableColors = remember { ComplicationColorsProvider.getAllComplicationColors() }
+        val platformColors by getPlatformCategories().collectAsState()
 
         LaunchedEffect("init") {
             navController.previousBackStackEntry
@@ -59,27 +68,24 @@ interface ComplicationColorScreen {
                 title = "Default",
                 colors = listOf(defaultColor),
                 includeTopPadding = false,
-                onColorClick = { color ->
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set(ComplicationColorScreenResultKey, color)
-
-                    navController.popBackStack()
-                }
+                onColorClick =  { color -> navController.selectColorAndNavigateBack(color) }
             )
+
+            platformColors.forEach { colorCategory ->
+                ColorCategory(
+                    composeComponents = composeComponents,
+                    title = colorCategory.label,
+                    colors = colorCategory.colors,
+                    onColorClick = { onPlatformColorClicked(it) },
+                )
+            }
 
             availableColors.forEach { colorCategory ->
                 ColorCategory(
                     composeComponents = composeComponents,
                     title = colorCategory.label,
                     colors = colorCategory.colors,
-                    onColorClick =  { color ->
-                        navController.previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set(ComplicationColorScreenResultKey, color)
-
-                        navController.popBackStack()
-                    }
+                    onColorClick =  { color -> navController.selectColorAndNavigateBack(color) }
                 )
             }
         }
@@ -107,5 +113,13 @@ interface ComplicationColorScreen {
                 )
             }
         }
+    }
+
+    fun NavController.selectColorAndNavigateBack(color: ComplicationColor) {
+        previousBackStackEntry
+            ?.savedStateHandle
+            ?.set(ComplicationColorScreenResultKey, color)
+
+        popBackStack()
     }
 }
