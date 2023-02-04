@@ -15,12 +15,16 @@
  */
 package com.benoitletondor.pixelminimalwatchface.compose.component
 
+import android.content.ComponentName
 import android.support.wearable.complications.ComplicationProviderInfo
+import android.support.wearable.complications.ProviderInfoRetriever
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,36 +34,84 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import com.benoitletondor.pixelminimalwatchface.PixelMinimalWatchFace
 import com.benoitletondor.pixelminimalwatchface.R
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchface.helper.toBitmap
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 
 @Composable
-fun SettingComplicationSlot(
+fun WatchSettingComplicationSlot(
     modifier: Modifier = Modifier,
-    providerInfo: ComplicationProviderInfo?,
+    complicationLocation: ComplicationLocation,
     color: ComplicationColor?,
-    onClick : (() -> Unit)?,
     iconWidth: Int = 40,
     iconHeight: Int = 40,
 ) {
     val context = LocalContext.current
-    val iconDrawable = remember(providerInfo?.providerIcon) {
-        providerInfo?.providerIcon?.loadDrawable(context)
+
+    val providerInfoState = remember { mutableStateOf<ComplicationProviderInfo?>(null) }
+    val watchFaceComponentName = remember { ComponentName(context, PixelMinimalWatchFace::class.java) }
+    val providerInfoRetriever = remember { ProviderInfoRetriever(context, Dispatchers.IO.asExecutor()) }
+
+    fun updateComplication() {
+        providerInfoRetriever.retrieveProviderInfo(
+            object : ProviderInfoRetriever.OnProviderInfoReceivedCallback() {
+                override fun onProviderInfoReceived(watchFaceComplicationId: Int, complicationProviderInfo: ComplicationProviderInfo?) {
+                    providerInfoState.value = complicationProviderInfo
+                }
+
+                override fun onRetrievalFailed() {
+                    super.onRetrievalFailed()
+                    Log.e("SettingComplicationSlot", "Error fetching complication provider info")
+                }
+            },
+            watchFaceComponentName,
+            PixelMinimalWatchFace.getComplicationId(complicationLocation)
+        )
+    }
+
+    DisposableEffect("providerInfoRetriever") {
+        providerInfoRetriever.init()
+
+        onDispose {
+            providerInfoRetriever.release()
+        }
+    }
+
+    // FIXME : too many redraw?
+    updateComplication()
+
+    WatchSettingComplicationSlot(
+        modifier = modifier,
+        complicationProviderInfo = providerInfoState.value,
+        color = color,
+        iconWidth = iconWidth,
+        iconHeight = iconHeight,
+    )
+}
+
+@Composable
+fun WatchSettingComplicationSlot(
+    modifier: Modifier = Modifier,
+    complicationProviderInfo: ComplicationProviderInfo?,
+    color: ComplicationColor?,
+    iconWidth: Int = 40,
+    iconHeight: Int = 40,
+) {
+    val context = LocalContext.current
+
+    val iconDrawable = remember(complicationProviderInfo?.providerIcon) {
+        complicationProviderInfo?.providerIcon?.loadDrawable(context)
     }
 
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .let {
-                if(onClick != null) {
-                    it.clickable(onClick = onClick)
-                } else {
-                    it
-                }
-            }
     ) {
-        if (providerInfo == null) {
+        if (complicationProviderInfo == null) {
             Image(
                 painter = painterResource(id = R.drawable.add_complication),
                 contentDescription = "Add widget",
@@ -77,11 +129,10 @@ fun SettingComplicationSlot(
                 if (iconDrawable != null) {
                     Image(
                         bitmap = iconDrawable.toBitmap(iconWidth, iconHeight).asImageBitmap(),
-                        contentDescription = providerInfo.providerName,
+                        contentDescription = complicationProviderInfo?.providerName,
                         colorFilter = color?.let { ColorFilter.tint(Color(it.color)) },
                     )
                 }
-
             }
         }
     }

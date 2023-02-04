@@ -175,7 +175,6 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
                     modifier = Modifier.padding(bottom = 20.dp),
                 )
             }
-
         }
     }
 

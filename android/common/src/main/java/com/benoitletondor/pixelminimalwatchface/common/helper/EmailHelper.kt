@@ -27,6 +27,7 @@ fun Context.getEmailSubject(): String {
         if (Build.VERSION.SDK_INT >= 30) {
             packageManager.getInstallSourceInfo(packageName).installingPackageName == PLAY_STORE_PACKAGE_NAME
         } else {
+            @Suppress("DEPRECATION")
             packageManager.getInstallerPackageName(packageName) == PLAY_STORE_PACKAGE_NAME
         }
     } catch (e: Exception) {

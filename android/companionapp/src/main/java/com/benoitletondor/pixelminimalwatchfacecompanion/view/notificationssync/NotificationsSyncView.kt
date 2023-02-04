@@ -44,7 +44,7 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.blueButtonColors
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarScaffold
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.primaryBlue
-import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE
 
 @Composable
 fun NotificationsSyncView(navController: NavController, viewModel: NotificationsSyncViewModel) {
@@ -187,21 +187,7 @@ private fun ActivatedNotificationsSyncLayout(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "- Go into the watch face settings on your watch (by long pressing on the time on the watch face, then tapping the Customize button at the bottom)",
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Text(
-            text = "- Tap the \"Phone notification icons\" button",
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Text(
-            text = "- Disable the \"Show notification icons\" switch",
+            text = "Disable the feature from the watch face settings or directly on your watch (by long pressing on the time on the watch face, then tapping the Customize button at the bottom)",
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,

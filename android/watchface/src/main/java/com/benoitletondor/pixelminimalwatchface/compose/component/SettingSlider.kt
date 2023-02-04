@@ -28,11 +28,12 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.InlineSlider
 import androidx.wear.compose.material.Text
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun SettingSlider(
     @DrawableRes iconDrawable: Int,
-    onValueChange: (Int) -> Unit,
+    onValueChange: suspend (Int) -> Unit,
     value: Int,
     title: String,
     modifier: Modifier = Modifier,
@@ -63,7 +64,7 @@ fun SettingSlider(
         InlineSlider(
             value = value,
             valueProgression = IntProgression.fromClosedRange(minValue, maxValue, step),
-            onValueChange = onValueChange,
+            onValueChange = { runBlocking { onValueChange(it) } },
             decreaseIcon = { Text(
                 text = "-",
                 modifier = Modifier.fillMaxWidth(),

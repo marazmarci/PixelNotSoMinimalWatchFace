@@ -13,28 +13,39 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchface.model
+package com.benoitletondor.pixelminimalwatchface.common.settings.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.ColorInt
 
-enum class ComplicationLocation : Parcelable {
-    LEFT, MIDDLE, RIGHT, BOTTOM, ANDROID_12_TOP_LEFT, ANDROID_12_TOP_RIGHT, ANDROID_12_BOTTOM_LEFT, ANDROID_12_BOTTOM_RIGHT;
+data class ComplicationColor(
+    @ColorInt val color: Int,
+    val label: String,
+    val isDefault: Boolean
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readString()!!,
+        parcel.readByte() != 0.toByte()
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(ordinal)
+        parcel.writeInt(color)
+        parcel.writeString(label)
+        parcel.writeByte(if (isDefault) 1 else 0)
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<ComplicationLocation> {
-        override fun createFromParcel(parcel: Parcel): ComplicationLocation {
-            return values()[parcel.readInt()]
+    companion object CREATOR : Parcelable.Creator<ComplicationColor> {
+        override fun createFromParcel(parcel: Parcel): ComplicationColor {
+            return ComplicationColor(parcel)
         }
 
-        override fun newArray(size: Int): Array<ComplicationLocation?> {
+        override fun newArray(size: Int): Array<ComplicationColor?> {
             return arrayOfNulls(size)
         }
     }

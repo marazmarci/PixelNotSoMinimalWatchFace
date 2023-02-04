@@ -87,7 +87,9 @@ class PhoneBatteryConfigurationViewModel(
                         syncActivated = syncActivated,
                     )
 
-                    storage.setShowPhoneBattery(syncActivated)
+                    viewModelScope.launch {
+                        storage.setShowPhoneBattery(syncActivated)
+                    }
                 }
             } catch (t: Throwable) {
                 Log.e(TAG, "Error while parsing sync activated response from phone", t)
@@ -219,7 +221,9 @@ class PhoneBatteryConfigurationViewModel(
     }
 
     fun onForceDeactivateSyncClicked() {
-        storage.setShowPhoneBattery(false)
+        viewModelScope.launch {
+            storage.setShowPhoneBattery(false)
+        }
 
         when(val state = state) {
             is State.Error -> this.state = State.Error(state.errorType, syncActivated = false)

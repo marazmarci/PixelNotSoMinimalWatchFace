@@ -13,30 +13,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchface.settings
+package com.benoitletondor.pixelminimalwatchface.common.settings
 
 import androidx.annotation.ColorInt
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColor
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationLocation
-import com.benoitletondor.pixelminimalwatchface.settings.screens.ComplicationColorScreenResultKey
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationLocation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-const val ROUTE_START = "settings"
-
 const val ROUTE_COLOR_DEFAULT_ARG = "default"
 const val ROUTE_COLOR = "color/{$ROUTE_COLOR_DEFAULT_ARG}"
-
 const val ROUTE_WIDGET_LOCATION_ARG = "location"
 const val ROUTE_WIDGET = "widget/{$ROUTE_WIDGET_LOCATION_ARG}"
 
-fun NavHostController.navigateToWidgetSelectionScreen(complicationLocation: ComplicationLocation) {
-    navigate(ROUTE_WIDGET.replace("{${ROUTE_WIDGET_LOCATION_ARG}}", complicationLocation.name))
-}
-
-suspend fun NavHostController.navigateToColorSelectionScreen(@ColorInt defaultColor: Int): ComplicationColor? = suspendCancellableCoroutine { continuation ->
+suspend fun NavController.navigateToColorSelectionScreen(@ColorInt defaultColor: Int): ComplicationColor? = suspendCancellableCoroutine { continuation ->
     var listener:  NavController.OnDestinationChangedListener? = null
     val destination = currentDestination
     listener = NavController.OnDestinationChangedListener { _, newDestination, _ ->
@@ -62,4 +53,8 @@ suspend fun NavHostController.navigateToColorSelectionScreen(@ColorInt defaultCo
     continuation.invokeOnCancellation {
         removeOnDestinationChangedListener(listener)
     }
+}
+
+fun NavController.navigateToWidgetSelectionScreen(complicationLocation: ComplicationLocation) {
+    navigate(ROUTE_WIDGET.replace("{${ROUTE_WIDGET_LOCATION_ARG}}", complicationLocation.name))
 }

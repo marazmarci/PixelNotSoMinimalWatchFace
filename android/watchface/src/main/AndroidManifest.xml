@@ -16,8 +16,7 @@
 -->
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.benoitletondor.pixelminimalwatchface">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Required to act as a custom watch face. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -80,6 +79,10 @@
 
         <activity android:name="android.support.wearable.complications.ComplicationHelperActivity"/>
 
+        <activity android:name=".settings.ComplicationsPermissionRequestActivity" />
+
+        <activity android:name=".settings.ComplicationEditActivity" />
+
         <activity
             android:name=".helper.FullBrightnessActivity"
             android:theme="@style/TransparentTheme"/>
@@ -107,6 +110,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
                 android:value="com.benoitletondor.pixelminimalwatchface.CONFIG_COMPLICATION_SIMPLE"/>
+
+            <meta-data
+                android:name="com.google.android.wearable.watchface.companionConfigurationAction"
+                android:value="com.benoitletondor.pixelminimalwatchface.PHONE_CONFIG" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

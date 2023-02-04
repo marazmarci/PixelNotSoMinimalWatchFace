@@ -43,12 +43,6 @@
     <string name="feature_drop_notification_message">New features are available for Pixel Minimal Watch Face!</string>
     <string name="feature_drop_notification_cta">See what\'s new</string>
 
-    <string name="time_size_0">smaller</string>
-    <string name="time_size_25">small</string>
-    <string name="time_size_50">default</string>
-    <string name="time_size_75">big</string>
-    <string name="time_size_100">bigger</string>
-
     <string name="phone_battery_configuration_title">(Beta) Phone battery sync setup</string>
     <string name="phone_battery_configuration_troubleshoot_title">(Beta) Phone battery sync troubleshoot</string>
 </resources>

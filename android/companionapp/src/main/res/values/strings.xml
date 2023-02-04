@@ -16,8 +16,6 @@
 <resources>
     <string name="app_name">Pixel Minimal Watch Face</string>
 
-    <string name="setup_watch_face_instructions">To access the settings, everything happens on your watch: on the watch face, long press on the time. After 1s, you\'ll see a button appear at the bottom, tap on it to customize.</string>
-
     <string name="premium_error">Unable to reach PlayStore to verify your premium status.\n\nPlease check your connection and try again.\n(%s)</string>
     <string name="error_syncing_title">Error syncing with watch</string>
     <string name="error_syncing_message">An error occurred while syncing with your watch. Please check connection and try again.\n(%s)</string>
@@ -42,4 +40,18 @@
     <string name="premium_1_title">4 customisable widgets, weather info, battery indicators, beautifully integrated</string>
     <string name="premium_2_title">Choose the widgets you want</string>
     <string name="premium_3_title">Choose between the regular layout and an Android 12 inspired one</string>
+
+    <string name="rating_popup_question_title">What do you think of Pixel Minimal Watch Face?</string>
+    <string name="rating_popup_question_message">I develop it on my free time, doing the best I can to make it look great and as optimised as possible.\n\nThere still might be things to improve so I would really appreciate your feedback.</string>
+    <string name="rating_popup_question_cta_negative">I don\'t like it</string>
+    <string name="rating_popup_question_cta_positive">I like it</string>
+    <string name="rating_popup_negative_title">:(</string>
+    <string name="rating_popup_negative_message">I\'m sad to hear that. Would you mind sending me your feedback?</string>
+    <string name="rating_popup_negative_cta_negative">No thanks</string>
+    <string name="rating_popup_negative_cta_positive">Sure</string>
+    <string name="rating_popup_positive_title">:)</string>
+    <string name="rating_popup_positive_message">I\'m glad you enjoy it. Feel like helping with a good rating on the PlayStore?</string>
+    <string name="rating_popup_positive_cta_negative">No thanks</string>
+    <string name="rating_popup_positive_cta_positive">Sure</string>
+    <string name="rating_feedback_send_error">Unable to find an app to send feedback email.</string>
 </resources>

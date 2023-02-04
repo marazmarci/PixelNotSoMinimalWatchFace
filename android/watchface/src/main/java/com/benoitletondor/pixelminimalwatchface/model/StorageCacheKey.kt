@@ -1,3 +1,18 @@
+/*
+ *   Copyright 2022 Benoit LETONDOR
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.benoitletondor.pixelminimalwatchface.model
 
 import android.content.Context
@@ -25,6 +40,10 @@ abstract class StorageCachedValue<T>(
         return@run newValue
     }
 
+    fun refresh() {
+        cachedValue.value = getter()
+    }
+
     fun set(value: T) {
         cachedValue.value = value
         setter(value)
@@ -40,24 +59,35 @@ abstract class StorageCachedValue<T>(
 }
 
 class StorageCachedIntValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val key: String,
     private val defaultValue: Int,
 ) : StorageCachedValue<Int>(
     getter = { sharedPreferences.getInt(key, defaultValue) },
     setter = { sharedPreferences.edit { putInt(key, it) } },
-)
+) {
+    init {
+        storageUpdater.register(key, this)
+    }
+}
 
 class StorageCachedBoolValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val key: String,
     private val defaultValue: Boolean,
 ) : StorageCachedValue<Boolean>(
     getter = { sharedPreferences.getBoolean(key, defaultValue) },
     setter = { sharedPreferences.edit { putBoolean(key, it) } },
-)
+) {
+    init {
+        storageUpdater.register(key, this)
+    }
+}
 
 class StorageCachedColorValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val appContext: Context,
     private val key: String,
@@ -73,9 +103,14 @@ class StorageCachedColorValue(
     fun set(@ColorInt color: Int) {
         set(CachedColorValues(color, PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)))
     }
+
+    init {
+        storageUpdater.register(key, this)
+    }
 }
 
 class StorageCachedResolvedColorValue(
+    storageUpdater: StorageUpdater,
     private val sharedPreferences: SharedPreferences,
     private val key: String,
     @ColorInt private val colorInt: Int,
@@ -89,6 +124,10 @@ class StorageCachedResolvedColorValue(
 ) {
     fun set(@ColorInt color: Int) {
         set(CachedColorValues(color, PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)))
+    }
+
+    init {
+        storageUpdater.register(key, this)
     }
 }
 

@@ -105,7 +105,9 @@ class NotificationsSyncConfigurationViewModel(
                         syncStatus = syncStatus,
                     )
 
-                    storage.setNotificationsSyncActivated(syncStatus == NotificationsSyncStatus.ACTIVATED)
+                    viewModelScope.launch {
+                        storage.setNotificationsSyncActivated(syncStatus == NotificationsSyncStatus.ACTIVATED)
+                    }
                 }
             } catch (t: Throwable) {
                 Log.e(TAG, "Error while parsing sync activated response from phone", t)
@@ -259,7 +261,9 @@ class NotificationsSyncConfigurationViewModel(
     }
 
     fun onForceDeactivateSyncClicked() {
-        storage.setNotificationsSyncActivated(false)
+        viewModelScope.launch {
+            storage.setNotificationsSyncActivated(false)
+        }
 
         when(val state = state) {
             is State.Error -> this.state = State.Error(state.errorType, syncActivated = false)

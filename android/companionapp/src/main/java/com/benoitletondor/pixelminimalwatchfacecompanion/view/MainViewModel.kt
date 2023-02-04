@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchfacecompanion.view.main
+package com.benoitletondor.pixelminimalwatchfacecompanion.view
 
 import android.app.Activity
 import android.util.Log
@@ -54,7 +54,9 @@ class MainViewModel @Inject constructor(
     private val lastSyncedPremiumStatusStateFlow = MutableStateFlow<Boolean?>(null)
     private val isSyncingStateFlow = MutableStateFlow(false)
     private val userIsBuyingPremiumStateFlow = MutableStateFlow(false)
-    private val appInstalledStatusStateFlow = MutableStateFlow<AppInstalledStatus>(AppInstalledStatus.Unknown)
+    private val appInstalledStatusStateFlow = MutableStateFlow<AppInstalledStatus>(
+        AppInstalledStatus.Unknown
+    )
 
     private val userForcedInstallStatusFlow = MutableStateFlow(UserForcedInstallStatus.UNSPECIFIED)
 
@@ -67,7 +69,7 @@ class MainViewModel @Inject constructor(
         storage.isBatterySyncActivatedFlow(),
         storage.isNotificationsSyncActivatedFlow(),
         flow { emit(config.getWarning()) },
-        ::computeStep,
+        Companion::computeStep,
     ).stateIn(viewModelScope, SharingStarted.Eagerly, Step.Loading)
     val stepFlow: Flow<Step> = currentStepFlow
     val step: Step get() = currentStepFlow.value
@@ -202,6 +204,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onSettingsButtonPressed() {
+        viewModelScope.launch {
+            navigationEventMutableFlow.emit(NavigationDestination.Settings)
+        }
+    }
+
     fun onInstallWatchFaceButtonPressed() {
         viewModelScope.launch {
             try {
@@ -240,6 +248,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onNavigateToInstallApp() {
+        viewModelScope.launch {
+            userForcedInstallStatusFlow.emit(UserForcedInstallStatus.UNINSTALLED)
+        }
+    }
+
+    fun onNavigateToDonationScreen() {
+        viewModelScope.launch {
+            navigationEventMutableFlow.emit(NavigationDestination.Donate)
+        }
+    }
+
     sealed class Step {
         object Loading : Step()
         object Syncing : Step()
@@ -259,6 +279,7 @@ class MainViewModel @Inject constructor(
         object Donate : NavigationDestination()
         object DebugBatterySync : NavigationDestination()
         object SetupNotificationsSync : NavigationDestination()
+        object Settings : NavigationDestination()
     }
 
     sealed class ErrorType {

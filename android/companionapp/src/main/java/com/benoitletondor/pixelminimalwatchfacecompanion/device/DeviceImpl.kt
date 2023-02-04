@@ -27,6 +27,7 @@ import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.benoitletondor.pixelminimalwatchfacecompanion.ForegroundService
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -114,6 +115,17 @@ class DeviceImpl @Inject constructor(
                     )
                 }
                 .sortedBy { it.appName.lowercase() }
+        }
+    }
+
+    override fun getMaterialUColor(): Int? {
+        if (!DynamicColors.isDynamicColorAvailable()) {
+            return null
+        }
+
+        val wrappedContext = DynamicColors.wrapContextIfAvailable(context, R.style.ThemeOverlay_Material3_DynamicColors_DayNight)
+        return wrappedContext.obtainStyledAttributes(intArrayOf(R.attr.colorPrimary)).use {
+            it.getColor(0, context.getColor(R.color.colorPrimary))
         }
     }
 

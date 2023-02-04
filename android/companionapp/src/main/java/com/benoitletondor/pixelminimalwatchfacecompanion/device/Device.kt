@@ -28,6 +28,7 @@ interface Device {
     fun finishForegroundService()
     fun hasNotificationsListenerPermission(): Boolean
     suspend fun listAllApps(): List<AppInfo>
+    fun getMaterialUColor(): Int?
 
     @Stable
     @Immutable

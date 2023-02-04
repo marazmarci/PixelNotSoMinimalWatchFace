@@ -15,6 +15,7 @@
  */
 package com.benoitletondor.pixelminimalwatchface.compose.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.height
@@ -27,15 +28,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingComplicationSlotContainer(
-    modifier: Modifier = Modifier,
+fun WatchSettingComplicationSlotContainer(
+    modifier: Modifier,
+    onClick: (() -> Unit)?,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = modifier
             .width(50.dp)
             .height(50.dp)
-            .clip(CircleShape),
+            .clip(CircleShape)
+            .let {
+                if (onClick != null) {
+                    return@let it
+                        .clickable(onClick = onClick)
+                }
+
+                return@let it
+            },
         contentAlignment = Alignment.Center,
         content = content
     )

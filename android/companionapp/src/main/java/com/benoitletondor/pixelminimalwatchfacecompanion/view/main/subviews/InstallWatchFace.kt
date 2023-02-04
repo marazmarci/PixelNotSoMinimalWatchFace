@@ -37,7 +37,7 @@ import com.benoitletondor.pixelminimalwatchfacecompanion.sync.Sync
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.blueButtonColors
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.primaryGreen
-import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.MainViewModel
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.MainViewModel
 
 @Composable
 fun InstallWatchFace(

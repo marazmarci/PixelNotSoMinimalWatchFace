@@ -15,29 +15,60 @@
  */
 package com.benoitletondor.pixelminimalwatchface.settings
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.benoitletondor.pixelminimalwatchface.*
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_COLOR
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_COLOR_DEFAULT_ARG
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_WIDGET
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_WIDGET_LOCATION_ARG
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorsProvider
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchface.compose.*
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColor
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationColorsProvider
-import com.benoitletondor.pixelminimalwatchface.model.ComplicationLocation
-import com.benoitletondor.pixelminimalwatchface.settings.screens.ComplicationColorScreen
-import com.benoitletondor.pixelminimalwatchface.settings.screens.SettingsScreen
-import com.benoitletondor.pixelminimalwatchface.settings.screens.WidgetConfigurationScreen
+import com.benoitletondor.pixelminimalwatchface.helper.isComplicationsPermissionGranted
+import com.benoitletondor.pixelminimalwatchface.model.WatchPlatform
+import com.benoitletondor.pixelminimalwatchface.settings.screens.WatchComplicationColorScreen
+import com.benoitletondor.pixelminimalwatchface.settings.screens.WatchSettingsScreen
+import com.benoitletondor.pixelminimalwatchface.settings.screens.WatchWidgetConfigurationScreen
+import kotlinx.coroutines.launch
 
 class SettingsActivity : ComponentActivity() {
+
+    private lateinit var permissionRequestActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var watchPlatform: WatchPlatform
+    private lateinit var watchSettingsScreen: WatchSettingsScreen
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        permissionRequestActivityLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) {
+            val granted = isComplicationsPermissionGranted()
+
+            lifecycleScope.launch {
+                watchPlatform.onPermissionResult(granted)
+            }
+        }
+
+        watchPlatform = WatchPlatform(this, Injection.storage(this), permissionRequestActivityLauncher)
+        watchSettingsScreen = WatchSettingsScreen(watchPlatform)
+
         setContent {
             val swipeDismissableNavController = rememberSwipeDismissableNavController()
+            val watchSettingsComponents = remember("settingsComponents") { WatchSettingsComposeComponents() }
 
             WearTheme {
                 SwipeDismissableNavHost(
@@ -45,9 +76,10 @@ class SettingsActivity : ComponentActivity() {
                     startDestination = ROUTE_START,
                 ) {
                     composable(ROUTE_START) {
-                        SettingsScreen(
+                        watchSettingsScreen.Screen(
+                            composeComponents = watchSettingsComponents,
+                            platform = watchPlatform,
                             navController = swipeDismissableNavController,
-                            storage = Injection.storage(this@SettingsActivity),
                         )
                     }
 
@@ -58,8 +90,10 @@ class SettingsActivity : ComponentActivity() {
                         val complicationLocation = ComplicationLocation.valueOf( it.arguments?.getString(ROUTE_WIDGET_LOCATION_ARG)
                             ?: throw IllegalStateException("Unable to find $ROUTE_WIDGET_LOCATION_ARG arg"))
 
-                        WidgetConfigurationScreen(
-                            storage = Injection.storage(this@SettingsActivity),
+                        WatchWidgetConfigurationScreen().Screen(
+                            modifier = Modifier,
+                            composeComponents = watchSettingsComponents,
+                            platform = watchPlatform,
                             navController = swipeDismissableNavController,
                             complicationLocation = complicationLocation,
                         )
@@ -72,7 +106,9 @@ class SettingsActivity : ComponentActivity() {
                         val complicationColor: Int = it.arguments?.getInt(ROUTE_COLOR_DEFAULT_ARG)
                             ?: throw IllegalStateException("Unable to find $ROUTE_COLOR_DEFAULT_ARG arg")
 
-                        ComplicationColorScreen(
+                        WatchComplicationColorScreen().Screen(
+                            composeComponents = watchSettingsComponents,
+                            platform = watchPlatform,
                             navController = swipeDismissableNavController,
                             defaultColor = ComplicationColor(complicationColor, ComplicationColorsProvider.defaultColorName, true),
                         )
@@ -80,6 +116,10 @@ class SettingsActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val ROUTE_START = "settings"
     }
 }
 

@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchfacecompanion.view.main
+package com.benoitletondor.pixelminimalwatchfacecompanion.view
 
 import android.content.Context
 import android.content.Intent
@@ -38,28 +38,51 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_COLOR
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_COLOR_DEFAULT_ARG
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_WIDGET
+import com.benoitletondor.pixelminimalwatchface.common.settings.ROUTE_WIDGET_LOCATION_ARG
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColor
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColorsProvider
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationLocation
 import com.benoitletondor.pixelminimalwatchfacecompanion.BuildConfig
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import com.benoitletondor.pixelminimalwatchfacecompanion.helper.startSupportEmailActivity
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.AppMaterialTheme
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarMoreMenuItem
 import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.AppTopBarScaffold
+import com.benoitletondor.pixelminimalwatchfacecompanion.ui.components.settings.PhoneSettingsComposeComponents
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.debugphonebatterysync.DebugPhoneBatterySync
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.donation.Donation
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.main.subviews.*
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.NotificationsSyncView
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.notificationssync.filter.NotificationsSyncFilterView
 import com.benoitletondor.pixelminimalwatchfacecompanion.view.onboarding.OnboardingView
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.NavigateToInstallWatchFaceScreenResult
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.SettingsView
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.ColorSelectorScreen
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.NodeSettingsScreen
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.NodeSettingsViewModel
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.PhoneBatterySyncScreen
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.PhoneComplicationColorScreen
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.PhoneNotificationsSyncScreen
+import com.benoitletondor.pixelminimalwatchfacecompanion.view.settings.nodesettings.PhoneWidgetConfigurationScreen
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
 private const val NAV_MAIN_ROUTE = "main"
-private const val NAV_DONATION_ROUTE = "donation"
+const val NAV_DONATION_ROUTE = "donation"
 private const val NAV_ONBOARDING_ROUTE = "onboarding"
-private const val NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE = "phoneBatterySyncDebug"
-private const val NAV_NOTIFICATIONS_SYNC_ROUTE = "notificationsSync"
+const val NAV_DEBUG_PHONE_BATTERY_SYNC_ROUTE = "phoneBatterySyncDebug"
+const val NAV_NOTIFICATIONS_SYNC_ROUTE = "notificationsSync"
+const val NAV_PHONE_BATTERY_SYNC_SETTINGS_ROUTE = "phoneBatterySyncSettings"
+const val NAV_PHONE_NOTIFICATIONS_SYNC_SETTINGS_ROUTE = "phoneNotificationsSyncSettings"
+const val NAV_COLOR_SELECTOR_SCREEN_ROUTE = "colorSelectorScreen"
+const val NAV_SETTINGS_ROUTE = "settings"
+const val NAV_SETTINGS_NODE_ROUTE_ARG = "node"
+const val NAV_SETTINGS_NODE_ROUTE = "settings/node/{$NAV_SETTINGS_NODE_ROUTE_ARG}"
 const val NAV_NOTIFICATIONS_SYNC_FILTER_ROUTE = "notificationsSyncFilterRoute"
 private const val DEEPLINK_SCHEME = "pixelminimalwatchface"
 
@@ -70,6 +93,11 @@ class MainActivity : AppCompatActivity() {
         setContent {
             MainView()
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        this.intent = intent
     }
 }
 
@@ -110,6 +138,91 @@ private fun MainView() {
             ) {
                 NotificationsSyncFilterView(navController, hiltViewModel())
             }
+            composable(
+                route = NAV_SETTINGS_ROUTE,
+            ) {
+                SettingsView(navController, hiltViewModel())
+            }
+            composable(
+                route = NAV_SETTINGS_NODE_ROUTE,
+                arguments = listOf(navArgument(NAV_SETTINGS_NODE_ROUTE_ARG) { type = NavType.StringType })
+            ) {
+                val nodeId: String = it.arguments?.getString(NAV_SETTINGS_NODE_ROUTE_ARG)
+                    ?: throw IllegalStateException("Unable to find $NAV_SETTINGS_NODE_ROUTE_ARG arg")
+
+                NodeSettingsScreen(
+                    navController = navController,
+                    viewModel = hiltViewModel(),
+                    nodeId = nodeId,
+                )
+            }
+            composable(
+                ROUTE_COLOR,
+                arguments = listOf(navArgument(ROUTE_COLOR_DEFAULT_ARG) { type = NavType.IntType })
+            ) {
+                val complicationColor: Int = it.arguments?.getInt(ROUTE_COLOR_DEFAULT_ARG)
+                    ?: throw IllegalStateException("Unable to find $ROUTE_COLOR_DEFAULT_ARG arg")
+
+                PhoneComplicationColorScreen(hiltViewModel()).PhoneScreen(
+                    composeComponents = PhoneSettingsComposeComponents(),
+                    platform = NodeSettingsViewModel.currentSettingsPlatform ?: throw IllegalStateException("Null currentSettingsPlatform"),
+                    navController = navController,
+                    defaultColor = ComplicationColor(complicationColor, ComplicationColorsProvider.defaultColorName, true),
+                )
+            }
+
+            composable(
+                ROUTE_WIDGET,
+                arguments = listOf(navArgument(ROUTE_WIDGET_LOCATION_ARG) { type = NavType.StringType })
+            ) {
+                val complicationLocation = ComplicationLocation.valueOf( it.arguments?.getString(
+                    ROUTE_WIDGET_LOCATION_ARG
+                ) ?: throw IllegalStateException("Unable to find $ROUTE_WIDGET_LOCATION_ARG arg"))
+
+                val phonePlatform = NodeSettingsViewModel.currentSettingsPlatform ?: throw IllegalStateException("Null currentSettingsPlatform")
+
+                PhoneWidgetConfigurationScreen(phonePlatform).PhoneScreen(
+                    composeComponents = PhoneSettingsComposeComponents(),
+                    platform = phonePlatform,
+                    navController = navController,
+                    complicationLocation = complicationLocation,
+                )
+            }
+
+            composable(
+                NAV_PHONE_BATTERY_SYNC_SETTINGS_ROUTE
+            ) {
+                val phonePlatform = NodeSettingsViewModel.currentSettingsPlatform ?: throw IllegalStateException("Null currentSettingsPlatform")
+
+                PhoneBatterySyncScreen(
+                    navController = navController,
+                    phonePlatform = phonePlatform,
+                    composeComponents = PhoneSettingsComposeComponents(),
+                    viewModel = hiltViewModel(),
+                )
+            }
+
+            composable(
+                NAV_PHONE_NOTIFICATIONS_SYNC_SETTINGS_ROUTE
+            ) {
+                val phonePlatform = NodeSettingsViewModel.currentSettingsPlatform ?: throw IllegalStateException("Null currentSettingsPlatform")
+
+                PhoneNotificationsSyncScreen(
+                    viewModel = hiltViewModel(),
+                    navController = navController,
+                    phonePlatform = phonePlatform,
+                    composeComponents = PhoneSettingsComposeComponents(),
+                )
+            }
+
+            composable(
+                NAV_COLOR_SELECTOR_SCREEN_ROUTE
+            ) {
+                ColorSelectorScreen(
+                    navController = navController,
+                    viewModel = hiltViewModel(),
+                )
+            }
         }
     }
 }
@@ -118,6 +231,18 @@ private fun MainView() {
 private fun Main(navController: NavController, mainViewModel: MainViewModel) {
     val step: MainViewModel.Step by mainViewModel.stepFlow.collectAsState(initial = mainViewModel.step)
     val context = LocalContext.current
+
+    LaunchedEffect("settingsResult") {
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.getStateFlow(NavigateToInstallWatchFaceScreenResult, false)
+            ?.collect { shouldNavigateToInstallWatch ->
+                if (shouldNavigateToInstallWatch){
+                    navController.currentBackStackEntry?.savedStateHandle?.remove<Boolean>(NavigateToInstallWatchFaceScreenResult)
+                    mainViewModel.onNavigateToInstallApp()
+                }
+            }
+    }
 
     LaunchedEffect("nav") {
         launch {
@@ -143,6 +268,9 @@ private fun Main(navController: NavController, mainViewModel: MainViewModel) {
                     }
                     MainViewModel.NavigationDestination.SetupNotificationsSync -> {
                         navController.navigate(NAV_NOTIFICATIONS_SYNC_ROUTE)
+                    }
+                    MainViewModel.NavigationDestination.Settings -> {
+                        navController.navigate(NAV_SETTINGS_ROUTE)
                     }
                 }
             }

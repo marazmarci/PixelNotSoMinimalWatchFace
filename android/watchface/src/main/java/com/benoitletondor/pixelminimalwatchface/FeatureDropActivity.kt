@@ -32,10 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
+import com.benoitletondor.pixelminimalwatchface.common.compose.productSansFontFamily
 import com.benoitletondor.pixelminimalwatchface.compose.WearTheme
 import com.benoitletondor.pixelminimalwatchface.compose.component.ChipButton
 import com.benoitletondor.pixelminimalwatchface.compose.component.RotatoryAwareLazyColumn
-import com.benoitletondor.pixelminimalwatchface.compose.productSansFontFamily
 import com.benoitletondor.pixelminimalwatchface.helper.isScreenRound
 import com.benoitletondor.pixelminimalwatchface.settings.SettingsActivity
 
@@ -78,7 +78,7 @@ class FeatureDropActivity : ComponentActivity() {
 
         item(key = "Subtitle") {
             Text(
-                text = "Winter feature drop",
+                text = "February 2023 feature drop",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillParentMaxWidth(),
                 fontSize = 16.sp,
@@ -99,32 +99,32 @@ class FeatureDropActivity : ComponentActivity() {
         if (isScreenRound) {
             item(key = "Item1") {
                 Text(
-                    text = "- Seconds ring: New option to use smooth animation",
+                    text = "- Settings are now available from the phone companion app!",
                 )
             }
         }
 
         item(key = "Item2") {
             Text(
-                text = "- Customize the widgets secondary color",
+                text = "- Create and use custom colors to customize items (only available from the companion app settings).",
             )
         }
 
         item(key = "Item3") {
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "- Filter apps from phone notifications sync. On the phone companion app, tap the \"Troubleshoot\" button and \"Setup notification icons sync\"",
+                text = "- Use your phone Material You color to customize item (only available from the companion app settings).",
             )
         }
 
         item(key = "Item4") {
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "- Bug fixes and optimisations",
+                text = "- Display colors in ambient mode for all watches (was WearOS 3 only before).",
             )
         }
 
-        if (isActive) {
+        /*if (isActive) {
             item(key = "isActiveText") {
                 Text(
                     text = "To setup those new options, tap this button to go to the watch face settings:",
@@ -149,14 +149,15 @@ class FeatureDropActivity : ComponentActivity() {
                     },
                 )
             }
-        } else {
+        } else {*/
             item(key = "isInactiveText") {
                 Text(
-                    text = "To setup those new options, use Pixel Minimal Watch Face as your watch face and long press on the time to access the Configure button.",
+                    //text = "To setup those new options, use Pixel Minimal Watch Face as your watch face and long press on the time to access the Configure button.",
+                    text = "To setup those new options:\n- Use Pixel Minimal Watch Face as your watch face\n - Update the the phone companion app on your phone to the latest version\n - Open it to access all the settings",
                     modifier = Modifier.padding(top = 16.dp),
                 )
             }
-        }
+       /*}*/
 
         item(key = "Outro") {
             Text(

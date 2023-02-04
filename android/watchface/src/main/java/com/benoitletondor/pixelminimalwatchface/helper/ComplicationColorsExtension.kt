@@ -13,68 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.benoitletondor.pixelminimalwatchface.model
+package com.benoitletondor.pixelminimalwatchface.helper
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.annotation.ColorInt
 import com.benoitletondor.pixelminimalwatchface.PixelMinimalWatchFace
-
-data class ComplicationColors(
-    val leftColor: ComplicationColor,
-    val middleColor: ComplicationColor,
-    val rightColor: ComplicationColor,
-    val bottomColor: ComplicationColor,
-    val android12TopLeftColor: ComplicationColor,
-    val android12TopRightColor: ComplicationColor,
-    val android12BottomLeftColor: ComplicationColor,
-    val android12BottomRightColor: ComplicationColor,
-    val leftSecondaryColor: ComplicationColor,
-    val middleSecondaryColor: ComplicationColor,
-    val rightSecondaryColor: ComplicationColor,
-    val bottomSecondaryColor: ComplicationColor,
-    val android12TopLeftSecondaryColor: ComplicationColor,
-    val android12TopRightSecondaryColor: ComplicationColor,
-    val android12BottomLeftSecondaryColor: ComplicationColor,
-    val android12BottomRightSecondaryColor: ComplicationColor,
-)
-
-data class ComplicationColorCategory(
-    val label: String,
-    val colors: List<ComplicationColor>,
-)
-
-data class ComplicationColor(
-    @ColorInt val color: Int,
-    val label: String,
-    val isDefault: Boolean
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readInt(),
-        parcel.readString()!!,
-        parcel.readByte() != 0.toByte()
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(color)
-        parcel.writeString(label)
-        parcel.writeByte(if (isDefault) 1 else 0)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<ComplicationColor> {
-        override fun createFromParcel(parcel: Parcel): ComplicationColor {
-            return ComplicationColor(parcel)
-        }
-
-        override fun newArray(size: Int): Array<ComplicationColor?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
+import com.benoitletondor.pixelminimalwatchface.common.settings.model.ComplicationColors
 
 @ColorInt
 fun ComplicationColors.getPrimaryColorForComplicationId(complicationId: Int): Int = when (complicationId) {
