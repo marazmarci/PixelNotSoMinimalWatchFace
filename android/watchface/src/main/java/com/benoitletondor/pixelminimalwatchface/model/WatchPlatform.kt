@@ -46,9 +46,12 @@ import com.benoitletondor.pixelminimalwatchface.rating.FeedbackActivity
 import com.benoitletondor.pixelminimalwatchface.settings.notificationssync.NotificationsSyncConfigurationActivity
 import com.benoitletondor.pixelminimalwatchface.settings.phonebattery.PhoneBatteryConfigurationActivity
 import com.google.android.wearable.intent.RemoteIntent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 
 class WatchPlatform(
     private val activity: ComponentActivity,
@@ -82,6 +85,8 @@ class WatchPlatform(
                 watchFaceComponentName,
             )
         )
+
+        yield()
 
         return permissionRequestResultMutableFlow.first()
     }

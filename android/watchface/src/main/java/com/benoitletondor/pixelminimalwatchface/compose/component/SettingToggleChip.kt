@@ -19,11 +19,11 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.wear.compose.material.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingToggleChip(
@@ -34,6 +34,8 @@ fun SettingToggleChip(
     secondaryLabel: String? = null,
     @DrawableRes iconDrawable: Int?,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     ToggleChip(
         label = {
             Text(
@@ -63,7 +65,7 @@ fun SettingToggleChip(
                 modifier = Modifier.size(ChipDefaults.SmallIconSize)
             ) }
         },
-        onCheckedChange = { runBlocking { onCheckedChange(it) } },
+        onCheckedChange = { coroutineScope.launch { onCheckedChange(it) } },
         modifier = modifier
             .fillMaxWidth(),
     )
