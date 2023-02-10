@@ -19,6 +19,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.InlineSlider
 import androidx.wear.compose.material.Text
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingSlider(
@@ -41,6 +42,8 @@ fun SettingSlider(
     maxValue: Int = 100,
     step: Int = 25,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
     ) {
@@ -64,7 +67,7 @@ fun SettingSlider(
         InlineSlider(
             value = value,
             valueProgression = IntProgression.fromClosedRange(minValue, maxValue, step),
-            onValueChange = { runBlocking { onValueChange(it) } },
+            onValueChange = { coroutineScope.launch { onValueChange(it) } },
             decreaseIcon = { Text(
                 text = "-",
                 modifier = Modifier.fillMaxWidth(),
