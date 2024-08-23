@@ -84,15 +84,15 @@ android {
 dependencies {
     implementation project(':common')
 
-    implementation 'androidx.wear:wear:1.3.0'
+    implementation 'androidx.wear:wear:1.2.0'
 
-    implementation "androidx.wear.compose:compose-material:1.1.1" // FIXME 1.3.1
-    implementation "androidx.wear.compose:compose-foundation:1.1.1" // FIXME 1.3.1
-    implementation "androidx.wear.compose:compose-navigation:1.1.1" // FIXME 1.3.1
+    implementation "androidx.wear.compose:compose-material:1.1.1"
+    implementation "androidx.wear.compose:compose-foundation:1.1.1"
+    implementation "androidx.wear.compose:compose-navigation:1.1.1"
 
-    debugImplementation "androidx.compose.ui:ui-tooling:1.3.3" // FIXME 1.6.8
-    implementation "androidx.compose.ui:ui-tooling-preview:1.3.3" // FIXME 1.6.8
+    debugImplementation "androidx.compose.ui:ui-tooling:1.3.3"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.3.3"
 
-    implementation 'com.google.android.support:wearable:2.9.0'
-    compileOnly 'com.google.android.wearable:wearable:2.9.0'
+    implementation 'com.google.android.support:wearable:2.8.1'
+    compileOnly 'com.google.android.wearable:wearable:2.8.1'
 }
