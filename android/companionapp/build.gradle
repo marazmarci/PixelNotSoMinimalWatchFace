@@ -25,7 +25,7 @@ plugins {
 android {
     namespace 'com.benoitletondor.pixelminimalwatchfacecompanion'
 
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "dev.maraz.pixelnotsominimalwatchface"
