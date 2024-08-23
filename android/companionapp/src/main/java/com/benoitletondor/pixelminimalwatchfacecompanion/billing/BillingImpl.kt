@@ -65,7 +65,7 @@ class BillingImpl @Inject constructor(
     /**
      * iab check status
      */
-    private var iabStatus: PremiumCheckStatus = PremiumCheckStatus.Initializing
+    private var iabStatus: PremiumCheckStatus = PremiumCheckStatus.Premium
 
     override val userPremiumEventStream: Flow<PremiumCheckStatus>
         get() = userPremiumEventSteamInternal
@@ -93,8 +93,8 @@ class BillingImpl @Inject constructor(
      * @param status the new status
      */
     private fun setIabStatusAndNotify(status: PremiumCheckStatus) {
-        iabStatus = status
-        userPremiumEventSteamInternal.value = status
+        iabStatus = PremiumCheckStatus.Premium
+        userPremiumEventSteamInternal.value = PremiumCheckStatus.Premium
     }
 
     /**
@@ -103,7 +103,7 @@ class BillingImpl @Inject constructor(
      * @return true if the user if premium, false otherwise
      */
     override fun isUserPremium(): Boolean {
-        return iabStatus == PremiumCheckStatus.Premium
+        return true // iabStatus == PremiumCheckStatus.Premium
     }
 
     /**

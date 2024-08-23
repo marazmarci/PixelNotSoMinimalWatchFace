@@ -71,6 +71,7 @@ import com.benoitletondor.pixelminimalwatchface.common.settings.model.Complicati
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 
 const val DEFAULT_APP_VERSION = -1
 
@@ -222,7 +223,7 @@ class StorageImpl(
     // SharedPreferences uses a map so we cache the values to avoid map lookups
     private val timeSizeCache = StorageCachedIntValue(this, sharedPreferences, KEY_TIME_SIZE, DEFAULT_TIME_SIZE)
     private val dateAndBatterySizeCache = StorageCachedIntValue(this, sharedPreferences, KEY_DATE_AND_BATTERY_SIZE, getTimeSize())
-    private val isPremiumUserCache = StorageCachedBoolValue(this, sharedPreferences, KEY_USER_PREMIUM, false)
+    private val isPremiumUserCache = StorageCachedBoolValue(this, sharedPreferences, KEY_USER_PREMIUM, true)
     private val use24hFormatCache = StorageCachedBoolValue(this, sharedPreferences, KEY_USE_24H_TIME_FORMAT, true)
     private val showWearOSLogoCache = StorageCachedBoolValue(this, sharedPreferences, KEY_SHOW_WEAR_OS_LOGO, true)
     private val showComplicationsInAmbientModeCache = StorageCachedBoolValue(this, sharedPreferences, KEY_SHOW_COMPLICATIONS_AMBIENT, false)
@@ -601,9 +602,9 @@ class StorageImpl(
 
     override fun isUserPremium(): Boolean = isPremiumUserCache.get()
 
-    override fun setUserPremium(premium: Boolean) = isPremiumUserCache.set(premium)
+    override fun setUserPremium(premium: Boolean) = isPremiumUserCache.set(true)
 
-    override fun watchIsUserPremium(): Flow<Boolean> = isPremiumUserCache.watchChanges()
+    override fun watchIsUserPremium(): Flow<Boolean> = flowOf(true)
 
     override suspend fun setUse24hTimeFormat(use: Boolean) = use24hFormatCache.set(use)
 
