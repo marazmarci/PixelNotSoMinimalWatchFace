@@ -40,7 +40,12 @@ class WatchSettingsScreen(
     override val weatherTempScaleDisclaimer: String = "Temperature scale (°F or °C) is controlled by the Weather app."
 
     override fun LazyListScope.BecomePremiumSection() {
-        item(key = "PremiumSection") { SettingSectionItem(label = "Premium features") }
+        item(key = "PremiumSection") {
+            SettingSectionItem(
+                label = "Premium features",
+                modifier = Modifier,
+            )
+        }
 
         item(key = "PremiumCompanion") {
             val activity = LocalContext.current as ComponentActivity

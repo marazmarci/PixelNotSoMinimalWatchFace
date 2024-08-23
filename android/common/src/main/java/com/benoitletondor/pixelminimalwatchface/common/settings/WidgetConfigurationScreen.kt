@@ -23,7 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -69,7 +71,7 @@ interface WidgetConfigurationScreen {
 
     @Composable
     fun Screen(
-        modifier: Modifier = Modifier,
+        modifier: Modifier,
         composeComponents: SettingsComposeComponents,
         platform: Platform,
         navController: NavController,
@@ -85,13 +87,20 @@ interface WidgetConfigurationScreen {
                 .map { it.getSecondaryColorForLocation(complicationLocation) }
         }.collectAsState(platform.getComplicationColors().getSecondaryColorForLocation(complicationLocation))
 
-        composeComponents.PlatformLazyColumn {
+        composeComponents.PlatformLazyColumn(
+            modifier = Modifier,
+        ) {
             if (showTitleInScreen) {
                 item("title") {
                     val title = remember { title(complicationLocation) }
-                    composeComponents.PlatformText(
+                    composeComponents.AbstractPlatformText(
                         text = title,
                         modifier = Modifier.padding(bottom = 6.dp),
+                        color = Color.Unspecified,
+                        fontSize = TextUnit.Unspecified,
+                        fontFamily = null,
+                        textAlign = null,
+                        lineHeight = TextUnit.Unspecified,
                     )
                 }
             }

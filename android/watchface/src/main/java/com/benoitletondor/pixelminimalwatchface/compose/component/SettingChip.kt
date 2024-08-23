@@ -24,7 +24,7 @@ import androidx.wear.compose.material.*
 
 @Composable
 fun SettingChip(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     onClick: () -> Unit,
     label: String,
     secondaryLabel: String? = null,

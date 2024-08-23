@@ -143,12 +143,13 @@ private fun Content(
         }
 
         item(key = "SyncButton") {
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 checked = isPhoneNotificationsSyncActivated,
                 onCheckedChange = phonePlatform::setNotificationsSyncActivated,
                 label = "Show phone notification icons",
                 iconDrawable = null,
-                modifier = Modifier.padding(bottom = 30.dp)
+                modifier = Modifier.padding(bottom = 30.dp),
+                secondaryLabel = null,
             )
         }
 

@@ -25,7 +25,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -89,6 +88,7 @@ class FeedbackActivity : ComponentActivity() {
         WearTheme {
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 item {
                     Text(
@@ -111,6 +111,7 @@ class FeedbackActivity : ComponentActivity() {
                     Column {
                         ExplanationText(
                             text = "I develop it on my free time, doing the best I can to make it look great and as optimised as possible.",
+                            modifier = Modifier,
                         )
 
                         ExplanationText(
@@ -133,6 +134,7 @@ class FeedbackActivity : ComponentActivity() {
                     ChipButton(
                         onClick = onNegativeButtonPressed,
                         text = "I don't like it",
+                        modifier = Modifier,
                     )
                 }
             }
@@ -144,6 +146,7 @@ class FeedbackActivity : ComponentActivity() {
         WearTheme {
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 item {
                     Text(
@@ -166,6 +169,7 @@ class FeedbackActivity : ComponentActivity() {
                 item {
                     ExplanationText(
                         text = "Would you mind sending me your feedback by email using your phone?",
+                        modifier = Modifier,
                     )
                 }
 
@@ -221,6 +225,7 @@ class FeedbackActivity : ComponentActivity() {
                     ChipButton(
                         onClick = { finish() },
                         text = "No thanks",
+                        modifier = Modifier,
                     )
                 }
             }
@@ -232,6 +237,7 @@ class FeedbackActivity : ComponentActivity() {
         WearTheme {
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 item {
                     Text(
@@ -260,6 +266,7 @@ class FeedbackActivity : ComponentActivity() {
 
                         ExplanationText(
                             text = "5 stars reviews really help lot, I would really appreciate it.",
+                            modifier = Modifier,
                         )
                     }
 
@@ -296,6 +303,7 @@ class FeedbackActivity : ComponentActivity() {
                     ChipButton(
                         onClick = { finish() },
                         text = "No thanks",
+                        modifier = Modifier,
                     )
                 }
             }

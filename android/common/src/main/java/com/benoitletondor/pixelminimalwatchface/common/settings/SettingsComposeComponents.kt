@@ -36,7 +36,7 @@ interface SettingsComposeComponents {
 
     @Composable
     fun PlatformLazyColumn(
-        modifier: Modifier = Modifier,
+        modifier: Modifier,
         content: LazyListScope.() -> Unit,
     ) {
         AbstractPlatformLazyColumn(
@@ -57,48 +57,12 @@ interface SettingsComposeComponents {
     )
 
     @Composable
-    fun PlatformText(
-        text: String,
-        modifier: Modifier = Modifier,
-        color: Color = Color.Unspecified,
-        fontSize: TextUnit = TextUnit.Unspecified,
-        fontFamily: FontFamily? = null,
-        textAlign: TextAlign? = null,
-        lineHeight: TextUnit = TextUnit.Unspecified,
-    ) {
-        AbstractPlatformText(
-            text = text,
-            modifier = modifier,
-            color = color,
-            fontSize = fontSize,
-            fontFamily = fontFamily,
-            textAlign = textAlign,
-            lineHeight = lineHeight,
-        )
-    }
-
-    @Composable
     fun AbstractSettingSectionItem(
         modifier: Modifier,
         label: String,
         includeTopPadding: Boolean,
         includeBottomPadding: Boolean,
     )
-
-    @Composable
-    fun SettingSectionItem(
-        modifier: Modifier = Modifier,
-        label: String,
-        includeTopPadding: Boolean = true,
-        includeBottomPadding: Boolean = true,
-    ) {
-        AbstractSettingSectionItem(
-            modifier = modifier,
-            label = label,
-            includeTopPadding = includeTopPadding,
-            includeBottomPadding = includeBottomPadding,
-        )
-    }
 
     @Composable
     fun AbstractSettingToggleChip(
@@ -111,25 +75,6 @@ interface SettingsComposeComponents {
     )
 
     @Composable
-    fun SettingToggleChip(
-        modifier: Modifier = Modifier,
-        checked: Boolean,
-        onCheckedChange: suspend (Boolean) -> Unit,
-        label: String,
-        secondaryLabel: String? = null,
-        @DrawableRes iconDrawable: Int?,
-    ) {
-        AbstractSettingToggleChip(
-            modifier = modifier,
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            label = label,
-            secondaryLabel = secondaryLabel,
-            iconDrawable = iconDrawable,
-        )
-    }
-
-    @Composable
     fun AbstractSettingChip(
         modifier: Modifier,
         onClick: () -> Unit,
@@ -137,23 +82,6 @@ interface SettingsComposeComponents {
         secondaryLabel: String?,
         @DrawableRes iconDrawable: Int?,
     )
-
-    @Composable
-    fun SettingChip(
-        modifier: Modifier = Modifier,
-        onClick: () -> Unit,
-        label: String,
-        secondaryLabel: String? = null,
-        @DrawableRes iconDrawable: Int?,
-    ) {
-        AbstractSettingChip(
-            modifier = modifier,
-            onClick = onClick,
-            label = label,
-            secondaryLabel = secondaryLabel,
-            iconDrawable = iconDrawable,
-        )
-    }
 
     @Composable
     fun AbstractSettingSlider(
@@ -168,29 +96,6 @@ interface SettingsComposeComponents {
     )
 
     @Composable
-    fun SettingSlider(
-        @DrawableRes iconDrawable: Int,
-        onValueChange: suspend (Int) -> Unit,
-        value: Int,
-        title: String,
-        modifier: Modifier = Modifier,
-        minValue: Int = 0,
-        maxValue: Int = 100,
-        step: Int = 25,
-    ) {
-        AbstractSettingSlider(
-            iconDrawable = iconDrawable,
-            onValueChange = onValueChange,
-            value = value,
-            title = title,
-            modifier = modifier,
-            minValue = minValue,
-            maxValue = maxValue,
-            step = step,
-        )
-    }
-
-    @Composable
     fun AbstractSettingComplicationSlot(
         modifier: Modifier,
         complicationLocation: ComplicationLocation,
@@ -199,7 +104,7 @@ interface SettingsComposeComponents {
 
     @Composable
     fun SettingComplicationSlot(
-        modifier: Modifier = Modifier,
+        modifier: Modifier,
         complicationLocation: ComplicationLocation,
         color: ComplicationColor,
     ) {

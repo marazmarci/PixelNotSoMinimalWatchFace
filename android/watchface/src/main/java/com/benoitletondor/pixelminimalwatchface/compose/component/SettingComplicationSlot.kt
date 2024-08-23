@@ -44,7 +44,7 @@ import kotlinx.coroutines.asExecutor
 
 @Composable
 fun WatchSettingComplicationSlot(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     complicationLocation: ComplicationLocation,
     color: ComplicationColor?,
     iconWidth: Int = 40,
@@ -95,7 +95,7 @@ fun WatchSettingComplicationSlot(
 
 @Composable
 fun WatchSettingComplicationSlot(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     complicationProviderInfo: ComplicationProviderInfo?,
     color: ComplicationColor?,
     iconWidth: Int = 40,

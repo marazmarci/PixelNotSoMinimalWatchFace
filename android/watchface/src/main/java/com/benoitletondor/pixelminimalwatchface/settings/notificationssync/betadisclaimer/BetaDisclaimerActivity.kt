@@ -33,6 +33,7 @@ class BetaDisclaimerActivity : ComponentActivity() {
         WearTheme {
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 Items()
             }
@@ -93,7 +94,8 @@ class BetaDisclaimerActivity : ComponentActivity() {
                 text = "Understood",
                 onClick = {
                     finish()
-                }
+                },
+                modifier = Modifier,
             )
         }
     }

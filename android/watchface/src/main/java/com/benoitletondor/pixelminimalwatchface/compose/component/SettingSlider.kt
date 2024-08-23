@@ -37,7 +37,7 @@ fun SettingSlider(
     onValueChange: suspend (Int) -> Unit,
     value: Int,
     title: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     minValue: Int = 0,
     maxValue: Int = 100,
     step: Int = 25,

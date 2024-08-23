@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RotatoryAwareLazyColumn(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     horizontalPadding: Dp = 10.dp,
     content: LazyListScope.() -> Unit,
 ) {

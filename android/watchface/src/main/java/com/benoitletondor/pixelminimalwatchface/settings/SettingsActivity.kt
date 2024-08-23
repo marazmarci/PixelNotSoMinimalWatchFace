@@ -111,6 +111,7 @@ class SettingsActivity : ComponentActivity() {
                             platform = watchPlatform,
                             navController = swipeDismissableNavController,
                             defaultColor = ComplicationColor(complicationColor, ComplicationColorsProvider.defaultColorName, true),
+                            modifier = Modifier,
                         )
                     }
                 }

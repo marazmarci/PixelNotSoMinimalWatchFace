@@ -26,7 +26,7 @@ import androidx.wear.compose.material.Text
 
 @Composable
 fun SettingSectionItem(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     label: String,
     includeTopPadding: Boolean = true,
     includeBottomPadding: Boolean = true,

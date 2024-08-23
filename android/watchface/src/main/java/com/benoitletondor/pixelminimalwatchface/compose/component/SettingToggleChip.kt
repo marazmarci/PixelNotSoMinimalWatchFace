@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingToggleChip(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     checked: Boolean,
     onCheckedChange: suspend (Boolean) -> Unit,
     label: String,

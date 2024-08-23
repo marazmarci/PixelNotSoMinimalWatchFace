@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Chip(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     onClick: () -> Unit,
     content : @Composable BoxScope.() -> Unit,
 ) {

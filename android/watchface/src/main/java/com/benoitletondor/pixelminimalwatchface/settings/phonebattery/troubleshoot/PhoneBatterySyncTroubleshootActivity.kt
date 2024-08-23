@@ -43,6 +43,7 @@ class PhoneBatterySyncTroubleshootActivity : ComponentActivity() {
             WearTheme {
                 RotatoryAwareLazyColumn(
                     horizontalPadding = 20.dp,
+                    modifier = Modifier,
                 ) {
                     item {
                         Text(
@@ -58,12 +59,14 @@ class PhoneBatterySyncTroubleshootActivity : ComponentActivity() {
                     item {
                         ExplanationText(
                             text = "To sync your phone battery with your watch, your phone needs to be able to send updates to your watch.",
+                            modifier = Modifier,
                         )
                     }
 
                     item {
                         ExplanationText(
                             text = "This is still in beta as multiple things can fail during this process, from bluetooth issues to WearOS specific problems.",
+                            modifier = Modifier,
                         )
                     }
 
@@ -71,18 +74,22 @@ class PhoneBatterySyncTroubleshootActivity : ComponentActivity() {
                         Column {
                             ExplanationText(
                                 text = "Here are a few things you can try to make it work:",
+                                modifier = Modifier,
                             )
 
                             ExplanationText(
                                 text = "1. Make sure you have \"Pixel Minimal Watch Face\" app installed on your phone too\n(open it once to make sure it's alive)",
+                                modifier = Modifier,
                             )
 
                             ExplanationText(
                                 text = "2. Ensure both \"Pixel Minimal Watch Face\" and \"WearOS\" apps on your phone are up-to-date",
+                                modifier = Modifier,
                             )
 
                             ExplanationText(
                                 text = "3. Try disabling battery optimisation for \"Pixel Minimal Watch Face\" on your phone.",
+                                modifier = Modifier,
                             )
                         }
                     }
@@ -91,6 +98,7 @@ class PhoneBatterySyncTroubleshootActivity : ComponentActivity() {
                         Column {
                             ExplanationText(
                                 text = "If you cannot make it work, please send me an email and I'll try to help:",
+                                modifier = Modifier,
                             )
 
                             Text(

@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -70,25 +71,31 @@ interface SettingsScreen {
         val showComplicationsColorInAmbient by platform.watchShowColorsInAmbientMode().collectAsState(platform.showColorsInAmbientMode())
         val showWearOSLogo by platform.watchShowWearOSLogo().collectAsState(platform.showWearOSLogo())
 
-        composeComponents.PlatformLazyColumn {
+        composeComponents.PlatformLazyColumn(
+            modifier = Modifier,
+        ) {
             if (includeHeader) {
                 item(key = "Title") {
-                    composeComponents.PlatformText(
+                    composeComponents.AbstractPlatformText(
                         text = "Pixel Minimal Watch Face",
                         fontFamily = productSansFontFamily,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillParentMaxWidth(),
+                        color = Color.Unspecified,
+                        fontSize = TextUnit.Unspecified,
+                        lineHeight = TextUnit.Unspecified,
                     )
                 }
             }
 
             item(key = "Android 12 style") {
-                composeComponents.SettingToggleChip(
+                composeComponents.AbstractSettingToggleChip(
                     label = "Android 12 style",
                     checked = useAndroid12,
                     onCheckedChange = platform::setUseAndroid12Style,
                     iconDrawable = R.drawable.ic_baseline_android,
                     modifier = Modifier.padding(top = 10.dp),
+                    secondaryLabel = null,
                 )
             }
 
@@ -108,12 +115,13 @@ interface SettingsScreen {
 
             if (!showNotifications || !useAndroid12) {
                 item(key = "ShowWearOSLogo") {
-                    composeComponents.SettingToggleChip(
+                    composeComponents.AbstractSettingToggleChip(
                         label = if (useAndroid12 || !isUserPremium) { "Show WearOS logo" } else { "WearOS logo as middle widget" },
                         checked = showWearOSLogo,
                         onCheckedChange = platform::setShowWearOSLogo,
                         iconDrawable = R.drawable.ic_wear_os_logo_white,
                         modifier = Modifier.padding(top = 10.dp),
+                        secondaryLabel = null,
                     )
                 }
             }
@@ -173,15 +181,26 @@ interface SettingsScreen {
 
             if (includeFooter) {
                 item(key = "FooterVersion") {
-                    composeComponents.PlatformText(
+                    composeComponents.AbstractPlatformText(
                         text ="Version: ${platform.appVersionName}",
                         modifier = Modifier.padding(top = 10.dp),
+                        color = Color.Unspecified,
+                        fontSize = TextUnit.Unspecified,
+                        fontFamily = null,
+                        textAlign = null,
+                        lineHeight = TextUnit.Unspecified,
                     )
                 }
 
                 item(key = "FooterCopyright") {
-                    composeComponents.PlatformText(
+                    composeComponents.AbstractPlatformText(
                         text ="Made by Benoit Letondor",
+                        modifier = Modifier,
+                        color = Color.Unspecified,
+                        fontSize = TextUnit.Unspecified,
+                        fontFamily = null,
+                        textAlign = null,
+                        lineHeight = TextUnit.Unspecified,
                     )
                 }
             }
@@ -197,7 +216,14 @@ interface SettingsScreen {
         showWatchBattery: Boolean,
         showNotifications: Boolean,
     ) {
-        item(key = "WidgetsSection") { composeComponents.SettingSectionItem(label = "Widgets") }
+        item(key = "WidgetsSection") {
+            composeComponents.AbstractSettingSectionItem(
+                label = "Widgets",
+                modifier = Modifier,
+                includeTopPadding = true,
+                includeBottomPadding = true,
+            )
+        }
 
         if (useAndroid12) {
             item(key = "Android12Complications") {
@@ -223,12 +249,15 @@ interface SettingsScreen {
             val widgetsSize by platform.watchWidgetsSize().collectAsState(platform.getWidgetsSize())
             val context = LocalContext.current
 
-            composeComponents.SettingSlider(
+            composeComponents.AbstractSettingSlider(
                 iconDrawable = R.drawable.ic_baseline_photo_size_select_small_24,
                 onValueChange = platform::setWidgetsSize,
                 value = widgetsSize,
                 title = "Size of widgets: ${context.fontDisplaySizeToHumanReadableString(widgetsSize)}",
                 modifier = Modifier.padding(top = 6.dp),
+                minValue = 0,
+                maxValue = 100,
+                step = 25,
             )
         }
     }
@@ -256,6 +285,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.ANDROID_12_TOP_LEFT,
                         color = complicationColors.android12TopLeftColor,
+                        modifier = Modifier,
                     )
                 }
 
@@ -266,6 +296,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.ANDROID_12_TOP_RIGHT,
                         color = complicationColors.android12TopRightColor,
+                        modifier = Modifier,
                     )
                 }
             }
@@ -281,6 +312,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.ANDROID_12_BOTTOM_LEFT,
                         color = complicationColors.android12BottomLeftColor,
+                        modifier = Modifier,
                     )
                 }
 
@@ -291,6 +323,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.ANDROID_12_BOTTOM_RIGHT,
                         color = complicationColors.android12BottomRightColor,
+                        modifier = Modifier,
                     )
                 }
             }
@@ -323,6 +356,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.LEFT,
                         color = complicationColors.leftColor,
+                        modifier = Modifier,
                     )
                 }
 
@@ -339,6 +373,7 @@ interface SettingsScreen {
                         composeComponents.SettingComplicationSlot(
                             complicationLocation = ComplicationLocation.MIDDLE,
                             color = complicationColors.middleColor,
+                            modifier = Modifier,
                         )
                     }
                 }
@@ -350,6 +385,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.RIGHT,
                         color = complicationColors.rightColor,
+                        modifier = Modifier,
                     )
                 }
             }
@@ -372,6 +408,7 @@ interface SettingsScreen {
                     composeComponents.SettingComplicationSlot(
                         complicationLocation = ComplicationLocation.BOTTOM,
                         color = complicationColors.bottomColor,
+                        modifier = Modifier,
                     )
                 }
             }
@@ -387,18 +424,24 @@ interface SettingsScreen {
         showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "BatteryIndicatorSection") {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = "Display battery status",
                 includeBottomPadding = false,
+                modifier = Modifier,
+                includeTopPadding = true,
             )
         }
 
         if (!useAndroid12) {
             item(key = "BatteryIndicatorBottomWidgetWarning") {
-                composeComponents.PlatformText(
+                composeComponents.AbstractPlatformText(
                     text = "Activating any battery indicator replaces the bottom widget",
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
+                    modifier = Modifier,
+                    color = Color.Unspecified,
+                    fontFamily = null,
+                    textAlign = null,
                 )
             }
         }
@@ -406,7 +449,7 @@ interface SettingsScreen {
         item(key = "WatchBatteryIndicator") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Watch battery indicator",
                 checked = showWatchBattery,
                 onCheckedChange = { showBattery ->
@@ -424,25 +467,28 @@ interface SettingsScreen {
                 },
                 iconDrawable = R.drawable.ic_baseline_battery_charging_full,
                 modifier = Modifier.padding(top = 10.dp),
+                secondaryLabel = null,
             )
         }
 
         item(key = "PhoneBatteryIndicator") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "(Beta) Phone battery indicator setup",
                 onClick = {
                     platform.startPhoneBatterySyncConfigScreen(navController, activity)
                 },
                 iconDrawable = R.drawable.ic_phone,
+                modifier = Modifier,
+                secondaryLabel = null,
             )
         }
 
         item(key = "BatteryIndicatorsColor") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "Battery indicators colors",
                 secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
@@ -474,26 +520,36 @@ interface SettingsScreen {
         showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "NotificationsDisplaySection") {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = "Display phone notifications",
                 includeBottomPadding = false,
+                modifier = Modifier,
+                includeTopPadding = true,
             )
         }
 
         if (useAndroid12) {
             item(key = "NotificationsDisplayBottomWidgetWarning") {
-                composeComponents.PlatformText(
+                composeComponents.AbstractPlatformText(
                     text = "Activating notifications display replaces the WearOS logo",
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
+                    modifier = Modifier,
+                    color = Color.Unspecified,
+                    fontFamily = null,
+                    textAlign = null,
                 )
             }
         } else {
             item(key = "NotificationsDisplayBottomWidgetWarning") {
-                composeComponents.PlatformText(
+                composeComponents.AbstractPlatformText(
                     text = "Activating notifications display replaces the bottom widget",
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
+                    modifier = Modifier,
+                    color = Color.Unspecified,
+                    fontFamily = null,
+                    textAlign = null,
                 )
             }
         }
@@ -501,19 +557,21 @@ interface SettingsScreen {
         item(key = "NotificationsDisplayButton") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "(Beta) Phone notification icons",
                 onClick = {
                     platform.startPhoneNotificationIconsConfigScreen(navController, activity)
                 },
                 iconDrawable = R.drawable.ic_baseline_circle_notifications_24,
+                modifier = Modifier,
+                secondaryLabel = null,
             )
         }
 
         item(key = "NotificationsDisplayColor") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "Notification icons colors",
                 secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
@@ -545,21 +603,24 @@ interface SettingsScreen {
         showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "DateTimeSection") {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = "Time and date",
                 includeBottomPadding = false,
+                modifier = Modifier,
+                includeTopPadding = true,
             )
         }
 
         item(key = "ShortDateFormat") {
             val useShortDateFormat by platform.watchUseShortDateFormat().collectAsState(platform.getUseShortDateFormat())
 
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Use short date format",
                 checked = useShortDateFormat,
                 onCheckedChange = platform::setUseShortDateFormat,
                 iconDrawable = R.drawable.ic_baseline_short_text,
                 modifier = Modifier.padding(top = 10.dp),
+                secondaryLabel = null,
             )
         }
 
@@ -570,7 +631,7 @@ interface SettingsScreen {
                 val activity = LocalContext.current as ComponentActivity
 
                 Column {
-                    composeComponents.SettingToggleChip(
+                    composeComponents.AbstractSettingToggleChip(
                         label = "Show weather after date",
                         checked = showWeather,
                         onCheckedChange = { showWeather ->
@@ -587,25 +648,30 @@ interface SettingsScreen {
                             job.await()
                         },
                         iconDrawable = R.drawable.ic_weather_partly_cloudy,
+                        modifier = Modifier,
+                        secondaryLabel = null,
                     )
 
                     if (showWeather) {
-                        composeComponents.PlatformText(
+                        composeComponents.AbstractPlatformText(
                             text = weatherTempScaleDisclaimer,
                             fontSize = 12.sp,
                             lineHeight = 14.sp,
                             color = Color.Gray,
                             modifier = Modifier.padding(start = 40.dp, bottom = 4.dp),
+                            fontFamily = null,
+                            textAlign = null,
                         )
 
                         if (weatherProvider.weatherProviderInfo != null) {
-                            composeComponents.SettingChip(
+                            composeComponents.AbstractSettingChip(
                                 label = "Open Weather app for setup",
                                 onClick = {
                                     activity.openActivity(weatherProvider.weatherProviderInfo.appPackage, weatherProvider.weatherProviderInfo.weatherActivityName)
                                 },
                                 iconDrawable = null,
                                 modifier = Modifier.padding(start = 40.dp, bottom = 8.dp),
+                                secondaryLabel = null,
                             )
                         }
 
@@ -618,11 +684,13 @@ interface SettingsScreen {
         item(key = "24hTimeFormatSetting") {
             val use24hTimeFormat by platform.watchUse24hTimeFormat().collectAsState(platform.getUse24hTimeFormat())
 
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Use 24h time format",
                 checked = use24hTimeFormat,
                 onCheckedChange = platform::setUse24hTimeFormat,
                 iconDrawable = R.drawable.ic_access_time,
+                modifier = Modifier,
+                secondaryLabel = null,
             )
         }
 
@@ -630,12 +698,15 @@ interface SettingsScreen {
             val timeSize by platform.watchTimeSize().collectAsState(platform.getTimeSize())
             val context = LocalContext.current
 
-            composeComponents.SettingSlider(
+            composeComponents.AbstractSettingSlider(
                 iconDrawable = R.drawable.ic_baseline_format_size,
                 onValueChange = platform::setTimeSize,
                 value = timeSize,
                 title = "Size of time: ${context.fontDisplaySizeToHumanReadableString(timeSize)}",
                 modifier = Modifier.padding(top = 8.dp),
+                minValue = 0,
+                maxValue = 100,
+                step = 25,
             )
         }
 
@@ -643,19 +714,22 @@ interface SettingsScreen {
             val dateAndBatterySize by platform.watchDateAndBatterySize().collectAsState(platform.getDateAndBatterySize())
             val context = LocalContext.current
 
-            composeComponents.SettingSlider(
+            composeComponents.AbstractSettingSlider(
                 iconDrawable = R.drawable.ic_baseline_format_size,
                 onValueChange = platform::setDateAndBatterySize,
                 value = dateAndBatterySize,
                 title = "Size of date & battery: ${context.fontDisplaySizeToHumanReadableString(dateAndBatterySize)}",
                 modifier = Modifier.padding(top = 8.dp),
+                minValue = 0,
+                maxValue = 100,
+                step = 25,
             )
         }
 
         item(key = "TimeColor") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "Time color",
                 secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
@@ -683,7 +757,7 @@ interface SettingsScreen {
         item(key = "DateColor") {
             val activity = LocalContext.current as ComponentActivity
 
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "Date color",
                 secondaryLabel = if (showComplicationsColorInAmbient) null else "(doesn't affect ambient)",
                 onClick = {
@@ -714,15 +788,17 @@ interface SettingsScreen {
                 val useSweepingSecondsMotion by platform.watchUseSweepingSecondsRingMotion().collectAsState(platform.useSweepingSecondsRingMotion())
 
                 Column {
-                    composeComponents.SettingToggleChip(
+                    composeComponents.AbstractSettingToggleChip(
                         label = "Show seconds ring",
                         checked = showSecondsRing,
                         onCheckedChange = platform::setShowSecondsRing,
                         iconDrawable = R.drawable.ic_baseline_panorama_fish_eye,
+                        modifier = Modifier,
+                        secondaryLabel = null,
                     )
 
                     if (showSecondsRing) {
-                        composeComponents.SettingChip(
+                        composeComponents.AbstractSettingChip(
                             label = "Seconds ring color",
                             onClick = {
                                 activity.lifecycleScope.launch {
@@ -741,14 +817,16 @@ interface SettingsScreen {
                             },
                             iconDrawable = R.drawable.ic_palette_24,
                             modifier = Modifier.padding(top = 4.dp),
+                            secondaryLabel = null,
                         )
 
-                        composeComponents.SettingToggleChip(
+                        composeComponents.AbstractSettingToggleChip(
                             checked = useSweepingSecondsMotion,
                             onCheckedChange = platform::setUseSweepingSecondsRingMotion,
                             label = "Smooth ring motion",
                             iconDrawable = R.drawable.ic_baseline_refresh_24,
-                            modifier = Modifier.padding(top = 4.dp)
+                            modifier = Modifier.padding(top = 4.dp),
+                            secondaryLabel = null,
                         )
                     }
                 }
@@ -761,32 +839,37 @@ interface SettingsScreen {
         platform: Platform,
     ) {
         item(key = "TimeStyleSection") {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = "Time style",
+                modifier = Modifier,
+                includeTopPadding = true,
+                includeBottomPadding = true,
             )
         }
 
         item(key = "ThinTimeWatchOn") {
             val useThinTimeStyleInRegularMode by platform.watchUseThinTimeStyleInRegularMode().collectAsState(platform.useThinTimeStyleInRegularMode())
 
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Use thin time style when watch is on",
                 checked = useThinTimeStyleInRegularMode,
                 onCheckedChange = platform::setUseThinTimeStyleInRegularMode,
                 iconDrawable = R.drawable.ic_baseline_invert_colors,
                 modifier = Modifier.heightIn(min = 70.dp),
+                secondaryLabel = null,
             )
         }
 
         item(key = "NormalTimeWatchOff") {
             val useNormalTimeStyleInAmbientMode by platform.watchUseNormalTimeStyleInAmbientMode().collectAsState(platform.useNormalTimeStyleInAmbientMode())
 
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Use normal in place of thin time style in ambient mode",
                 checked = useNormalTimeStyleInAmbientMode,
                 onCheckedChange = platform::setUseNormalTimeStyleInAmbientMode,
                 iconDrawable = R.drawable.ic_baseline_invert_colors_off,
                 modifier = Modifier.heightIn(min = 70.dp),
+                secondaryLabel = null,
             )
         }
     }
@@ -803,19 +886,24 @@ interface SettingsScreen {
         showComplicationsColorInAmbient: Boolean,
     ) {
         item(key = "AmbientSection") {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = "Ambient mode",
+                modifier = Modifier,
+                includeTopPadding = true,
+                includeBottomPadding = true,
             )
         }
 
         item(key = "ShowDateInAmbientMode") {
             val showDateInAmbient by platform.watchShowDateInAmbient().collectAsState(platform.getShowDateInAmbient())
 
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Show date in ambient mode",
                 checked = showDateInAmbient,
                 onCheckedChange = platform::setShowDateInAmbient,
                 iconDrawable = R.drawable.ic_outline_calendar_today,
+                modifier = Modifier,
+                secondaryLabel = null,
             )
         }
 
@@ -823,11 +911,13 @@ interface SettingsScreen {
             item(key= "ComplicationsInAmbientMode") {
                 val showComplicationsInAmbient by platform.watchShowComplicationsInAmbientMode().collectAsState(platform.showComplicationsInAmbientMode())
 
-                composeComponents.SettingToggleChip(
+                composeComponents.AbstractSettingToggleChip(
                     label = "Widgets in ambient mode",
                     checked = showComplicationsInAmbient,
                     onCheckedChange = platform::setShowComplicationsInAmbientMode,
                     iconDrawable = R.drawable.ic_settings_power,
+                    modifier = Modifier,
+                    secondaryLabel = null,
                 )
             }
         }
@@ -836,12 +926,13 @@ interface SettingsScreen {
             item(key = "ShowBatteryInAmbientMode") {
                 val hideBatteryInAmbient by platform.watchHideBatteryInAmbient().collectAsState(platform.hideBatteryInAmbient())
 
-                composeComponents.SettingToggleChip(
+                composeComponents.AbstractSettingToggleChip(
                     label = "Show battery indicators in ambient mode",
                     checked = !hideBatteryInAmbient,
                     onCheckedChange = { platform.setHideBatteryInAmbient(!it) },
                     iconDrawable = R.drawable.ic_settings_power,
                     modifier = Modifier.heightIn(min = 70.dp),
+                    secondaryLabel = null,
                 )
             }
         }
@@ -850,12 +941,13 @@ interface SettingsScreen {
             item(key = "ShowNotificationsInAmbientMode") {
                 val showNotificationsInAmbient by platform.watchShowNotificationsInAmbient().collectAsState(platform.getShowNotificationsInAmbient())
 
-                composeComponents.SettingToggleChip(
+                composeComponents.AbstractSettingToggleChip(
                     label = "Show notifications in ambient mode",
                     checked = showNotificationsInAmbient,
                     onCheckedChange = platform::setShowNotificationsInAmbient,
                     iconDrawable = R.drawable.ic_baseline_notifications_none_24,
                     modifier = Modifier.heightIn(min = 70.dp),
+                    secondaryLabel = null,
                 )
             }
         }
@@ -864,18 +956,19 @@ interface SettingsScreen {
             item(key = "ShowWearOSLogoInAmbientMode") {
                 val showWearOSLogoInAmbient by platform.watchShowWearOSLogoInAmbient().collectAsState(platform.getShowWearOSLogoInAmbient())
 
-                composeComponents.SettingToggleChip(
+                composeComponents.AbstractSettingToggleChip(
                     label = "Show Wear OS logo in ambient mode",
                     checked = showWearOSLogoInAmbient,
                     onCheckedChange = platform::setShowWearOSLogoInAmbient,
                     iconDrawable = R.drawable.ic_wear_os_logo_white,
                     modifier = Modifier.heightIn(min = 70.dp),
+                    secondaryLabel = null,
                 )
             }
         }
 
         item(key = "showColorsInAmbient") {
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 label = "Colors in ambient mode",
                 secondaryLabel = "Caution: can increase battery usage",
                 checked = showComplicationsColorInAmbient,
@@ -893,20 +986,25 @@ interface SettingsScreen {
         isUserPremium: Boolean
     ) {
         item(key = "SupportSection") {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = "Support",
+                modifier = Modifier,
+                includeTopPadding = true,
+                includeBottomPadding = true,
             )
         }
 
         item(key = "GiveFeedback") {
             val activity = LocalContext.current as ComponentActivity
-            composeComponents.SettingChip(
+            composeComponents.AbstractSettingChip(
                 label = "Give your feedback",
                 onClick = {
                     platform.setRatingDisplayed(true)
                     platform.startFeedbackScreen(navController, activity)
                 },
                 iconDrawable = R.drawable.ic_thumbs_up_down,
+                modifier = Modifier,
+                secondaryLabel = null,
             )
         }
 
@@ -914,10 +1012,12 @@ interface SettingsScreen {
             item(key = "Donate") {
                 val activity = LocalContext.current as ComponentActivity
 
-                composeComponents.SettingChip(
+                composeComponents.AbstractSettingChip(
                     label = "Donate to support development",
                     onClick = { platform.startDonationScreen(navController, activity) },
                     iconDrawable = R.drawable.ic_baseline_add_reaction,
+                    modifier = Modifier,
+                    secondaryLabel = null,
                 )
             }
         }

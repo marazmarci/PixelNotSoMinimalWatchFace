@@ -29,7 +29,7 @@ import androidx.wear.compose.material.Text
 
 @Composable
 fun ChipButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
     onClick: () -> Unit,
     text: String,

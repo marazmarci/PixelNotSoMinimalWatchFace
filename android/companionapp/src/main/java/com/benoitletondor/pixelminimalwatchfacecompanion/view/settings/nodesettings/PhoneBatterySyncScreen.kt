@@ -80,12 +80,13 @@ private fun Content(
         }
 
         item(key = "SyncButton") {
-            composeComponents.SettingToggleChip(
+            composeComponents.AbstractSettingToggleChip(
                 checked = isPhoneBatterySyncActivated,
                 onCheckedChange = phonePlatform::setShowPhoneBattery,
                 label = "Phone battery as bottom widget",
                 iconDrawable = null,
-                modifier = Modifier.padding(bottom = 30.dp)
+                modifier = Modifier.padding(bottom = 30.dp),
+                secondaryLabel = null,
             )
         }
 

@@ -56,6 +56,7 @@ class FeatureDropActivity : ComponentActivity() {
 
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 Items(isActive, isScreenRound)
             }

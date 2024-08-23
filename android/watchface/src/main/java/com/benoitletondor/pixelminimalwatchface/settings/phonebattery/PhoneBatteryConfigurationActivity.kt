@@ -116,6 +116,7 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
         WearTheme {
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 item(key = "Title") {
                     Text(
@@ -145,6 +146,7 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
         item(key = "ConnectedViewText1") {
             ExplanationText(
                 text = "Connected to your phone's companion app successfully.",
+                modifier = Modifier,
             )
         }
 
@@ -160,6 +162,7 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
                 },
                 label = "Phone battery as bottom widget",
                 iconDrawable = null,
+                modifier = Modifier,
             )
         }
 
@@ -209,11 +212,13 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
             Column {
                 ExplanationText(
                     text = "Unable to connect to the companion app on your phone",
+                    modifier = Modifier,
                 )
 
                 ExplanationText(
                     text = "Make sure your phone is connected and \"Pixel Minimal Watch Face\" companion app is installed on it.",
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier,
                 )
             }
 
@@ -231,6 +236,7 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
         item(key = "ErrorViewText2") {
             ExplanationText(
                 text = "If the issue persists:",
+                modifier = Modifier,
             )
         }
 
@@ -240,6 +246,7 @@ class PhoneBatteryConfigurationActivity : ComponentActivity(), CapabilityClient.
                 onClick = {
                     startActivity(Intent(this@PhoneBatteryConfigurationActivity, PhoneBatterySyncTroubleshootActivity::class.java))
                 },
+                modifier = Modifier,
             )
         }
 

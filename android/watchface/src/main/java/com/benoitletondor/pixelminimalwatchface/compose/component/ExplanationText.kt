@@ -25,7 +25,7 @@ import androidx.wear.compose.material.Text
 
 @Composable
 fun ExplanationText(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     text: String,
     fontWeight: FontWeight = FontWeight.Normal,
 ) {

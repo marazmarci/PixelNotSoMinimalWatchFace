@@ -45,7 +45,7 @@ interface ComplicationColorScreen {
 
     @Composable
     fun Screen(
-        modifier: Modifier = Modifier,
+        modifier: Modifier,
         composeComponents: SettingsComposeComponents,
         platform: Platform,
         navController: NavController,
@@ -99,9 +99,11 @@ interface ComplicationColorScreen {
         onColorClick: (ComplicationColor) -> Unit,
     ) {
         item {
-            composeComponents.SettingSectionItem(
+            composeComponents.AbstractSettingSectionItem(
                 label = title,
                 includeTopPadding = includeTopPadding,
+                modifier = Modifier,
+                includeBottomPadding = true,
             )
         }
 

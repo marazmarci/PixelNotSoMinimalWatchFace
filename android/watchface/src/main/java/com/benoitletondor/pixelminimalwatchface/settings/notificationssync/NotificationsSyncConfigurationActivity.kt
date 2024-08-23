@@ -128,6 +128,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
         WearTheme {
             RotatoryAwareLazyColumn(
                 horizontalPadding = 20.dp,
+                modifier = Modifier,
             ) {
                 item(key = "Title") {
                     Text(
@@ -160,6 +161,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
                 item(key = "ConnectedViewText1") {
                     ExplanationText(
                         text = "Connected to your phone's companion app successfully.",
+                        modifier = Modifier,
                     )
                 }
 
@@ -175,6 +177,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
                         },
                         label = "Show notification icons",
                         iconDrawable = null,
+                        modifier = Modifier,
                     )
                 }
 
@@ -205,6 +208,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
                 item(key = "ConnectedMissingPermissionViewText2") {
                     ExplanationText(
                         text = "To display phone notification icons, the phone companion app needs to have the notification access permission",
+                        modifier = Modifier,
                     )
                 }
 
@@ -223,6 +227,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
                             }
                         },
                         backgroundColor = MaterialTheme.colors.secondary,
+                        modifier = Modifier,
                     )
                 }
 
@@ -235,10 +240,12 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
 
                         ExplanationText(
                             text = "- Tap \"Troubleshoot\" button",
+                            modifier = Modifier,
                         )
 
                         ExplanationText(
                             text = "- Then tap \"Setup notification icons sync\" button",
+                            modifier = Modifier,
                         )
                     }
                 }
@@ -254,6 +261,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
                     ChipButton(
                         onClick = viewModel::onSyncWithPhoneDeactivated,
                         text = "Deactivate notification icons",
+                        modifier = Modifier,
                     )
                 }
             }
@@ -291,11 +299,13 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
             Column {
                 ExplanationText(
                     text = "Unable to connect to the companion app on your phone",
+                    modifier = Modifier,
                 )
 
                 ExplanationText(
                     text = "Make sure your phone is connected and \"Pixel Minimal Watch Face\" companion app is installed on it.",
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier,
                 )
             }
 
@@ -313,6 +323,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
         item(key = "ErrorViewText2") {
             ExplanationText(
                 text = "If the issue persists:",
+                modifier = Modifier,
             )
         }
 
@@ -322,6 +333,7 @@ class NotificationsSyncConfigurationActivity : ComponentActivity(), CapabilityCl
                 onClick = {
                     startActivity(Intent(this@NotificationsSyncConfigurationActivity, NotificationsSyncTroubleshootActivity::class.java))
                 },
+                modifier = Modifier,
             )
         }
 
