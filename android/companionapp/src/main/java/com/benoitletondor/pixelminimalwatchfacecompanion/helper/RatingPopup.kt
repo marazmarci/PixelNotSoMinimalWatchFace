@@ -25,11 +25,11 @@ import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailAddress
 import com.benoitletondor.pixelminimalwatchface.common.helper.getEmailSubject
 import com.benoitletondor.pixelminimalwatchfacecompanion.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.play.core.review.ReviewManagerFactory
+//import com.google.android.play.core.review.ReviewManagerFactory
 
 class RatingPopup(private val activity: Activity) {
 
-    private val reviewManager = ReviewManagerFactory.create(activity.applicationContext)
+//    private val reviewManager = ReviewManagerFactory.create(activity.applicationContext)
 
     fun show() {
         val dialog = buildStep1()
@@ -77,7 +77,7 @@ class RatingPopup(private val activity: Activity) {
             .setMessage(R.string.rating_popup_positive_message)
             .setNegativeButton(R.string.rating_popup_positive_cta_negative) { _, _ -> }
             .setPositiveButton(R.string.rating_popup_positive_cta_positive) { _, _ ->
-                reviewManager.requestReviewFlow()
+                /*reviewManager.requestReviewFlow()
                     .addOnCompleteListener { request ->
                         if (request.isSuccessful) {
                             val reviewInfo = request.result
@@ -90,7 +90,7 @@ class RatingPopup(private val activity: Activity) {
                         } else {
                             activity.openPlayStore()
                         }
-                    }
+                    }*/
             }
             .create()
     }
