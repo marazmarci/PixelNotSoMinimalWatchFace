@@ -50,10 +50,10 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    api 'androidx.activity:activity-ktx:1.6.1'
-    api "androidx.activity:activity-compose:1.6.1"
+    api 'androidx.activity:activity-ktx:1.7.0'
+    api "androidx.activity:activity-compose:1.7.0"
 
-    api 'com.google.android.gms:play-services-wearable:18.0.0'
+    api 'com.google.android.gms:play-services-wearable:18.2.0'
 
     implementation platform("androidx.compose:compose-bom:$compose_bom")
     implementation 'androidx.compose.foundation:foundation'
