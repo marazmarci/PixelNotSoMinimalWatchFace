@@ -113,7 +113,7 @@
 
             <meta-data
                 android:name="com.google.android.wearable.watchface.companionConfigurationAction"
-                android:value="com.benoitletondor.pixelminimalwatchface.PHONE_CONFIG" />
+                android:value="dev.maraz.pixelnotsominimalwatchface.PHONE_CONFIG" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

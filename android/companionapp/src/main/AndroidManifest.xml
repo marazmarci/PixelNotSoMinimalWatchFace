@@ -53,7 +53,7 @@
             </intent-filter>
 
             <intent-filter>
-                <action android:name="com.benoitletondor.pixelminimalwatchface.PHONE_CONFIG" />
+                <action android:name="dev.maraz.pixelnotsominimalwatchface.PHONE_CONFIG" />
                 <category android:name="com.google.android.wearable.watchface.category.COMPANION_CONFIGURATION" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -72,7 +72,7 @@
                     android:host="donate" />
 
                 <data
-                    android:scheme="pixelminimalwatchface"
+                    android:scheme="pixelnotsominimalwatchface"
                     android:host="notifications" />
             </intent-filter>
         </activity>
