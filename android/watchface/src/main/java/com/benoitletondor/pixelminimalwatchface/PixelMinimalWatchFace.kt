@@ -82,7 +82,7 @@ private const val THREE_DAYS_MS: Long = 1000 * 60 * 60 * 24 * 3L
 private const val THIRTY_MINS_MS: Long = 1000 * 60 * 30L
 private const val MINIMUM_COMPLICATION_UPDATE_INTERVAL_MS = 1000L
 val DEBUG_LOGS = BuildConfig.DEBUG
-private const val TAG = "PixelMinimalWatchFace"
+private const val TAG = "PixelNotSoMinimalWatchFace"
 
 class PixelMinimalWatchFace : CanvasWatchFaceService() {
 
