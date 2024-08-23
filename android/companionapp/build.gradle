@@ -22,10 +22,6 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
-def keystorePropertiesFile = rootProject.file("key/key.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 android {
     namespace 'com.benoitletondor.pixelminimalwatchfacecompanion'
 
@@ -56,10 +52,10 @@ android {
             storePassword "pixelwatchfacedebug"
         }
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            keyAlias "pixelwatchface"
+            keyPassword "pixelwatchfacedebug"
+            storeFile file("../key/debug.jks")
+            storePassword "pixelwatchfacedebug"
         }
     }
 
