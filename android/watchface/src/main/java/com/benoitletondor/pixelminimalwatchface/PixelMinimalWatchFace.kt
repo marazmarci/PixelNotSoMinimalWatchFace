@@ -1130,35 +1130,38 @@ class PixelMinimalWatchFace : CanvasWatchFaceService() {
         }
 
         private fun sendRatingNotification() {
-            // Create notification channel if needed
-            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
-                val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val mChannel = NotificationChannel(MISC_NOTIFICATION_CHANNEL_ID, getString(R.string.misc_notification_channel_name), importance)
-                mChannel.description = getString(R.string.misc_notification_channel_description)
+            try {
+                // Create notification channel if needed
+                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
+                    val importance = NotificationManager.IMPORTANCE_DEFAULT
+                    val mChannel = NotificationChannel(MISC_NOTIFICATION_CHANNEL_ID, getString(R.string.misc_notification_channel_name), importance)
+                    mChannel.description = getString(R.string.misc_notification_channel_description)
 
-                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.createNotificationChannel(mChannel)
+                    val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.createNotificationChannel(mChannel)
+                }
+
+                val activityIntent = Intent(service, FeedbackActivity::class.java)
+                val pendingIntent = PendingIntent.getActivity(
+                    service,
+                    0,
+                    activityIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT,
+                )
+
+                val notification = NotificationCompat.Builder(service, MISC_NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(getString(R.string.rating_notification_title))
+                    .setContentText(getString(R.string.rating_notification_message))
+                    .setStyle(NotificationCompat.BigTextStyle().bigText(getString(R.string.rating_notification_message)))
+                    .addAction(NotificationCompat.Action(R.drawable.ic_feedback, getString(R.string.rating_notification_cta), pendingIntent))
+                    .setAutoCancel(true)
+                    .build()
+
+                NotificationManagerCompat.from(service).notify(193828, notification)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error showing rating notification", e)
             }
-
-            val activityIntent = Intent(service, FeedbackActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(
-                service,
-                0,
-                activityIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT,
-            )
-
-            val notification = NotificationCompat.Builder(service, MISC_NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(getString(R.string.rating_notification_title))
-                .setContentText(getString(R.string.rating_notification_message))
-                .setStyle(NotificationCompat.BigTextStyle().bigText(getString(R.string.rating_notification_message)))
-                .addAction(NotificationCompat.Action(R.drawable.ic_feedback, getString(R.string.rating_notification_cta), pendingIntent))
-                .setAutoCancel(true)
-                .build()
-
-
-            NotificationManagerCompat.from(service).notify(193828, notification)
         }
 
         private fun syncPhoneBatteryStatus() {

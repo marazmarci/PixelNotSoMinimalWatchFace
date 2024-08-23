@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId "dev.maraz.pixelnotsominimalwatchface"
         minSdkVersion 25
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 10173
         versionName "2.4.2"
 
