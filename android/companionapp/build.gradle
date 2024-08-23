@@ -46,13 +46,13 @@ android {
 
     signingConfigs {
         debug {
-            keyAlias "pixelwatchface"
+            keyAlias "pixelwatchfacedebug"
             keyPassword "pixelwatchfacedebug"
             storeFile file("../key/debug.jks")
             storePassword "pixelwatchfacedebug"
         }
         release {
-            keyAlias "pixelwatchface"
+            keyAlias "pixelwatchfacedebug"
             keyPassword "pixelwatchfacedebug"
             storeFile file("../key/debug.jks")
             storePassword "pixelwatchfacedebug"
