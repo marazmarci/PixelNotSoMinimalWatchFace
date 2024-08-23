@@ -64,11 +64,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="pixelminimalwatchface"
+                    android:scheme="pixelnotsominimalwatchface"
                     android:host="open" />
 
                 <data
-                    android:scheme="pixelminimalwatchface"
+                    android:scheme="pixelnotsominimalwatchface"
                     android:host="donate" />
 
                 <data

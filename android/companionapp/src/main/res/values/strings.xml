@@ -14,7 +14,7 @@
    limitations under the License.
 -->
 <resources>
-    <string name="app_name">Pixel Minimal Watch Face</string>
+    <string name="app_name">Pixel Not-So-Minimal Watch Face</string>
 
     <string name="premium_error">Unable to reach PlayStore to verify your premium status.\n\nPlease check your connection and try again.\n(%s)</string>
     <string name="error_syncing_title">Error syncing with watch</string>
